@@ -1,4 +1,15 @@
 <resources>
     <string name="try_after">Попробуйте позже</string>
     <string name="not_connected">Нет подключения</string>
+    <string name="main">Главная</string>
+    <string name="tests">Тесты</string>
+    <string name="log">Журнал</string>
+    <string name="utp">Планирование УТП</string>
+    <string name="load_analysis">Анализ нагрузки</string>
+    <string name="compositions">Составы</string>
+    <string name="composition">Состав</string>
+    <string name="sportsman">Спортсмены</string>
+    <string name="sensor">Датчики</string>
+    <string name="settings">Настройки</string>
+    <string name="members">Участники:</string>
 </resources>

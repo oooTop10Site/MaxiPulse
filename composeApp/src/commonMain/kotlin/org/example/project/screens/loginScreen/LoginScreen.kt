@@ -45,6 +45,9 @@ import maxipuls.composeapp.generated.resources.lock
 import maxipuls.composeapp.generated.resources.logo
 import maxipuls.composeapp.generated.resources.user
 import org.example.project.ext.clickableBlank
+import org.example.project.screens.mainTab.MainTabScreen
+import org.example.project.screens.mainTab.tabs.MainTab
+import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.root.ScreenSize
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiButton
@@ -61,6 +64,7 @@ class LoginScreen : Screen {
         val viewModel = rememberScreenModel {
             LoginViewModel()
         }
+        val rootNavigator = RootNavigator.currentOrThrow
         val textOfPersonalData = buildAnnotatedString {
             withStyle(
                 style = MaxiPulsTheme.typography.regular.copy(
@@ -102,7 +106,7 @@ class LoginScreen : Screen {
                 viewModel.container.sideEffectFlow.collect {
                     when (it) {
                         LoginEvent.Success -> {
-                            //nav to main
+                            rootNavigator.push(MainTabScreen())
                         }
                     }
                 }

@@ -11,8 +11,12 @@ class UIKitColors(
     val textFieldStroke: Color,
     val placeholder: Color,
     val textColor: Color,
+    val lightTextColor: Color,
     val buttonContent: Color,
     val checkmark: Color,
+    val modalSheet: Color,
+    val divider: Color,
+    val card: Color,
 )
 
 fun uiKitColors() = UIKitColors(
@@ -24,8 +28,12 @@ fun uiKitColors() = UIKitColors(
     textFieldStroke = Color(0xFFA0A0A0),
     placeholder = Color(0xFFA0A0A0),
     textColor = Color.Black,
+    lightTextColor = Color.White,
     buttonContent = Color.White,
-    checkmark = Color.White
+    checkmark = Color.White,
+    modalSheet = Color(0xFF1C2536),
+    divider = Color(0xFFA0A0A0),
+    card = Color(0xFFF0F0F0)
 
 )
 
