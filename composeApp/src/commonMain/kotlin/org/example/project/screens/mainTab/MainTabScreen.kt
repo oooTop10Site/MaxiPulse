@@ -76,7 +76,9 @@ class MainTabScreen(private val tab: Tab = MainTab) : Screen {
         val tabsSecond = listOf(CompositionsTab, SportsmanTab, SensorTab, SettingsTab)
         val navigator = LocalNavigator.currentOrThrow
         var isOpen by remember { mutableStateOf(false) }
-        MaxiPageContainer(modifier = Modifier.fillMaxSize()) {
+        MaxiPageContainer(
+            modifier = Modifier.fillMaxSize().background(MaxiPulsTheme.colors.uiKit.background)
+        ) {
             TabNavigator(tab) {
                 val tabNavigator = LocalTabNavigator.current
                 Row(
@@ -164,7 +166,8 @@ class MainTabScreen(private val tab: Tab = MainTab) : Screen {
                                     tabEach.options.icon?.let {
                                         Icon(
                                             painter = it,
-                                            modifier = Modifier.size(30.dp).align(Alignment.CenterVertically),
+                                            modifier = Modifier.size(30.dp)
+                                                .align(Alignment.CenterVertically),
                                             contentDescription = null,
                                             tint = if (tabNavigator.current == tabEach) MaxiPulsTheme.colors.uiKit.primary
                                             else MaxiPulsTheme.colors.uiKit.lightTextColor

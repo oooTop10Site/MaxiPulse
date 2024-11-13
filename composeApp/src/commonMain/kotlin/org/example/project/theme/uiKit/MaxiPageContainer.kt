@@ -1,10 +1,12 @@
 package org.example.project.theme.uiKit
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -32,11 +34,14 @@ fun MaxiPageContainer(
             detectTapGestures(onTap = {
                 localFocusManager.clearFocus()
             })
-        }
+        }.background(MaxiPulsTheme.colors.uiKit.background)
     ) {
         Column {
             topBar?.invoke()
-            HorizontalDivider(modifier = Modifier.fillMaxWidth(), color = MaxiPulsTheme.colors.uiKit.divider)
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                color = MaxiPulsTheme.colors.uiKit.divider
+            )
         }
         Box(modifier = Modifier.weight(1f)) {
             content()
