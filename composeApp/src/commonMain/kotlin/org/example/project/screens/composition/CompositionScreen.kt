@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -32,12 +33,14 @@ import org.example.project.theme.uiKit.MaxiPageContainer
 import org.jetbrains.compose.resources.stringResource
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.clip
+import cafe.adriel.voyager.navigator.currentOrThrow
 import maxipuls.composeapp.generated.resources.add_ic
 import maxipuls.composeapp.generated.resources.composition
 import maxipuls.composeapp.generated.resources.drop_ic
 import maxipuls.composeapp.generated.resources.rectangle_listv2
 import maxipuls.composeapp.generated.resources.search
 import org.example.project.screens.composition.components.CompositionCard
+import org.example.project.screens.root.ScreenSize
 import org.jetbrains.compose.resources.painterResource
 
 class CompositionScreen : Screen {
@@ -48,6 +51,13 @@ class CompositionScreen : Screen {
             CompositionViewModel()
         }
         val state by viewModel.stateFlow.collectAsState()
+        val screenSize = ScreenSize.currentOrThrow
+        val chunkSize = when(screenSize.widthSizeClass) {
+            WindowWidthSizeClass.Medium -> 2
+            WindowWidthSizeClass.Expanded -> 2
+            WindowWidthSizeClass.Compact -> 1
+            else -> 1
+        }
         MaxiPageContainer(
             topBar = {
                 Column(
@@ -137,7 +147,7 @@ class CompositionScreen : Screen {
                 verticalArrangement = Arrangement.spacedBy(20.dp),
                 contentPadding = PaddingValues(20.dp)
             ) {
-                items(state.compositions.chunked(3)) { chunk ->
+                items(state.compositions.chunked(chunkSize)) { chunk ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -152,8 +162,8 @@ class CompositionScreen : Screen {
                                 //onClick()
                             }
                         }
-                        if (chunk.size != 3) {
-                            for (i in 1..3 - chunk.size) {
+                        if (chunk.size != chunkSize) {
+                            for (i in 1..chunkSize - chunk.size) {
                                 Box(modifier = Modifier.weight(1f).height(100.dp))
                             }
                         }
