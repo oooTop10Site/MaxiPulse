@@ -32,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,6 +68,7 @@ import org.example.project.theme.uiKit.MaxiPageContainer
 import org.jetbrains.compose.resources.painterResource
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import org.example.project.screens.root.ScreenSize
 
 class MainTabScreen(private val tab: Tab = MainTab) : Screen {
 
@@ -79,6 +81,7 @@ class MainTabScreen(private val tab: Tab = MainTab) : Screen {
         MaxiPageContainer(
             modifier = Modifier.fillMaxSize().background(MaxiPulsTheme.colors.uiKit.background)
         ) {
+            val screenSize = ScreenSize.currentOrThrow
             TabNavigator(tab) {
                 val tabNavigator = LocalTabNavigator.current
                 Row(

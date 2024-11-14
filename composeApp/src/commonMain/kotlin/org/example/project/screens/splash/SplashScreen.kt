@@ -1,4 +1,4 @@
-package org.example.project.screens.splashScreen
+package org.example.project.screens.splash
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -9,23 +9,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.delay
 import maxipuls.composeapp.generated.resources.Res
-import maxipuls.composeapp.generated.resources.database
-import maxipuls.composeapp.generated.resources.house_blank
 import maxipuls.composeapp.generated.resources.logo
 import org.example.project.domain.manager.AuthManager
-import org.example.project.screens.loginScreen.LoginScreen
+import org.example.project.screens.login.LoginScreen
 import org.example.project.screens.mainTab.MainTabScreen
 import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.root.ScreenSize
 import org.jetbrains.compose.resources.imageResource
-import org.jetbrains.compose.resources.painterResource
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 

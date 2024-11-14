@@ -1,4 +1,4 @@
-package org.example.project.screens.loginScreen
+package org.example.project.screens.login
 
 import org.example.project.platform.BaseScreenModel
 import org.orbitmvi.orbit.annotation.OrbitExperimental

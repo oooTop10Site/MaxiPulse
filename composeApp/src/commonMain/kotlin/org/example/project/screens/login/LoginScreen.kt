@@ -1,4 +1,4 @@
-package org.example.project.screens.loginScreen
+package org.example.project.screens.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -37,7 +36,6 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.currentOrThrow
-import io.ktor.util.valuesOf
 import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.background_auth
@@ -46,7 +44,6 @@ import maxipuls.composeapp.generated.resources.logo
 import maxipuls.composeapp.generated.resources.user
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.mainTab.MainTabScreen
-import org.example.project.screens.mainTab.tabs.MainTab
 import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.root.ScreenSize
 import org.example.project.theme.MaxiPulsTheme

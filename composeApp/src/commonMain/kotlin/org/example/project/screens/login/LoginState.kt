@@ -1,4 +1,4 @@
-package org.example.project.screens.loginScreen
+package org.example.project.screens.login
 
 data class LoginState(
     val login: String,
