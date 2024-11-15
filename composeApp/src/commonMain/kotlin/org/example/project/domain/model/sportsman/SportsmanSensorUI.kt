@@ -7,5 +7,5 @@ data class SportsmanSensorUI(
     val lastname: String,
     val middleName: String,
     val compositionNumber: Int,
-    val sensorId: String,
+    val sensor: SensorUI?,
 )

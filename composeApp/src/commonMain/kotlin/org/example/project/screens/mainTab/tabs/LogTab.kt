@@ -1,11 +1,13 @@
 package org.example.project.screens.mainTab.tabs
 
 import androidx.compose.runtime.Composable
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.book_bookmark
 import maxipuls.composeapp.generated.resources.log
+import org.example.project.screens.log.LogScreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -20,6 +22,6 @@ object LogTab : Tab {
 
     @Composable
     override fun Content() {
-
+        Navigator(LogScreen())
     }
 }

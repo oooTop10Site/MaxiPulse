@@ -21,4 +21,14 @@
     <string name="search">Поиск</string>
     <string name="sensor_not_found">Датчик не найден</string>
     <string name="start_tarining">Начать тренеровку</string>
+    <string name="ok">Ок</string>
+    <string name="attention">Внимание</string>
+    <string name="cancel">Отмена</string>
+    <string name="back">Назад</string>
+    <string name="choose_sensor">Выберите датчик</string>
+    <string name="sensor_already_assigned_desc">Данный датчик закреплен за другим спортсменом. Хотите переназначить его?</string>
+    <string name="sensor_already_assigned">Датчик уже назначен</string>
+    <string name="attention_user_with_not_active_sensor_desc">Выбран игрок с неактивным или находящимся вне зоны доступа датчиком. Вы уверены, что хотите начать тренировку?</string>
+    <string name="what_do_if_sensor_not_active">Что делать, если датчик неактивен?</string>
+    <string name="what_do_if_sensor_not_active_desc">1. Убедитесь, что датчик включен и горит индикатор.\n\n2. Убедитесь, что датчик имеет хороший контакт с кожей.\n\n3. Попробуйте заменить батарейки внутри датчика.\n\n4. Переподключите или замените датчик.</string>
 </resources>

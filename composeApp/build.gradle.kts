@@ -74,6 +74,9 @@ kotlin {
             implementation("com.squareup.okhttp3:okhttp:4.11.0")
             implementation(libs.ktor.client.okhttp)
         }
+        iosMain.dependencies {
+            implementation(compose.material)
+        }
         commonMain.dependencies {
 //            implementation(libs.libres.compose)
 

@@ -1,5 +1,6 @@
 package org.example.project.screens.sportsman
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -58,7 +59,7 @@ class SportsmanScreen: Screen {
         val state by viewModel.stateFlow.collectAsState()
         val screenSize = ScreenSize.currentOrThrow
         val chunkSize = when(screenSize.widthSizeClass) {
-            WindowWidthSizeClass.Medium -> 2
+            WindowWidthSizeClass.Medium -> 1
             WindowWidthSizeClass.Expanded -> 2
             WindowWidthSizeClass.Compact -> 1
             else -> 1
@@ -90,6 +91,7 @@ class SportsmanScreen: Screen {
                             onValueChange = {
                                 viewModel.changeSearch(it)
                             },
+                            placeholder = stringResource(Res.string.search),
                             modifier = Modifier.height(40.dp).weight(1f),
                             trailingIcon = {
                                 Icon(

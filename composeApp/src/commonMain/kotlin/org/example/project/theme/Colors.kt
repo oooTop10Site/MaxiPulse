@@ -20,6 +20,8 @@ class UIKitColors(
     val sportsmanAvatarBackground: Color,
 
     val grey500: Color,
+    val grey800: Color,
+    val grey400: Color,
 
     val green500: Color,
 
@@ -43,7 +45,9 @@ fun uiKitColors() = UIKitColors(
     card = Color(0xFFF0F0F0),
     sportsmanAvatarBackground = Color(0xFFD9D9D9),
 
+    grey800 = Color(0xFF696969),
     grey500 = Color(0xFFDFDFDF),
+    grey400 = Color(0xFFECECEC),
 
     green500 = Color(0xFF7ECA22),
     white = Color.White

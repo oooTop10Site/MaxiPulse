@@ -68,16 +68,20 @@ import org.example.project.theme.uiKit.MaxiPageContainer
 import org.jetbrains.compose.resources.painterResource
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.input.pointer.PointerEventType
+import org.example.project.platform.PointerEvent
+import org.example.project.platform.pointerEvent
 import org.example.project.screens.root.ScreenSize
 
 class MainTabScreen(private val tab: Tab = MainTab) : Screen {
-
     @Composable
     override fun Content() {
         val tabsFirst = listOf(MainTab, TestTab, LogTab, UTPTab, LoadAnalizeTab)
         val tabsSecond = listOf(CompositionsTab, SportsmanTab, SensorTab, SettingsTab)
         val navigator = LocalNavigator.currentOrThrow
         var isOpen by remember { mutableStateOf(false) }
+
         MaxiPageContainer(
             modifier = Modifier.fillMaxSize().background(MaxiPulsTheme.colors.uiKit.background)
         ) {
@@ -94,7 +98,10 @@ class MainTabScreen(private val tab: Tab = MainTab) : Screen {
                                     durationMillis = 300,
                                     easing = LinearOutSlowInEasing
                                 )
-                            ).fillMaxHeight().width(if (isOpen) 270.dp else 110.dp),
+                            ).fillMaxHeight().width(if (isOpen) 270.dp else 110.dp).pointerEvent(
+                                PointerEvent.Enter, action = {
+                                    isOpen = true
+                                }).pointerEvent(PointerEvent.Exit, action = { isOpen = false }),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Spacer(Modifier.size(30.dp))

@@ -52,7 +52,7 @@ class CompositionScreen : Screen {
         }
         val state by viewModel.stateFlow.collectAsState()
         val screenSize = ScreenSize.currentOrThrow
-        val chunkSize = when(screenSize.widthSizeClass) {
+        val chunkSize = when (screenSize.widthSizeClass) {
             WindowWidthSizeClass.Medium -> 2
             WindowWidthSizeClass.Expanded -> 2
             WindowWidthSizeClass.Compact -> 1
@@ -85,6 +85,7 @@ class CompositionScreen : Screen {
                             onValueChange = {
                                 viewModel.changeSearch(it)
                             },
+                            placeholder = stringResource(Res.string.search),
                             modifier = Modifier.height(40.dp).weight(1f),
                             trailingIcon = {
                                 Icon(

@@ -64,6 +64,7 @@ fun SportsmanSensorCard(
     sensorId: String,
     isSelect: Boolean,
     isBorder: Boolean,
+    clickSensor: () -> Unit,
     changeSelect: () -> Unit,
 ) {
     val screenSize = ScreenSize.currentOrThrow
@@ -165,14 +166,18 @@ fun SportsmanSensorCard(
                     alpha = 0.15f
                 ),
                 shape = RoundedCornerShape(15.dp)
-            ).clip(RoundedCornerShape(15.dp))
+            ).clip(RoundedCornerShape(15.dp)).clickableBlank() {
+                clickSensor()
+            }
         ) {
             Text(
                 text = if (sensorId.isBlank()) stringResource(Res.string.sensor_not_found) else "Movesense $sensorId",
                 style = MaxiPulsTheme.typography.regular.copy(
                     color = MaxiPulsTheme.colors.uiKit.textColor,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    lineHeight = 14.sp
                 ),
+                color = MaxiPulsTheme.colors.uiKit.textColor,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(top = 12.dp, bottom = 12.dp, start = 15.dp)
