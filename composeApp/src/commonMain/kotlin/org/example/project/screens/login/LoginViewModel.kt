@@ -1,6 +1,9 @@
 package org.example.project.screens.login
 
+import org.example.project.domain.manager.AuthManager
+import org.example.project.domain.repository.AuthRepository
 import org.example.project.platform.BaseScreenModel
+import org.koin.core.component.inject
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -8,6 +11,8 @@ import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 
 internal class LoginViewModel : BaseScreenModel<LoginState, LoginEvent>(LoginState.InitState) {
+    private val authRepository: AuthRepository by inject()
+    private val authManager: AuthManager by inject()
     fun changeRememberMe() = intent() {
         reduce {
             state.copy(
@@ -39,6 +44,19 @@ internal class LoginViewModel : BaseScreenModel<LoginState, LoginEvent>(LoginSta
     }
 
     fun login() = intent {
-        postSideEffect(LoginEvent.Success)
+        launchOperation(
+            operation = {
+                authRepository.login(state.login, state.password)
+            },
+            success = {
+                println("я тут - $it")
+                authManager.token = it
+                println(" authManager.token = $it")
+                postSideEffectLocal(LoginEvent.Success)
+            },
+            failure = {
+
+            }
+        )
     }
 }

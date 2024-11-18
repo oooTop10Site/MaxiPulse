@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -42,6 +43,7 @@ import maxipuls.composeapp.generated.resources.background_auth
 import maxipuls.composeapp.generated.resources.lock
 import maxipuls.composeapp.generated.resources.logo
 import maxipuls.composeapp.generated.resources.user
+import org.example.project.domain.model.ButtonActions
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.mainTab.MainTabScreen
 import org.example.project.screens.root.RootNavigator
@@ -199,7 +201,8 @@ class LoginScreen : Screen {
                         viewModel.login()
                     },
                     text = "Войти",
-                    modifier = Modifier.height(54.dp)
+                    modifier = Modifier.height(54.dp),
+                    buttonActions = ButtonActions.Unlimit
                 )
 
                 Text(
@@ -284,7 +287,8 @@ class LoginScreen : Screen {
                         viewModel.login()
                     },
                     text = "Войти",
-                    modifier = Modifier.height(54.dp)
+                    modifier = Modifier.height(54.dp),
+                    buttonActions = ButtonActions.Unlimit
                 )
 
                 Text(
@@ -370,7 +374,8 @@ class LoginScreen : Screen {
                         viewModel.login()
                     },
                     text = "Войти",
-                    modifier = Modifier.height(54.dp)
+                    modifier = Modifier.height(54.dp),
+                    buttonActions = ButtonActions.Unlimit
                 )
 
                 Text(

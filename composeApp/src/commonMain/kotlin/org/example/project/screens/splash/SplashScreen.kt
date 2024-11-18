@@ -11,14 +11,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.logo
 import org.example.project.domain.manager.AuthManager
 import org.example.project.screens.login.LoginScreen
 import org.example.project.screens.mainTab.MainTabScreen
+import org.example.project.screens.mainTab.tabs.MainTab
 import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.root.ScreenSize
 import org.jetbrains.compose.resources.imageResource
@@ -30,14 +33,20 @@ class SplashScreen : Screen, KoinComponent {
     @Composable
     override fun Content() {
         val authManager: AuthManager by inject()
+        val viewModel = rememberScreenModel { SplashScreenViewModel() }
         val windowSizeClass = ScreenSize.currentOrThrow
         val rootNavigator = RootNavigator.currentOrThrow
-        LaunchedEffect(Unit) {
-            delay(500L)
-            if(authManager.token.isNullOrBlank()) {
-            rootNavigator.push(LoginScreen())
-            } else {
-                rootNavigator.push(MainTabScreen())
+        LaunchedEffect(viewModel) {
+            launch {
+                viewModel.container.sideEffectFlow.collect{
+                    when(it) {
+                        SplashScreenEvent.Failure -> {rootNavigator.replaceAll(LoginScreen())}
+                        SplashScreenEvent.Success -> {
+                            delay(500L)
+                            rootNavigator.replaceAll(MainTabScreen())
+                        }
+                    }
+                }
             }
         }
         Box(

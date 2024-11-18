@@ -9,4 +9,7 @@ data class SportsmanUI(
     val age: Int,
     val height: Int,
     val weight: Int,
-)
+) {
+    val fio: String
+        get() = "$lastname $name $middleName"
+}

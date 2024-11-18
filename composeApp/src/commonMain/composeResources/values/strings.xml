@@ -16,6 +16,7 @@
     <string name="height_text">%1$d см</string>
     <string name="weight_text">%1$d кг</string>
     <string name="connect">Подключено - %1$d</string>
+    <string name="trainings_count">Тренеровки: %1$d</string>
     <string name="connecting">Подключение</string>
     <string name="on_active_sensors">Подключить активные датчики</string>
     <string name="search">Поиск</string>

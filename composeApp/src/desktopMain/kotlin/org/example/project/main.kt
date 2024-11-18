@@ -12,6 +12,7 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import org.example.project.di.KoinInjector
 import org.example.project.screens.root.RootApp
+import org.koin.core.component.KoinComponent
 import java.awt.Dimension
 
 @OptIn(ExperimentalComposeUiApi::class)

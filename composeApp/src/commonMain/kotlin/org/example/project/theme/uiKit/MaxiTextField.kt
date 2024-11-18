@@ -137,9 +137,6 @@ fun MaxiOutlinedTextField(
     val focusManager = LocalFocusManager.current
 //    val isFocused by interactionSource.collectIsFocusedAsState()
     var isFocused by remember { mutableStateOf(false) }
-    LaunchedEffect(isFocused) {
-        println("isFocused - $isFocused")
-    }
     Box(
         modifier
     ) {

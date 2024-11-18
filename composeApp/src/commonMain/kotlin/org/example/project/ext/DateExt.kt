@@ -4,7 +4,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 fun LocalDate.toUI(): String {
-    return "${this.year}.${this.monthNumber.addZero()}.${this.dayOfMonth.addZero()}"
+    return "${this.dayOfMonth.addZero()}.${this.monthNumber.addZero()}.${this.year}"
 }
 
 fun LocalTime.toUI(): String {

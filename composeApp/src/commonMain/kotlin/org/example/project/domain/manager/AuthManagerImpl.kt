@@ -12,6 +12,7 @@ class AuthManagerImpl : AuthManager, KoinComponent {
     override var token: String?
         get() = if (settings.getString(TOKEN).isBlank()) null else settings.getString(TOKEN, "")
         set(value) {
+            print("value - $value")
             settings.putString(TOKEN, value.orEmpty())
         }
 

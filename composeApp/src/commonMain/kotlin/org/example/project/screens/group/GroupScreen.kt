@@ -1,4 +1,4 @@
-package org.example.project.screens.composition
+package org.example.project.screens.group
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -16,14 +16,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import maxipuls.composeapp.generated.resources.Res
@@ -39,16 +37,17 @@ import maxipuls.composeapp.generated.resources.composition
 import maxipuls.composeapp.generated.resources.drop_ic
 import maxipuls.composeapp.generated.resources.rectangle_listv2
 import maxipuls.composeapp.generated.resources.search
-import org.example.project.screens.composition.components.CompositionCard
+import org.example.project.screens.group.components.CompositionCard
 import org.example.project.screens.root.ScreenSize
+import org.example.project.theme.uiKit.TopBarTitle
 import org.jetbrains.compose.resources.painterResource
 
-class CompositionScreen : Screen {
+class GroupScreen : Screen {
 
     @Composable
     override fun Content() {
         val viewModel = rememberScreenModel {
-            CompositionViewModel()
+            GroupViewModel()
         }
         val state by viewModel.stateFlow.collectAsState()
         val screenSize = ScreenSize.currentOrThrow
@@ -65,12 +64,10 @@ class CompositionScreen : Screen {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Spacer(Modifier.size(20.dp))
-                    Text(
+                    TopBarTitle(
                         text = stringResource(Res.string.composition),
-                        style = MaxiPulsTheme.typography.bold.copy(
-                            fontSize = 20.sp,
-                            color = MaxiPulsTheme.colors.uiKit.textColor
-                        )
+                        showCurrentTime = true,
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
                     )
                     Spacer(
                         Modifier.size(20.dp)

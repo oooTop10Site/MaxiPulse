@@ -112,6 +112,7 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.client.logging)
             implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.auth)
             implementation(libs.jensklingenberg.ktorfit)
 
             implementation(libs.composeImageLoader)
@@ -123,7 +124,6 @@ kotlin {
 
             implementation(libs.kotlinx.datetime)
 
-            implementation(libs.ktor.client.auth)
 
             implementation(libs.coil.compose.core)
             implementation(libs.coil.compose)
@@ -146,6 +146,7 @@ kotlin {
 
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(libs.ktor.client.okhttp)
             implementation(libs.kotlinx.coroutines.swing)
         }
     }

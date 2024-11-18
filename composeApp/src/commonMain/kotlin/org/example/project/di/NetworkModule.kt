@@ -74,8 +74,8 @@ private fun provideHttpClient(
 
     HttpResponseValidator {
         handleResponseExceptionWithRequest { cause, request ->
-//            println(cause)
-//            println(request)
+            println(cause)
+            println(request)
 //            if(!konnectivity.isConnected) {
 //                throw Failure.Message(getString(Res.string.not_connected))
 //            } else {
@@ -148,7 +148,6 @@ private fun provideHttpClient(
         level = LogLevel.ALL
         // Добавьте дополнительные настройки для логирования конкретных частей запроса/ответа
     }
-
 
 }
 

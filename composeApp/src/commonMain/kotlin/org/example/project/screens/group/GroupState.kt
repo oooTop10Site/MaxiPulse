@@ -1,13 +1,13 @@
-package org.example.project.screens.composition
+package org.example.project.screens.group
 
 import org.example.project.domain.model.composition.CompositionUI
 
-data class CompositionState (
+data class GroupState (
     val search: String,
     val compositions: List<CompositionUI>
 ) {
     companion object {
-        val InitState = CompositionState("", listOf(
+        val InitState = GroupState("", listOf(
             CompositionUI(id = "1", title = "Symphony No. 5", member = 85),
             CompositionUI(id = "2", title = "Piano Concerto No. 21", member = 1),
             CompositionUI(id = "3", title = "Violin Sonata No. 9", member = 2),

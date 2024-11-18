@@ -24,6 +24,11 @@ data class LogUI(
 }
 data class EventUI (
     val id: String,
-    val type: String,
+    val type: EventType,
     val title: String,
 )
+
+enum class EventType(val title: String) {
+    Training("Тренеровка"),
+    Championship("Чемпионат")
+}

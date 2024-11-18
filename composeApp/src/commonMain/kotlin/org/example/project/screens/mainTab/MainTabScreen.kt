@@ -30,10 +30,12 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -70,18 +72,37 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.pointer.PointerEventType
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
+import org.example.project.domain.manager.AuthManager
+import org.example.project.domain.manager.MessageObserverManager
 import org.example.project.platform.PointerEvent
 import org.example.project.platform.pointerEvent
 import org.example.project.screens.root.ScreenSize
+import org.example.project.theme.uiKit.MaxiSnackbarHost
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class MainTabScreen(private val tab: Tab = MainTab) : Screen {
+class MainTabScreen(private val tab: Tab = MainTab) : Screen, KoinComponent {
     @Composable
     override fun Content() {
         val tabsFirst = listOf(MainTab, TestTab, LogTab, UTPTab, LoadAnalizeTab)
         val tabsSecond = listOf(CompositionsTab, SportsmanTab, SensorTab, SettingsTab)
         val navigator = LocalNavigator.currentOrThrow
         var isOpen by remember { mutableStateOf(false) }
-
+        val observerManager: MessageObserverManager by inject()
+        val stateHost = remember { SnackbarHostState() }
+        LaunchedEffect(Unit) {
+            launch {
+                observerManager.message.receiveAsFlow().collect {
+                    if (it.isNotBlank()) {
+                        stateHost.showSnackbar(
+                            it
+                        )
+                    }
+                }
+            }
+        }
         MaxiPageContainer(
             modifier = Modifier.fillMaxSize().background(MaxiPulsTheme.colors.uiKit.background)
         ) {
@@ -230,6 +251,22 @@ class MainTabScreen(private val tab: Tab = MainTab) : Screen {
                 }
 
             }
+
+            val modifierSnackbarHost = when (screenSize.widthSizeClass) {
+                WindowWidthSizeClass.Compact -> Modifier.fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+
+                WindowWidthSizeClass.Medium -> Modifier.width(750.dp)
+                WindowWidthSizeClass.Expanded -> Modifier.width(900.dp)
+                else -> {
+                    Modifier.fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                }
+            }
+            MaxiSnackbarHost(
+                modifier = modifierSnackbarHost.align(Alignment.Center),
+                hostState = stateHost
+            )
         }
     }
 }
