@@ -15,6 +15,6 @@ import org.koin.dsl.module
 val moduleManager = module {
 //    singleOf(::Konnectivity)
     singleOf(::AuthManagerImpl) { bind<AuthManager>() }
-    factoryOf(::MessageObserverManagerImpl) { bind<MessageObserverManager>() }
+    singleOf(::MessageObserverManagerImpl) { bind<MessageObserverManager>() }
 
 }

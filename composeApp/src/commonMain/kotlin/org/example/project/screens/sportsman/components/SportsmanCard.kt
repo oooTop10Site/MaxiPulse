@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,6 +39,7 @@ import maxipuls.composeapp.generated.resources.weight_text
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.root.ScreenSize
 import org.example.project.theme.MaxiPulsTheme
+import org.example.project.theme.uiKit.MaxiImage
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -44,13 +47,14 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun SportsmanCard(
     modifier: Modifier = Modifier,
-    number: String,
+    number: Int,
     name: String,
     lastname: String,
     middleName: String,
     age: Int,
     height: Int,
     weight: Int,
+    avatar: String,
     onClick: () -> Unit,
 ) {
     val screenSize = ScreenSize.currentOrThrow
@@ -83,19 +87,30 @@ fun SportsmanCard(
                     ).clip(CircleShape).size((100.0 / division).dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Image(
-                        painter = painterResource(Res.drawable.profile),
-                        modifier = Modifier.size(width = (42 / division).dp, (54 / division).dp),
-                        colorFilter = ColorFilter.tint(color = MaxiPulsTheme.colors.uiKit.divider),
-                        contentDescription = null
-                    )
+                    if (avatar.isBlank()) {
+                        Image(
+                            painter = painterResource(Res.drawable.profile),
+                            modifier = Modifier.size(
+                                width = (42 / division).dp,
+                                (54 / division).dp
+                            ),
+                            colorFilter = ColorFilter.tint(color = MaxiPulsTheme.colors.uiKit.divider),
+                            contentDescription = null
+                        )
+                    } else {
+                        MaxiImage(
+                            modifier = Modifier.fillMaxSize(),
+                            url = avatar,
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.size((20 / spacerDivision).dp))
 
                 Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = number, style = MaxiPulsTheme.typography.bold.copy(
+                            text = number.toString(), style = MaxiPulsTheme.typography.bold.copy(
                                 color = MaxiPulsTheme.colors.uiKit.textColor,
                                 fontSize = 14.sp
                             )
@@ -186,7 +201,9 @@ fun SportsmanCard(
             Icon(
                 painterResource(Res.drawable.pencil),
                 contentDescription = null,
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(24.dp).clickableBlank {
+                    onClick()
+                },
                 tint = MaxiPulsTheme.colors.uiKit.primary
             )
         }

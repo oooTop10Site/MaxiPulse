@@ -1,6 +1,8 @@
 package org.example.project.screens.sportsman
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -30,11 +33,15 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.add_ic
 import maxipuls.composeapp.generated.resources.drop_ic
+import maxipuls.composeapp.generated.resources.grid_ic
 import maxipuls.composeapp.generated.resources.rectangle_listv2
 import maxipuls.composeapp.generated.resources.search
 import maxipuls.composeapp.generated.resources.sportsman
+import org.example.project.ext.clickableBlank
+import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.root.ScreenSize
 import org.example.project.screens.sportsman.components.SportsmanCard
+import org.example.project.screens.sportsman.edit.SportsmanEditScreen
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.theme.uiKit.MaxiPageContainer
@@ -45,19 +52,27 @@ import kotlin.collections.chunked
 
 class SportsmanScreen: Screen {
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
         val viewModel = rememberScreenModel {
             SportsmanViewModel()
         }
+        val rootNavigator = RootNavigator.currentOrThrow
         val state by viewModel.stateFlow.collectAsState()
         val screenSize = ScreenSize.currentOrThrow
-        val chunkSize = when(screenSize.widthSizeClass) {
-            WindowWidthSizeClass.Medium -> 1
-            WindowWidthSizeClass.Expanded -> 2
-            WindowWidthSizeClass.Compact -> 1
+        val chunkSize = when  {
+            !state.isGrid -> 1
+            screenSize.widthSizeClass == WindowWidthSizeClass.Medium -> 1
+            screenSize.widthSizeClass == WindowWidthSizeClass.Expanded -> 2
+            screenSize.widthSizeClass == WindowWidthSizeClass.Compact -> 1
             else -> 1
         }
+
+        LaunchedEffect(viewModel) {
+            viewModel.loadSportmans()
+        }
+
         MaxiPageContainer(
             topBar = {
                 Column(
@@ -108,10 +123,12 @@ class SportsmanScreen: Screen {
                         )
 
                         Icon(
-                            painterResource(Res.drawable.rectangle_listv2),
+                            if(state.isGrid) painterResource(Res.drawable.grid_ic) else  painterResource(Res.drawable.rectangle_listv2),
                             contentDescription = null,
-                            modifier = Modifier.size(30.dp),
-                            tint = MaxiPulsTheme.colors.uiKit.textColor
+                            modifier = Modifier.size(30.dp).clickableBlank {
+                                viewModel.changeIsGrid()
+                            },
+                            tint = MaxiPulsTheme.colors.uiKit.textColor,
                         )
 
                         Box(
@@ -158,8 +175,9 @@ class SportsmanScreen: Screen {
                                 age = it.age,
                                 height = it.height,
                                 weight = it.weight,
+                                avatar = it.avatar,
                             ) {
-                                //onClick()
+                                rootNavigator.push(SportsmanEditScreen(it.id))
                             }
                         }
                         if (chunk.size != chunkSize) {

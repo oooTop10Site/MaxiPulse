@@ -1,5 +1,8 @@
 package org.example.project.data.repository
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.example.project.data.api.MaxiPulseApi
 import org.example.project.data.model.login.LoginRequest
 import org.example.project.domain.repository.AuthRepository

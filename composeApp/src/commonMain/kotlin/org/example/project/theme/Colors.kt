@@ -25,7 +25,9 @@ class UIKitColors(
 
     val green500: Color,
 
-    val white: Color
+    val white: Color,
+
+    val shimmerColor: List<Color>
 )
 
 fun uiKitColors() = UIKitColors(
@@ -50,7 +52,12 @@ fun uiKitColors() = UIKitColors(
     grey400 = Color(0xFFECECEC),
 
     green500 = Color(0xFF7ECA22),
-    white = Color.White
+    white = Color.White,
+    shimmerColor = listOf(
+        Color(0xFFB8B5B5),
+        Color(0xFF8F8B8B),
+        Color(0xFFB8B5B5)
+    )
 
 )
 

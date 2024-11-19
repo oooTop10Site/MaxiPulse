@@ -26,6 +26,7 @@
     <string name="attention">Внимание</string>
     <string name="cancel">Отмена</string>
     <string name="back">Назад</string>
+    <string name="profile">Профиль</string>
     <string name="choose_sensor">Выберите датчик</string>
     <string name="sensor_already_assigned_desc">Данный датчик закреплен за другим спортсменом. Хотите переназначить его?</string>
     <string name="sensor_already_assigned">Датчик уже назначен</string>

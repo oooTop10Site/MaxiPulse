@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,8 +36,10 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import maxipuls.composeapp.generated.resources.add_ic
 import maxipuls.composeapp.generated.resources.composition
 import maxipuls.composeapp.generated.resources.drop_ic
+import maxipuls.composeapp.generated.resources.grid_ic
 import maxipuls.composeapp.generated.resources.rectangle_listv2
 import maxipuls.composeapp.generated.resources.search
+import org.example.project.ext.clickableBlank
 import org.example.project.screens.group.components.CompositionCard
 import org.example.project.screens.root.ScreenSize
 import org.example.project.theme.uiKit.TopBarTitle
@@ -51,11 +54,15 @@ class GroupScreen : Screen {
         }
         val state by viewModel.stateFlow.collectAsState()
         val screenSize = ScreenSize.currentOrThrow
-        val chunkSize = when (screenSize.widthSizeClass) {
-            WindowWidthSizeClass.Medium -> 2
-            WindowWidthSizeClass.Expanded -> 2
-            WindowWidthSizeClass.Compact -> 1
+        val chunkSize = when  {
+            !state.isGrid -> 1
+            screenSize.widthSizeClass == WindowWidthSizeClass.Medium -> 2
+            screenSize.widthSizeClass == WindowWidthSizeClass.Expanded -> 2
+            screenSize.widthSizeClass == WindowWidthSizeClass.Compact -> 1
             else -> 1
+        }
+        LaunchedEffect(viewModel) {
+            viewModel.loadGroups()
         }
         MaxiPageContainer(
             topBar = {
@@ -109,12 +116,13 @@ class GroupScreen : Screen {
                                 )
                             }
                         )
-
                         Icon(
-                            painterResource(Res.drawable.rectangle_listv2),
+                           if(state.isGrid) painterResource(Res.drawable.grid_ic) else  painterResource(Res.drawable.rectangle_listv2),
                             contentDescription = null,
-                            modifier = Modifier.size(30.dp),
-                            tint = MaxiPulsTheme.colors.uiKit.textColor
+                            modifier = Modifier.size(30.dp).clickableBlank {
+                                viewModel.changeIsGrid()
+                            },
+                            tint = MaxiPulsTheme.colors.uiKit.textColor,
                         )
 
                         Box(

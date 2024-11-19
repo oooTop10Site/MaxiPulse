@@ -1,6 +1,11 @@
 package org.example.project.ext
 
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -9,13 +14,20 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import org.example.project.domain.model.ButtonActions
+import org.example.project.theme.MaxiPulsTheme
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
@@ -75,6 +87,29 @@ internal fun Modifier.clickableRound(
     return clip(RoundedCornerShape(radius))
         .clickable(enabled) {
             onClick()
+        }
+}
+
+fun Modifier.shimmerEffect(): Modifier = composed {
+    var size by remember {
+        mutableStateOf(IntSize.Zero)
+    }
+    val transition = rememberInfiniteTransition()
+    val startOffsetx by transition.animateFloat(
+        initialValue = -2 * size.width.toFloat(),
+        targetValue =  2 * size.width.toFloat(),
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000)
+        )
+    )
+
+    background(brush = Brush.linearGradient(
+        colors = MaxiPulsTheme.colors.uiKit.shimmerColor,
+        start = Offset(startOffsetx, 0f),
+        end = Offset(startOffsetx + size.width.toFloat(), size.height.toFloat())
+    ))
+        .onGloballyPositioned {
+            size = it.size
         }
 }
 

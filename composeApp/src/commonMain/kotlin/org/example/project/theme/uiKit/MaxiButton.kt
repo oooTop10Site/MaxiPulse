@@ -12,10 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.example.project.domain.model.ButtonActions
 import org.example.project.theme.MaxiPulsTheme
 
@@ -34,13 +38,17 @@ fun MaxiButton(
     text: String,
     buttonActions: ButtonActions = ButtonActions.Once
 ) {
-    var countClick by remember { mutableIntStateOf(0) }
+    val scope = rememberCoroutineScope()
     Button(
         {
-            if (buttonActions == ButtonActions.Unlimit || countClick < 1) {
+            if (buttonActions == ButtonActions.Unlimit) {
                 onClick()
+            } else {
+                scope.launch() {
+                    onClick()
+                    delay(200L)
+                }
             }
-            countClick++
         },
         modifier,
         enabled,

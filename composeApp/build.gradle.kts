@@ -115,8 +115,6 @@ kotlin {
             implementation(libs.ktor.client.auth)
             implementation(libs.jensklingenberg.ktorfit)
 
-            implementation(libs.composeImageLoader)
-
 //            Orbit Mvi
             implementation(libs.orbit.mvi.core)
 
@@ -129,6 +127,7 @@ kotlin {
             implementation(libs.coil.compose)
             implementation(libs.coil.mp)
             implementation(libs.coil.network.ktor)
+//            implementation(libs.coil.network)
 
 //            implementation(libs.konnectivity)
 

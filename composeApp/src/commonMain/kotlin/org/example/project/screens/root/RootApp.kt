@@ -32,6 +32,8 @@ import org.koin.core.component.inject
 import kotlin.getValue
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.ui.unit.dp
+import org.koin.core.component.inject
+import kotlin.getValue
 
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -40,25 +42,61 @@ fun RootApp() {
     val windowSizeClass = calculateWindowSizeClass()
     MaxiPulsTheme {
         CompositionLocalProvider(ScreenSize provides windowSizeClass) {
-            Box(
-                modifier = Modifier.fillMaxSize()
+            val stateHost = remember { SnackbarHostState() }
+            val observerManager = ObserverManagerExt()
+            LaunchedEffect(Unit) {
+                launch {
+                    println("алу я тут")
+                    observerManager.message.receiveAsFlow().collect {
+                        println("errorMessage - $it")
+                        if (it.isNotBlank()) {
+                            stateHost.showSnackbar(
+                                it
+                            )
+                        }
+                    }
+                }
+            }
+            Navigator(
+                SplashScreen(),
+                disposeBehavior = NavigatorDisposeBehavior(
+                )
             ) {
-                Navigator(
-                    SplashScreen(),
-                    disposeBehavior = NavigatorDisposeBehavior(
-                    )
+                CompositionLocalProvider(
+                    RootNavigator provides it,
                 ) {
-                    CompositionLocalProvider(
-                        RootNavigator provides it,
+                    Box(
+                        modifier = Modifier.fillMaxSize()
                     ) {
                         SlideTransition(
                             it,
                         ) {
                             it.Content()
                         }
+                        val modifierSnackbarHost = when (windowSizeClass.widthSizeClass) {
+                            WindowWidthSizeClass.Compact -> Modifier.fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+
+                            WindowWidthSizeClass.Medium -> Modifier.width(750.dp)
+                            WindowWidthSizeClass.Expanded -> Modifier.width(900.dp)
+                            else -> {
+                                Modifier.fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
+                            }
+                        }
+                        MaxiSnackbarHost(
+                            modifier = modifierSnackbarHost.align(Alignment.Center),
+                            hostState = stateHost
+                        )
                     }
                 }
             }
         }
     }
+}
+
+class ObserverManagerExt() : KoinComponent {
+    val observerManager: MessageObserverManager by inject()
+
+    val message = observerManager.message
 }

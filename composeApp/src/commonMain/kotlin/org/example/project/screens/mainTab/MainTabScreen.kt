@@ -90,23 +90,9 @@ class MainTabScreen(private val tab: Tab = MainTab) : Screen, KoinComponent {
         val tabsSecond = listOf(CompositionsTab, SportsmanTab, SensorTab, SettingsTab)
         val navigator = LocalNavigator.currentOrThrow
         var isOpen by remember { mutableStateOf(false) }
-        val observerManager: MessageObserverManager by inject()
-        val stateHost = remember { SnackbarHostState() }
-        LaunchedEffect(Unit) {
-            launch {
-                observerManager.message.receiveAsFlow().collect {
-                    if (it.isNotBlank()) {
-                        stateHost.showSnackbar(
-                            it
-                        )
-                    }
-                }
-            }
-        }
         MaxiPageContainer(
             modifier = Modifier.fillMaxSize().background(MaxiPulsTheme.colors.uiKit.background)
         ) {
-            val screenSize = ScreenSize.currentOrThrow
             TabNavigator(tab) {
                 val tabNavigator = LocalTabNavigator.current
                 Row(
@@ -251,22 +237,6 @@ class MainTabScreen(private val tab: Tab = MainTab) : Screen, KoinComponent {
                 }
 
             }
-
-            val modifierSnackbarHost = when (screenSize.widthSizeClass) {
-                WindowWidthSizeClass.Compact -> Modifier.fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-
-                WindowWidthSizeClass.Medium -> Modifier.width(750.dp)
-                WindowWidthSizeClass.Expanded -> Modifier.width(900.dp)
-                else -> {
-                    Modifier.fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                }
-            }
-            MaxiSnackbarHost(
-                modifier = modifierSnackbarHost.align(Alignment.Center),
-                hostState = stateHost
-            )
         }
     }
 }

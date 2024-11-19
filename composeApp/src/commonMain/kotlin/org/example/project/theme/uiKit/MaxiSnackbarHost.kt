@@ -10,9 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.currentOrThrow
+import org.example.project.domain.manager.AuthManager
 import org.example.project.screens.login.LoginScreen
 import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.splash.SplashScreen
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import kotlin.getValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,6 +25,7 @@ fun MaxiSnackbarHost(
     modifier: Modifier = Modifier
 ) { //todo вообще бы тут делать authManager.exit()
     val rootNavigator = RootNavigator.currentOrThrow
+    val authManager = AuthManagerExT()
     val swipeState = rememberSwipeToDismissBoxState(confirmValueChange = {
         if (it == SwipeToDismissBoxValue.StartToEnd || it == SwipeToDismissBoxValue.EndToStart) {
             hostState.currentSnackbarData?.dismiss() // Закрыть текущее уведомление
@@ -29,6 +34,7 @@ fun MaxiSnackbarHost(
     })
     LaunchedEffect(hostState.currentSnackbarData?.visuals?.message) {
         if (hostState.currentSnackbarData?.visuals?.message.orEmpty().contains("Unauthenticated")) {
+            authManager.exitFromAcc()
             rootNavigator.replaceAll(LoginScreen())
         }
     }
@@ -36,4 +42,11 @@ fun MaxiSnackbarHost(
         SnackbarHost(hostState = hostState, modifier = modifier)
     }, state = swipeState)
 
+}
+class AuthManagerExT(): KoinComponent {
+    val authManager: AuthManager by inject()
+
+    fun exitFromAcc() {
+        authManager.exit()
+    }
 }

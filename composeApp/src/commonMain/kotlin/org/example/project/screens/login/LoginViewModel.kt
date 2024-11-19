@@ -49,8 +49,10 @@ internal class LoginViewModel : BaseScreenModel<LoginState, LoginEvent>(LoginSta
                 authRepository.login(state.login, state.password)
             },
             success = {
-                println("я тут - $it")
-                authManager.token = it
+                if(state.rememberMe) {
+                    println("я тут - $it")
+                    authManager.token = it
+                }
                 println(" authManager.token = $it")
                 postSideEffectLocal(LoginEvent.Success)
             },

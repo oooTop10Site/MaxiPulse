@@ -1,15 +1,14 @@
 package org.example.project.domain.model.composition
 
-import com.seiko.imageloader.component.mapper.StringUriMapper
-
-data class CompositionUI(
+data class GroupUI(
     val id: String,
     val title: String,
     val member: Int,
+    val avatar: String,
 ) {
     companion object {
-        val Default = CompositionUI(
-            "", "", 0
+        val Default = GroupUI(
+            "", "", 0, ""
         )
     }
 }

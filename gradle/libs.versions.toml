@@ -20,7 +20,7 @@ kotlinx-coroutines = "1.9.0"
 
 compose-plugin = "1.7.0"
 koin = "4.0.0"
-coil3 = "3.0.0-alpha07"
+coil3 = "3.0.3"
 ktor-ext = "3.0.1"
 ktorClientAuth = "3.0.1"
 ktor = "3.0.1"
@@ -32,7 +32,6 @@ datetime = "0.6.0"
 orbit = "6.0.0"
 ksp = "2.0.21-1.0.27"
 voyager = "1.1.0-beta02"
-composeImageLoader = "1.6.7"
 
 konnectivity = "0.1-alpha01"
 
@@ -65,8 +64,6 @@ ktor-web-sockets = { group = "io.ktor:ktor-client-websockets", name = "ktor-clie
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 jensklingenberg-ktorfit = { group = "de.jensklingenberg.ktorfit", name = "ktorfit-lib", version.ref = "ktorfit" }
 
-composeImageLoader = { module = "io.github.qdsfdhvh:image-loader", version.ref = "composeImageLoader" }
-
 
 #orbit-mvi
 orbit-mvi-core = { module = "org.orbit-mvi:orbit-core", version.ref = "orbit" }
@@ -80,7 +77,8 @@ russhwolf-settings = { group = "com.russhwolf", name = "multiplatform-settings-n
 #coil
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
 coil-compose-core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil3" }
-coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor", version.ref = "coil3" }
+coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil3" }
+#coil-network = { module = "io.coil-kt.coil3:coil-network", version.ref = "coil3" }
 coil-mp = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
 
 #koin

@@ -3,7 +3,6 @@ package org.example.project.data.api
 import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.DELETE
 import de.jensklingenberg.ktorfit.http.GET
-import de.jensklingenberg.ktorfit.http.HTTP
 import de.jensklingenberg.ktorfit.http.Multipart
 import de.jensklingenberg.ktorfit.http.POST
 import de.jensklingenberg.ktorfit.http.PUT
@@ -15,7 +14,7 @@ import org.example.project.data.model.group.ChangeGroupNameRequest
 import org.example.project.data.model.group.GroupResponse
 import org.example.project.data.model.login.LoginRequest
 import org.example.project.data.model.login.LoginResponse
-import org.example.project.data.model.sportsman.SportsmanResponse
+import org.example.project.data.model.sportsman.GamerResponse
 
 
 interface MaxiPulseApi {
@@ -25,10 +24,10 @@ interface MaxiPulseApi {
 
     //gamer
     @GET("api/gamer")
-    suspend fun getSportsman(): List<SportsmanResponse>
+    suspend fun getSportsmans(): BaseResponse<List<GamerResponse>>
 
     @GET("api/gamer/{id}")
-    suspend fun getSportsmanById(@Path("id") id: String): SportsmanResponse
+    suspend fun getSportsmanById(@Path("id") id: String): BaseResponse<GamerResponse>
 
     @Multipart
     @POST("api/gamer")
@@ -43,10 +42,10 @@ interface MaxiPulseApi {
 
     //group
     @GET("api/group")
-    suspend fun getGroup(): List<GroupResponse>
+    suspend fun getGroups(): BaseResponse<List<GroupResponse>>
 
     @GET("api/group/{id}")
-    suspend fun getGroupById(@Path("id") id: String): GroupResponse
+    suspend fun getGroupById(@Path("id") id: String): BaseResponse<GroupResponse>
 
     @Multipart
     @POST("api/group")
