@@ -19,6 +19,10 @@ fun Long.toTimeUI(): String {
     return "${hours.addZero()}:${minutes.addZero()}:${seconds.addZero()}"
 }
 
+fun LocalDate.toServer(): String {
+    return "${this.year}-${this.monthNumber.addZero()}-${this.dayOfMonth.addZero()}"
+}
+
 
 fun Int.addZero(): String {
     if (this < 10) {
@@ -33,5 +37,6 @@ fun Long.addZero(): String {
     }
     return this.toString()
 }
+
 
 

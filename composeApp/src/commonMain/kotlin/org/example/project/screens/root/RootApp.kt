@@ -65,32 +65,29 @@ fun RootApp() {
                 CompositionLocalProvider(
                     RootNavigator provides it,
                 ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize()
+                    SlideTransition(
+                        it,
                     ) {
-                        SlideTransition(
-                            it,
-                        ) {
-                            it.Content()
-                        }
-                        val modifierSnackbarHost = when (windowSizeClass.widthSizeClass) {
-                            WindowWidthSizeClass.Compact -> Modifier.fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-
-                            WindowWidthSizeClass.Medium -> Modifier.width(750.dp)
-                            WindowWidthSizeClass.Expanded -> Modifier.width(900.dp)
-                            else -> {
-                                Modifier.fillMaxWidth()
-                                    .padding(horizontal = 16.dp)
-                            }
-                        }
-                        MaxiSnackbarHost(
-                            modifier = modifierSnackbarHost.align(Alignment.Center),
-                            hostState = stateHost
-                        )
+                        it.Content()
                     }
+//                    val modifierSnackbarHost = when (windowSizeClass.widthSizeClass) {
+//                        WindowWidthSizeClass.Compact -> Modifier.fillMaxWidth()
+//                            .padding(horizontal = 16.dp)
+//
+//                        WindowWidthSizeClass.Medium -> Modifier.width(750.dp)
+//                        WindowWidthSizeClass.Expanded -> Modifier.width(900.dp)
+//                        else -> {
+//                            Modifier.fillMaxWidth()
+//                                .padding(horizontal = 16.dp)
+//                        }
+//                    }
+                    MaxiSnackbarHost(
+//                        modifier = modifierSnackbarHost,
+                        hostState = stateHost
+                    )
                 }
             }
+
         }
     }
 }

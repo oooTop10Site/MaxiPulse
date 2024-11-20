@@ -8,6 +8,9 @@ interface GamerRepository {
 
     suspend fun getGamers(): Either<Failure, List<SportsmanUI>>
     suspend fun getGamer(gamerId: String): Either<Failure, SportsmanUI>
-
+    suspend fun editGamer(
+        gamerId: String? = null,
+        sportsmanUI: SportsmanUI
+    ): Either<Failure, Unit>
 
 }

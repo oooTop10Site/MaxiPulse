@@ -24,12 +24,12 @@ sealed interface Form {
         val value: String,
     ) : Form
 
-    class FromBodyBool(
+    class FormBodyBool(
         val key: String,
         val value: Boolean
     ) : Form
 
-    class FromBodyInt(
+    class FormBodyInt(
         val key: String,
         val value: Int
     ) : Form
@@ -45,6 +45,7 @@ sealed interface FormFull {
         val byteArray: ByteArray,
         val previewByteArray: ByteArray
     ) : FormFull
+    
     class FormFileFull(
         val key: String,
         val name: String,
@@ -60,6 +61,7 @@ sealed interface FormFull {
         val key: String,
         val value: Boolean
     ) : FormFull
+
 
     class FromBodyFullInt(
         val key: String,

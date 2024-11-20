@@ -16,6 +16,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -30,13 +31,16 @@ fun MaxiButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     shape: Shape = ButtonDefaults.shape,
-    colors: ButtonColors = ButtonDefaults.buttonColors(containerColor = MaxiPulsTheme.colors.uiKit.buttonContainer, contentColor = MaxiPulsTheme.colors.uiKit.buttonContent),
+    colors: ButtonColors = ButtonDefaults.buttonColors(
+        containerColor = MaxiPulsTheme.colors.uiKit.buttonContainer,
+        contentColor = MaxiPulsTheme.colors.uiKit.buttonContent
+    ),
     elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
     border: BorderStroke? = null,
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
     text: String,
-    buttonActions: ButtonActions = ButtonActions.Once
+    buttonActions: ButtonActions = ButtonActions.Unlimit
 ) {
     val scope = rememberCoroutineScope()
     Button(
@@ -59,6 +63,13 @@ fun MaxiButton(
         contentPadding,
         interactionSource,
     ) {
-        Text(text, style = MaxiPulsTheme.typography.bold.copy(fontSize = 20.sp))
+        Text(
+            text,
+            style = MaxiPulsTheme.typography.bold.copy(
+                fontSize = 20.sp,
+                lineHeight = 20.sp,
+                textAlign = TextAlign.Center
+            )
+        )
     }
 }

@@ -43,7 +43,6 @@ internal class SportsmanViewModel: BaseScreenModel<SportsmanState, SportsmanEven
             },
             failure = {
                 println("put БЛЯЛЯЛАЛЛАЛАЛЧАЛЛА")
-                ibser.putMessage("БЛЯЛЯЛАЛЛАЛАЛЧАЛЛА")
             }
         )
     }

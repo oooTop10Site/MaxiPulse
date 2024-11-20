@@ -20,7 +20,7 @@ class GamerResponse (
     @SerialName("chss_max"                      ) val chssMax                     : Int?     ,
     @SerialName("chss_pano"                     ) val chssPano                    : Int?     ,
     @SerialName("chss_pao"                      ) val chssPao                     : Int?     ,
-    @SerialName("imt"                           ) val imt                         : Int?     ,
+    @SerialName("imt"                           ) val imt                         : String?  ,
     @SerialName("mpk"                           ) val mpk                         : String?  ,
     @SerialName("chest_excursion"               ) val chestExcursion              : Int?     ,
     @SerialName("experimental_respiration_rate" ) val experimentalRespirationRate : Int?     ,
@@ -30,6 +30,7 @@ class GamerResponse (
     @SerialName("rufie_test"                    ) val rufieTest                   : Int?     ,
     @SerialName("genchi_sample"                 ) val genchiSample                : Int?     ,
     @SerialName("maximum_chss_zone"             ) val maximumChssZone             : Int?     ,
+    @SerialName("birthday"             )          val birthday                    : String?  ,
     @SerialName("percent_muscle_mass"           ) val percentMuscleMass           : Int?
 
 )

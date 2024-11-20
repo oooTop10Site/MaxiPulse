@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.currentOrThrow
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.age_text
+import maxipuls.composeapp.generated.resources.female_ic
 import maxipuls.composeapp.generated.resources.height_text
 import maxipuls.composeapp.generated.resources.pencil
 import maxipuls.composeapp.generated.resources.profile
@@ -55,7 +56,9 @@ fun SportsmanCard(
     height: Int,
     weight: Int,
     avatar: String,
+    isMale: Boolean,
     onClick: () -> Unit,
+    onEdit: () -> Unit,
 ) {
     val screenSize = ScreenSize.currentOrThrow
     val division = when (screenSize.widthSizeClass) {
@@ -135,7 +138,7 @@ fun SportsmanCard(
                     Spacer(modifier = Modifier.size((17 / spacerDivision).dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            painterResource(Res.drawable.sportsman_ic),
+                            painterResource(if (isMale) Res.drawable.sportsman_ic else Res.drawable.female_ic),
                             contentDescription = null,
                             modifier = Modifier.size(24.dp),
                             tint = MaxiPulsTheme.colors.uiKit.textColor
@@ -202,7 +205,7 @@ fun SportsmanCard(
                 painterResource(Res.drawable.pencil),
                 contentDescription = null,
                 modifier = Modifier.size(24.dp).clickableBlank {
-                    onClick()
+                    onEdit()
                 },
                 tint = MaxiPulsTheme.colors.uiKit.primary
             )

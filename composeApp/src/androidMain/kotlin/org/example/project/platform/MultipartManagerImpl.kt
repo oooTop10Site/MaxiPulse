@@ -27,14 +27,14 @@ class MultipartManagerImpl(private val context: Context) : MultipartManager {
                     )
                 }
 
-                is Form.FromBodyBool -> {
+                is Form.FormBodyBool -> {
                     FormFull.FromBodyFullBool(
                         key = it.key,
                         value = it.value
                     )
                 }
 
-                is Form.FromBodyInt -> {
+                is Form.FormBodyInt -> {
                     FormFull.FromBodyFullInt(
                         key = it.key,
                         value = it.value
@@ -63,14 +63,14 @@ class MultipartManagerImpl(private val context: Context) : MultipartManager {
                     )
                 }
 
-                is Form.FromBodyBool -> {
+                is Form.FormBodyBool -> {
                     FormFull.FromBodyFullBool(
                         key = it.key,
                         value = it.value
                     )
                 }
 
-                is Form.FromBodyInt -> {
+                is Form.FormBodyInt -> {
                     FormFull.FromBodyFullInt(
                         key = it.key,
                         value = it.value

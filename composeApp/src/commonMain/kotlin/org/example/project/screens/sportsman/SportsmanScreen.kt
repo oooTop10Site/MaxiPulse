@@ -1,7 +1,6 @@
 package org.example.project.screens.sportsman
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +40,7 @@ import org.example.project.ext.clickableBlank
 import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.root.ScreenSize
 import org.example.project.screens.sportsman.components.SportsmanCard
+import org.example.project.screens.sportsman.detail.SportsmanDetailScreen
 import org.example.project.screens.sportsman.edit.SportsmanEditScreen
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
@@ -140,7 +140,9 @@ class SportsmanScreen: Screen {
                             Icon(
                                 painterResource(Res.drawable.add_ic),
                                 contentDescription = null,
-                                modifier = Modifier.size(24.dp),
+                                modifier = Modifier.size(24.dp).clickableBlank {
+                                   rootNavigator.push(SportsmanEditScreen())
+                                },
                                 tint = MaxiPulsTheme.colors.uiKit.lightTextColor
                             )
                         }
@@ -176,6 +178,10 @@ class SportsmanScreen: Screen {
                                 height = it.height,
                                 weight = it.weight,
                                 avatar = it.avatar,
+                                isMale = it.isMale,
+                                onClick = {
+                                    rootNavigator.push(SportsmanDetailScreen(it.id))
+                                }
                             ) {
                                 rootNavigator.push(SportsmanEditScreen(it.id))
                             }

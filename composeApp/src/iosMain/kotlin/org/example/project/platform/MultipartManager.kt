@@ -41,8 +41,8 @@ class MultipartManagerImpl : MultipartManager {
                     )
                 }
 
-                is Form.FromBodyBool -> TODO()
-                is Form.FromBodyInt -> TODO()
+                is Form.FormBodyBool -> TODO()
+                is Form.FormBodyInt -> TODO()
             }
         })
     }
@@ -69,8 +69,8 @@ class MultipartManagerImpl : MultipartManager {
                     )
                 }
 
-                is Form.FromBodyBool -> TODO()
-                is Form.FromBodyInt -> TODO()
+                is Form.FormBodyBool -> TODO()
+                is Form.FormBodyInt -> TODO()
             }
         })
     }

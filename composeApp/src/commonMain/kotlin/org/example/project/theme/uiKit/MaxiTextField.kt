@@ -17,6 +17,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.OutlinedTextFieldDefaults.Container
+import androidx.compose.material3.OutlinedTextFieldDefaults.FocusedBorderThickness
+import androidx.compose.material3.OutlinedTextFieldDefaults.UnfocusedBorderThickness
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
@@ -38,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import org.example.project.theme.MaxiPulsTheme
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier.Companion
 import androidx.compose.ui.unit.Dp
 import kotlin.math.min
 
@@ -72,8 +76,8 @@ fun MaxiTextField(
         unfocusedContainerColor = Color.Transparent,
         errorIndicatorColor = MaxiPulsTheme.colors.uiKit.textFieldStroke,
         focusedIndicatorColor = MaxiPulsTheme.colors.uiKit.textFieldStroke,
-    disabledIndicatorColor = MaxiPulsTheme.colors.uiKit.textFieldStroke,
-    unfocusedIndicatorColor = MaxiPulsTheme.colors.uiKit.textFieldStroke,
+        disabledIndicatorColor = MaxiPulsTheme.colors.uiKit.textFieldStroke,
+        unfocusedIndicatorColor = MaxiPulsTheme.colors.uiKit.textFieldStroke,
     )
 ) {
     TextField(
@@ -87,7 +91,7 @@ fun MaxiTextField(
         placeholder = {
             if (placeholder == null) null else Text(
                 text = placeholder,
-                color = MaxiPulsTheme.colors.uiKit.placeholder
+                color = MaxiPulsTheme.colors.uiKit.placeholder.copy(alpha = 0.5f)
             )
         },
         leadingIcon = leadingIcon,
@@ -128,9 +132,9 @@ fun MaxiOutlinedTextField(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Dp = 15.dp,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
-        unfocusedBorderColor = Color.Transparent,
+        unfocusedBorderColor = MaxiPulsTheme.colors.uiKit.textFieldStroke,
         errorBorderColor = Color.Transparent,
-        focusedBorderColor = Color.Transparent,
+        focusedBorderColor = MaxiPulsTheme.colors.uiKit.textFieldStroke,
         disabledBorderColor = Color.Transparent
     )
 ) {
@@ -145,10 +149,12 @@ fun MaxiOutlinedTextField(
             value = value,
             onValueChange = onValueChange,
             readOnly = readOnly,
-            textStyle = MaxiPulsTheme.typography.regular.copy(color = MaxiPulsTheme.colors.uiKit.textColor, fontSize = 14.sp),
+            textStyle = MaxiPulsTheme.typography.regular.copy(
+                color = MaxiPulsTheme.colors.uiKit.textColor,
+                fontSize = 14.sp
+            ),
             interactionSource = interactionSource,
             modifier = Modifier.fillMaxWidth()
-                .border(width = 1.dp, color = MaxiPulsTheme.colors.uiKit.textFieldStroke, shape = RoundedCornerShape(15.dp))
                 .onFocusChanged { isFocused = it.isFocused },
             singleLine = singleLine,
             maxLines = maxLines,
@@ -162,11 +168,13 @@ fun MaxiOutlinedTextField(
                     value = value,
                     innerTextField = innerTextField,
                     enabled = enabled,
-                    placeholder = {
+                    label = {
                         Text(
                             text = placeholder.orEmpty(),
                             style = MaxiPulsTheme.typography.regular.copy(
-                                fontSize = 14.sp
+                                fontSize = 14.sp,
+                                lineHeight = 14.sp,
+                                color = MaxiPulsTheme.colors.uiKit.placeholder
                             )
                         )
                     },
@@ -191,6 +199,18 @@ fun MaxiOutlinedTextField(
                         horizontal = 15.dp,
                         vertical = 6.dp
                     ),
+                    container = {
+                        Container(
+                            enabled = enabled,
+                            isError = isError,
+                            interactionSource = interactionSource,
+                            modifier = Modifier,
+                            colors = colors,
+                            shape = RoundedCornerShape(shape),
+                            focusedBorderThickness = FocusedBorderThickness,
+                            unfocusedBorderThickness = UnfocusedBorderThickness,
+                        )
+                    }
                 )
             }
         )

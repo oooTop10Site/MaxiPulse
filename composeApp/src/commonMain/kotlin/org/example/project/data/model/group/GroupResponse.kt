@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 class GroupResponse (
     @SerialName("id"    ) val id    : String?,
     @SerialName("name"  ) val title  : String?,
-    @SerialName("image" ) val image : String?
+    @SerialName("image" ) val image : String?,
+    @SerialName("count" ) val count : Int?
 
 )

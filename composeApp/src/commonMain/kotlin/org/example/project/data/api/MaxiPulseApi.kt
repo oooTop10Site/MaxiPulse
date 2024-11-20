@@ -7,7 +7,6 @@ import de.jensklingenberg.ktorfit.http.Multipart
 import de.jensklingenberg.ktorfit.http.POST
 import de.jensklingenberg.ktorfit.http.PUT
 import de.jensklingenberg.ktorfit.http.Path
-import de.jensklingenberg.ktorfit.http.Query
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import org.example.project.data.model.BaseResponse
 import org.example.project.data.model.group.ChangeGroupNameRequest
@@ -33,8 +32,9 @@ interface MaxiPulseApi {
     @POST("api/gamer")
     suspend fun createSportsman(@Body request: MultiPartFormDataContent)
 
-    @PUT("api/gamer/{id}")
-    suspend fun changeSportsmanFirstname(@Path("id") id: String, @Query("firstname") firstname: String)
+    @Multipart
+    @POST("api/gamer/{id}")
+    suspend fun changeSportsman(@Path("id") id: String, @Body request: MultiPartFormDataContent)
 
     @DELETE("api/gamer/{id}")
     suspend fun deleteSportsman(@Path("id") id: String)
