@@ -8,6 +8,7 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -41,7 +42,11 @@ import androidx.compose.ui.unit.sp
 import org.example.project.theme.MaxiPulsTheme
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier.Companion
+import androidx.compose.ui.text.PlatformParagraphStyle
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import kotlin.math.min
 
@@ -91,7 +96,9 @@ fun MaxiTextField(
         placeholder = {
             if (placeholder == null) null else Text(
                 text = placeholder,
-                color = MaxiPulsTheme.colors.uiKit.placeholder.copy(alpha = 0.5f)
+                color = MaxiPulsTheme.colors.uiKit.placeholder.copy(alpha = 0.5f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         },
         leadingIcon = leadingIcon,
@@ -130,7 +137,7 @@ fun MaxiOutlinedTextField(
     minLines: Int = 1,
     onClick: (() -> Unit)? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Dp = 15.dp,
+    shape: Dp = 20.dp,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
         unfocusedBorderColor = MaxiPulsTheme.colors.uiKit.textFieldStroke,
         errorBorderColor = Color.Transparent,
@@ -151,10 +158,10 @@ fun MaxiOutlinedTextField(
             readOnly = readOnly,
             textStyle = MaxiPulsTheme.typography.regular.copy(
                 color = MaxiPulsTheme.colors.uiKit.textColor,
-                fontSize = 14.sp
+                fontSize = 15.sp
             ),
             interactionSource = interactionSource,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxHeight().fillMaxWidth()
                 .onFocusChanged { isFocused = it.isFocused },
             singleLine = singleLine,
             maxLines = maxLines,
@@ -171,11 +178,16 @@ fun MaxiOutlinedTextField(
                     label = {
                         Text(
                             text = placeholder.orEmpty(),
-                            style = MaxiPulsTheme.typography.regular.copy(
-                                fontSize = 14.sp,
-                                lineHeight = 14.sp,
+                            style = MaxiPulsTheme.typography.medium.copy(
+//                                platformStyle = PlatformTextStyle(
+//                                    includeFontPadding = false
+//                                ),
+                                fontSize = 13.sp,
+                                lineHeight = 13.sp,
                                 color = MaxiPulsTheme.colors.uiKit.placeholder
-                            )
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     },
                     trailingIcon = trailingIcon,
@@ -196,15 +208,14 @@ fun MaxiOutlinedTextField(
                     leadingIcon = leadingIcon,
                     colors = colors,
                     contentPadding = PaddingValues(
-                        horizontal = 15.dp,
-                        vertical = 6.dp
+                        horizontal = 16.dp,
                     ),
                     container = {
                         Container(
                             enabled = enabled,
                             isError = isError,
                             interactionSource = interactionSource,
-                            modifier = Modifier,
+                            modifier = Modifier.align(Alignment.CenterStart),
                             colors = colors,
                             shape = RoundedCornerShape(shape),
                             focusedBorderThickness = FocusedBorderThickness,

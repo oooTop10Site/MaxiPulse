@@ -12,6 +12,7 @@ import org.koin.dsl.module
 
 val repositoryModule = module {
     factoryOf(::AuthRepositoryImpl) { bind<AuthRepository>() }
-    factoryOf(::GamerRepositoryImpl) { bind<GamerRepository>() }
     factoryOf(::GroupRepositoryImpl) { bind<GroupRepository>() }
+    factoryOf(::GamerRepositoryImpl) { bind<GamerRepository>() }
+
 }

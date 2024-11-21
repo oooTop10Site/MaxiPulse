@@ -1,6 +1,7 @@
 package org.example.project.domain.model.sportsman
 
 import kotlinx.datetime.LocalDate
+import org.example.project.domain.model.gameType.GameTypeUI
 
 data class SportsmanUI(
     val id: String,
@@ -20,13 +21,14 @@ data class SportsmanUI(
     val chssMax: Int,
     val chssResting: Int,
     val birthDay: LocalDate?,
+    val gameTypeUI: GameTypeUI,
 ) {
     val fio: String
         get() = "$lastname $name $middleName"
 
     companion object {
         val Default = SportsmanUI(
-            "", 0, "", "", "", 0, 0, 0, "", true, 0, 0.0, 0, 0, 0, 0, null
+            "", 0, "", "", "", 0, 0, 0, "", true, 0, 0.0, 0, 0, 0, 0, null, GameTypeUI.Default
         )
     }
 }

@@ -15,12 +15,11 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
@@ -32,7 +31,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -64,7 +62,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.add_large_ic
-import maxipuls.composeapp.generated.resources.age_text
 import maxipuls.composeapp.generated.resources.back_ic
 import maxipuls.composeapp.generated.resources.biometrics_indicators
 import maxipuls.composeapp.generated.resources.calendar
@@ -72,9 +69,10 @@ import maxipuls.composeapp.generated.resources.canceled
 import maxipuls.composeapp.generated.resources.chss_max
 import maxipuls.composeapp.generated.resources.chss_pano
 import maxipuls.composeapp.generated.resources.chss_pao
-import maxipuls.composeapp.generated.resources.chss_resting
+import maxipuls.composeapp.generated.resources.composition_and_group
+import maxipuls.composeapp.generated.resources.couch
+import maxipuls.composeapp.generated.resources.counting
 import maxipuls.composeapp.generated.resources.date_birthday
-import maxipuls.composeapp.generated.resources.female_ic
 import maxipuls.composeapp.generated.resources.height
 import maxipuls.composeapp.generated.resources.imt
 import maxipuls.composeapp.generated.resources.lastname
@@ -82,18 +80,20 @@ import maxipuls.composeapp.generated.resources.middlename
 import maxipuls.composeapp.generated.resources.mpk
 import maxipuls.composeapp.generated.resources.name_or_nick
 import maxipuls.composeapp.generated.resources.number_player
+import maxipuls.composeapp.generated.resources.ok
 import maxipuls.composeapp.generated.resources.pencil
 import maxipuls.composeapp.generated.resources.profile
 import maxipuls.composeapp.generated.resources.right_ic
 import maxipuls.composeapp.generated.resources.save
 import maxipuls.composeapp.generated.resources.sex
+import maxipuls.composeapp.generated.resources.sport
 import maxipuls.composeapp.generated.resources.sport_category
 import maxipuls.composeapp.generated.resources.sport_training_indicators
-import maxipuls.composeapp.generated.resources.sportsman_ic
 import maxipuls.composeapp.generated.resources.stage_sport_ready
 import maxipuls.composeapp.generated.resources.turn_on_personal_sensor
 import maxipuls.composeapp.generated.resources.weight
 import org.example.project.domain.model.ButtonActions
+import org.example.project.domain.model.gameType.GameTypeUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.granted
 import org.example.project.ext.isMaleToString
@@ -102,10 +102,14 @@ import org.example.project.platform.ImagePicker
 import org.example.project.platform.permission.model.Permission
 import org.example.project.screens.root.RootNavigator
 import org.example.project.theme.MaxiPulsTheme
+import org.example.project.theme.uiKit.ButtonTextStyle
 import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
+import org.example.project.theme.uiKit.MaxiTextFieldMenu
+import org.example.project.theme.uiKit.MaxiTextFieldResMenu
 import org.example.project.theme.uiKit.simpleVerticalScrollbar
+import org.example.project.utils.Constants
 import org.example.project.utils.previousOrPresentSelectableDates
 import org.example.project.utils.toStringWithCondition
 import org.jetbrains.compose.resources.painterResource
@@ -139,7 +143,7 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
 
             LaunchedEffect(viewModel) {
                 viewModel.loadSportsman(id = gamerId)
-
+                viewModel.loadGameTypes()
                 launch {
                     viewModel.container.sideEffectFlow.collect {
                         when (it) {
@@ -283,7 +287,8 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         viewModel.changeLastname(it)
 
                                     },
-                                    modifier = Modifier.height(34.dp).width(200.dp),
+                                    modifier = Modifier.height(Constants.TextFieldHeight)
+                                        .width(200.dp),
                                     placeholder = stringResource(Res.string.lastname),
                                 )
                                 MaxiOutlinedTextField(
@@ -291,7 +296,8 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                     onValueChange = {
                                         viewModel.changeFirstname(it)
                                     },
-                                    modifier = Modifier.height(34.dp).width(200.dp),
+                                    modifier = Modifier.height(Constants.TextFieldHeight)
+                                        .width(200.dp),
                                     placeholder = stringResource(Res.string.name_or_nick),
                                 )
                                 MaxiOutlinedTextField(
@@ -299,7 +305,8 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                     onValueChange = {
                                         viewModel.changeMiddleName(it)
                                     },
-                                    modifier = Modifier.height(34.dp).width(200.dp),
+                                    modifier = Modifier.height(Constants.TextFieldHeight)
+                                        .width(200.dp),
                                     placeholder = stringResource(Res.string.middlename),
                                 )
                             }
@@ -332,44 +339,78 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                                 contentDescription = null
                                             )
                                         },
-                                        modifier = Modifier.height(34.dp).weight(0.8f),
+                                        modifier = Modifier.height(Constants.TextFieldHeight)
+                                            .weight(0.8f),
                                         placeholder = stringResource(Res.string.date_birthday),
                                     )
                                     Spacer(Modifier.size(20.dp))
 
-                                    MaxiOutlinedTextField(
-                                        value = "",
-                                        onValueChange = {
+                                    MaxiTextFieldResMenu<String>(
+                                        text = "",
+                                        onChangeWorkScope = {
+                                            viewModel.changeSportStage()
                                         },
-                                        readOnly = true,
-                                        onClick = {},
-                                        modifier = Modifier.height(34.dp).weight(1f),
-                                        placeholder = stringResource(Res.string.stage_sport_ready),
+                                        modifier = Modifier.height(Constants.TextFieldHeight)
+                                            .weight(1f),
+                                        placeholderText = stringResource(Res.string.stage_sport_ready),
+                                        items = listOf(),
+                                        itemToString = {
+                                            Res.string.ok
+                                        },
+                                        expanden = state.expandSportStage,
+                                        onExpanded = {
+                                            viewModel.changeExpandSportStage()
+                                        }
                                     )
                                 }
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    MaxiOutlinedTextField(
-                                        value = stringResource(state.sportsmanUI.isMale.isMaleToString()),
-                                        onValueChange = {
-                                            viewModel.changeWeight(it)
-
+                                    MaxiTextFieldResMenu<Boolean>(
+                                        text = stringResource(state.sportsmanUI.isMale.isMaleToString()),
+                                        onChangeWorkScope = {
+                                            viewModel.changeSex(it)
                                         },
-                                        modifier = Modifier.height(34.dp).weight(0.8f),
-                                        placeholder = stringResource(Res.string.sex),
+                                        modifier = Modifier.height(Constants.TextFieldHeight)
+                                            .weight(0.8f),
+                                        placeholderText = stringResource(Res.string.sex),
+                                        items = listOf(true, false),
+                                        itemToString = {
+                                            it.isMaleToString()
+                                        },
+                                        trailingIcon = {
+                                            Icon(
+                                                painter = painterResource(Res.drawable.sex),
+                                                contentDescription = null,
+                                                modifier = Modifier.padding(end = 5.dp)
+                                                    .widthIn(max = 56.dp)
+                                                    .heightIn(max = Constants.TextFieldHeight)
+                                            )
+                                        },
+                                        expanden = state.expandSex,
+                                        onExpanded = {
+                                            viewModel.changeExpandSex()
+                                        }
                                     )
                                     Spacer(Modifier.size(20.dp))
 
-                                    MaxiOutlinedTextField(
-                                        value = "",
-                                        onValueChange = {
+                                    MaxiTextFieldResMenu<String>(
+                                        text = "",
+                                        onChangeWorkScope = {
+                                            viewModel.changeSportCategory()
                                         },
-                                        readOnly = true,
-                                        onClick = {},
-                                        modifier = Modifier.height(34.dp).weight(1f),
-                                        placeholder = stringResource(Res.string.sport_category),
+                                        modifier = Modifier.height(Constants.TextFieldHeight)
+                                            .weight(1f),
+                                        placeholderText = stringResource(Res.string.sport_category),
+                                        items = listOf(),
+                                        itemToString = {
+                                            Res.string.ok
+                                        },
+                                        expanden = state.expandSportCategory,
+                                        onExpanded = {
+                                            viewModel.changeExpandSportCategory()
+                                        }
                                     )
                                 }
                                 MaxiButton(
@@ -396,6 +437,73 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                     ) {
                         item {
                             Row(
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(80.dp)
+                            ) {
+                                MaxiTextFieldMenu<GameTypeUI>(
+                                    text = state.sportsmanUI.gameTypeUI.name,
+                                    onChangeWorkScope = {
+                                        viewModel.changeSport(it)
+                                    },
+                                    modifier = Modifier.height(Constants.TextFieldHeight)
+                                        .weight(1f),
+                                    placeholderText = stringResource(Res.string.sport),
+                                    items = state.gameTypes,
+                                    itemToString = {
+                                        it.name
+                                    },
+                                    expanden = state.expandSport,
+                                    onExpanded = {
+                                        viewModel.changeExpandSport()
+                                    }
+                                )
+
+                                MaxiTextFieldResMenu<String>(
+                                    text = "",
+                                    onChangeWorkScope = {
+                                        viewModel.changeGroup()
+                                    },
+                                    modifier = Modifier.height(Constants.TextFieldHeight)
+                                        .weight(1f),
+                                    placeholderText = stringResource(Res.string.composition_and_group),
+                                    items = listOf(),
+                                    itemToString = {
+                                        Res.string.ok
+                                    },
+                                    expanden = state.expandGroup,
+                                    onExpanded = {
+                                        viewModel.changeExpandGroup()
+                                    }
+                                )
+
+                                MaxiTextFieldResMenu<String>(
+                                    text = "",
+                                    onChangeWorkScope = {
+                                        viewModel.changeCouch()
+                                    },
+                                    modifier = Modifier.height(Constants.TextFieldHeight)
+                                        .weight(1f),
+                                    placeholderText = stringResource(Res.string.couch),
+                                    items = listOf(),
+                                    itemToString = {
+                                        Res.string.ok
+                                    },
+                                    expanden = state.expandCouch,
+                                    onExpanded = {
+                                        viewModel.changeExpandCouch()
+                                    }
+                                )
+                            }
+                        }
+                        item {
+                            HorizontalDivider(
+                                Modifier.fillMaxWidth(),
+                                color = MaxiPulsTheme.colors.uiKit.divider
+                            )
+                        }
+                        item {
+                            Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.padding(horizontal = 20.dp)
                             ) {
@@ -404,7 +512,8 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                     onValueChange = {
                                         viewModel.changeNumber(it)
                                     },
-                                    modifier = Modifier.weight(1f).height(34.dp),
+                                    modifier = Modifier.weight(1f)
+                                        .height(Constants.TextFieldHeight),
                                     placeholder = stringResource(Res.string.number_player),
                                 )
 
@@ -415,7 +524,8 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                     onValueChange = {
                                         viewModel.changeMPK(it)
                                     },
-                                    modifier = Modifier.weight(1f).height(34.dp),
+                                    modifier = Modifier.weight(1f)
+                                        .height(Constants.TextFieldHeight),
                                     placeholder = stringResource(Res.string.mpk),
                                 )
                             }
@@ -431,7 +541,8 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         viewModel.changeHeight(it)
 
                                     },
-                                    modifier = Modifier.weight(1f).height(34.dp),
+                                    modifier = Modifier.weight(1f)
+                                        .height(Constants.TextFieldHeight),
                                     placeholder = stringResource(Res.string.height),
                                 )
 
@@ -443,7 +554,8 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         viewModel.changeChssPano(it)
 
                                     },
-                                    modifier = Modifier.weight(1f).height(34.dp),
+                                    modifier = Modifier.weight(1f)
+                                        .height(Constants.TextFieldHeight),
                                     placeholder = stringResource(Res.string.chss_pano),
                                 )
                             }
@@ -459,7 +571,8 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         viewModel.changeWeight(it)
 
                                     },
-                                    modifier = Modifier.weight(1f).height(34.dp),
+                                    modifier = Modifier.weight(1f)
+                                        .height(Constants.TextFieldHeight),
                                     placeholder = stringResource(Res.string.weight),
                                 )
 
@@ -471,7 +584,8 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         viewModel.changeChssPao(it)
 
                                     },
-                                    modifier = Modifier.weight(1f).height(34.dp),
+                                    modifier = Modifier.weight(1f)
+                                        .height(Constants.TextFieldHeight),
                                     placeholder = stringResource(Res.string.chss_pao),
                                 )
                             }
@@ -481,15 +595,32 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.padding(horizontal = 20.dp)
                             ) {
-                                MaxiOutlinedTextField(
-                                    value = state.sportsmanUI.chssMax.toStringWithCondition(),
-                                    onValueChange = {
-                                        viewModel.changeChssMax(it)
+                                Row(
+                                    modifier = Modifier.weight(1f),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    MaxiOutlinedTextField(
+                                        value = state.sportsmanUI.chssMax.toStringWithCondition(),
+                                        onValueChange = {
+                                            viewModel.changeChssMax(it)
 
-                                    },
-                                    modifier = Modifier.weight(1f).height(34.dp),
-                                    placeholder = stringResource(Res.string.chss_max),
-                                )
+                                        },
+                                        modifier = Modifier.weight(1f)
+                                            .height(Constants.TextFieldHeight),
+                                        placeholder = stringResource(Res.string.chss_max),
+                                    )
+                                    Spacer(Modifier.size(20.dp))
+                                    MaxiButton(
+                                        shape = RoundedCornerShape(15.dp),
+                                        onClick = {
+                                            //todo
+                                        },
+                                        text = stringResource(Res.string.counting),
+                                        buttonActions = ButtonActions.Unlimit,
+                                        modifier = Modifier.height(Constants.TextFieldHeight),
+                                        buttonTextStyle = ButtonTextStyle.Medium
+                                    )
+                                }
 
                                 Spacer(Modifier.size(52.dp))
 
@@ -499,33 +630,13 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         viewModel.changeImtString(it)
 
                                     },
-                                    modifier = Modifier.weight(1f).height(34.dp).onFocusChanged {
-                                        if (!it.isFocused) {
-                                            viewModel.changeImt()
-                                        }
-                                    },
+                                    modifier = Modifier.weight(1f).height(Constants.TextFieldHeight)
+                                        .onFocusChanged {
+                                            if (!it.isFocused) {
+                                                viewModel.changeImt()
+                                            }
+                                        },
                                     placeholder = stringResource(Res.string.imt),
-                                )
-                            }
-                        }
-                        item {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(horizontal = 20.dp)
-                            ) {
-                                MaxiOutlinedTextField(
-                                    value = state.sportsmanUI.chssResting.toStringWithCondition(),
-                                    onValueChange = {
-                                        viewModel.changeChssResting(it)
-                                    },
-                                    modifier = Modifier.weight(1f).height(34.dp),
-                                    placeholder = stringResource(Res.string.chss_resting),
-                                )
-
-                                Spacer(Modifier.size(52.dp))
-
-                                Box(
-                                    modifier = Modifier.weight(1f).height(34.dp),
                                 )
                             }
                         }
@@ -598,35 +709,43 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                 )
                             }
                         }
-                    }
+                        item {
+                            Spacer(modifier = Modifier.size(5.dp))
+                        }
 
-                    Row(
-                        modifier = Modifier.padding(bottom = 40.dp, start = 20.dp, end = 20.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        MaxiButton(
-                            shape = RoundedCornerShape(15.dp),
-                            onClick = {
-                                rootNavigator.pop()
-                            },
-                            text = stringResource(Res.string.canceled),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaxiPulsTheme.colors.uiKit.grey400,
-                                contentColor = MaxiPulsTheme.colors.uiKit.textColor
-                            ),
-                            buttonActions = ButtonActions.Unlimit,
-                            modifier = Modifier.height(54.dp)
-                        )
-                        Spacer(Modifier.size(20.dp))
-                        MaxiButton(
-                            shape = RoundedCornerShape(15.dp),
-                            onClick = {
-                                viewModel.save()
-                            },
-                            text = stringResource(Res.string.save),
-                            buttonActions = ButtonActions.Unlimit,
-                            modifier = Modifier.height(54.dp).weight(1f)
-                        )
+                        item {
+                            Row(
+                                modifier = Modifier.padding(
+                                    start = 20.dp,
+                                    end = 20.dp
+                                ),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                MaxiButton(
+                                    shape = RoundedCornerShape(15.dp),
+                                    onClick = {
+                                        rootNavigator.pop()
+                                    },
+                                    text = stringResource(Res.string.canceled),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaxiPulsTheme.colors.uiKit.grey400,
+                                        contentColor = MaxiPulsTheme.colors.uiKit.textColor
+                                    ),
+                                    buttonActions = ButtonActions.Unlimit,
+                                    modifier = Modifier.height(54.dp)
+                                )
+                                Spacer(Modifier.size(20.dp))
+                                MaxiButton(
+                                    shape = RoundedCornerShape(15.dp),
+                                    onClick = {
+                                        viewModel.save()
+                                    },
+                                    text = stringResource(Res.string.save),
+                                    buttonActions = ButtonActions.Unlimit,
+                                    modifier = Modifier.height(54.dp).weight(1f)
+                                )
+                            }
+                        }
                     }
                 }
             }

@@ -9,6 +9,7 @@ import de.jensklingenberg.ktorfit.http.PUT
 import de.jensklingenberg.ktorfit.http.Path
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import org.example.project.data.model.BaseResponse
+import org.example.project.data.model.gameType.GameTypeResponse
 import org.example.project.data.model.group.ChangeGroupNameRequest
 import org.example.project.data.model.group.GroupResponse
 import org.example.project.data.model.login.LoginRequest
@@ -38,6 +39,9 @@ interface MaxiPulseApi {
 
     @DELETE("api/gamer/{id}")
     suspend fun deleteSportsman(@Path("id") id: String)
+
+    @GET("api/game-type")
+    suspend fun getGameTypes(): BaseResponse<List<GameTypeResponse>>
 
 
     //group

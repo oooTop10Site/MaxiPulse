@@ -18,6 +18,7 @@ import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import maxipuls.composeapp.generated.resources.success_save
+import org.example.project.domain.model.gameType.GameTypeUI
 
 
 internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, SportsmanEditEvent>(
@@ -42,6 +43,21 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
                 }
             )
         }
+    }
+
+    fun loadGameTypes() = intent {
+        launchOperation(
+            operation = {
+                gamerRepository.getGameTypes()
+            },
+            success = {
+                reduceLocal {
+                    state.copy(
+                        gameTypes = it
+                    )
+                }
+            }
+        )
     }
 
     fun changeAvatar(avatar: String) = blockingIntent() {
@@ -168,8 +184,95 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
                 sportsmanUI = state.sportsmanUI.copy(chssMax = newValue.orEmpty())
             )
         }
+    }
+
+    fun changeSex(isMale: Boolean) = intent {
+        reduce {
+            state.copy(
+                sportsmanUI = state.sportsmanUI.copy( isMale = isMale)
+            )
+        }
+    }
+
+    fun changeExpandSex() = intent {
+        reduce {
+            state.copy(
+                expandSex = !state.expandSex
+            )
+        }
+    }
+
+    fun changeExpandSportStage() = intent {
+        reduce {
+            state.copy(
+                expandSportStage = !state.expandSportStage
+            )
+        }
+    }
+
+    fun changeSportStage() = intent {
 
     }
+
+    fun changeExpandSportCategory() = intent {
+        reduce {
+            state.copy(
+                expandSportCategory = !state.expandSportCategory
+            )
+        }
+    }
+
+    fun changeSportCategory() = intent {
+
+    }
+
+
+    fun changeExpandSport() = intent {
+        reduce {
+            state.copy(
+                expandSport = !state.expandSport
+            )
+        }
+    }
+
+    fun changeSport(gameTypeUI: GameTypeUI) = intent {
+        reduce {
+            state.copy(
+                sportsmanUI = state.sportsmanUI.copy(
+                    gameTypeUI = gameTypeUI
+                )
+            )
+        }
+    }
+
+
+    fun changeExpandGroup() = intent {
+        reduce {
+            state.copy(
+                expandGroup = !state.expandGroup
+            )
+        }
+    }
+
+    fun changeGroup() = intent {
+
+    }
+
+
+
+    fun changeExpandCouch() = intent {
+        reduce {
+            state.copy(
+                expandCouch = !state.expandCouch
+            )
+        }
+    }
+
+    fun changeCouch() = intent {
+
+    }
+
+
 
     fun changeChssResting(value: String) = blockingIntent {
         val newValue = value.take(3).filter { it.isDigit() }.toIntOrNull()

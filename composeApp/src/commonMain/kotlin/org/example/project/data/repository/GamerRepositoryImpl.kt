@@ -4,6 +4,7 @@ import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.max_file_size
 import org.example.project.data.api.MaxiPulseApi
 import org.example.project.data.mapper.toUI
+import org.example.project.domain.model.gameType.GameTypeUI
 import org.example.project.domain.model.sportsman.SportsmanUI
 import org.example.project.domain.repository.GamerRepository
 import org.example.project.ext.toServer
@@ -81,6 +82,8 @@ class GamerRepositoryImpl(
             add(Form.FormBodyInt("chss_pao", sportsmanUI.chssPao))
             add(Form.FormBody("imt", sportsmanUI.imt.toString()))
             add(Form.FormBody("mpk", sportsmanUI.mpk.toString()))
+            add(Form.FormBody("game_type_id", sportsmanUI.gameTypeUI.id))
+            add(Form.FormBodyBool("is_male", sportsmanUI.isMale))
             if (sportsmanUI.birthDay != null) {
                 add(Form.FormBody("birthday", sportsmanUI.birthDay.toServer()))
             }
@@ -100,6 +103,17 @@ class GamerRepositoryImpl(
                 } else {
                     maxiPulseApi.createSportsman(body)
                 }
+            }
+        )
+    }
+
+    override suspend fun getGameTypes(): Either<Failure, List<GameTypeUI>> {
+        return apiCall(
+            call = {
+                maxiPulseApi.getGameTypes()
+            },
+            mapResponse = {
+                it.data?.map { it.toUI() }.orEmpty()
             }
         )
     }

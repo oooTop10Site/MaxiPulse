@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -40,9 +41,51 @@ fun MaxiButton(
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
     text: String,
+    buttonTextStyle: ButtonTextStyle = ButtonTextStyle.Bold,
     buttonActions: ButtonActions = ButtonActions.Unlimit
 ) {
     val scope = rememberCoroutineScope()
+    val styleText = when (buttonTextStyle) {
+        ButtonTextStyle.Bold -> {
+            MaxiPulsTheme.typography.bold.copy(
+                fontSize = 20.sp,
+                lineHeight = 20.sp,
+                textAlign = TextAlign.Center,
+            )
+        }
+
+        ButtonTextStyle.SemiBold -> {
+            MaxiPulsTheme.typography.bold.copy(
+                fontSize = 20.sp,
+                lineHeight = 20.sp,
+                textAlign = TextAlign.Center,
+            )
+        }
+
+        ButtonTextStyle.Medium -> {
+            MaxiPulsTheme.typography.medium.copy(
+                fontSize = 16.sp,
+                lineHeight = 16.sp,
+                textAlign = TextAlign.Center,
+            )
+        }
+
+        ButtonTextStyle.Regular -> {
+            MaxiPulsTheme.typography.bold.copy(
+                fontSize = 20.sp,
+                lineHeight = 20.sp,
+                textAlign = TextAlign.Center,
+            )
+        }
+
+        ButtonTextStyle.Small -> {
+            MaxiPulsTheme.typography.bold.copy(
+                fontSize = 20.sp,
+                lineHeight = 20.sp,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
     Button(
         {
             if (buttonActions == ButtonActions.Unlimit) {
@@ -65,11 +108,102 @@ fun MaxiButton(
     ) {
         Text(
             text,
-            style = MaxiPulsTheme.typography.bold.copy(
-                fontSize = 20.sp,
-                lineHeight = 20.sp,
-                textAlign = TextAlign.Center
-            )
+            style = styleText,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
     }
+}
+
+@Composable
+fun MaxiButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    shape: Shape = ButtonDefaults.shape,
+    colors: ButtonColors = ButtonDefaults.buttonColors(
+        containerColor = MaxiPulsTheme.colors.uiKit.buttonContainer,
+        contentColor = MaxiPulsTheme.colors.uiKit.buttonContent
+    ),
+    elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
+    border: BorderStroke? = null,
+    contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
+    interactionSource: MutableInteractionSource? = null,
+    buttonTextStyle: ButtonTextStyle = ButtonTextStyle.Bold,
+    buttonActions: ButtonActions = ButtonActions.Unlimit,
+    content: @Composable () -> Unit,
+) {
+    val scope = rememberCoroutineScope()
+    val styleText = when (buttonTextStyle) {
+        ButtonTextStyle.Bold -> {
+            MaxiPulsTheme.typography.bold.copy(
+                fontSize = 20.sp,
+                lineHeight = 20.sp,
+                textAlign = TextAlign.Center,
+            )
+        }
+
+        ButtonTextStyle.SemiBold -> {
+            MaxiPulsTheme.typography.bold.copy(
+                fontSize = 20.sp,
+                lineHeight = 20.sp,
+                textAlign = TextAlign.Center,
+            )
+        }
+
+        ButtonTextStyle.Medium -> {
+            MaxiPulsTheme.typography.medium.copy(
+                fontSize = 16.sp,
+                lineHeight = 16.sp,
+                textAlign = TextAlign.Center,
+            )
+        }
+
+        ButtonTextStyle.Regular -> {
+            MaxiPulsTheme.typography.bold.copy(
+                fontSize = 20.sp,
+                lineHeight = 20.sp,
+                textAlign = TextAlign.Center,
+            )
+        }
+
+        ButtonTextStyle.Small -> {
+            MaxiPulsTheme.typography.bold.copy(
+                fontSize = 20.sp,
+                lineHeight = 20.sp,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+    Button(
+        {
+            if (buttonActions == ButtonActions.Unlimit) {
+                onClick()
+            } else {
+                scope.launch() {
+                    onClick()
+                    delay(200L)
+                }
+            }
+        },
+        modifier,
+        enabled,
+        shape,
+        colors,
+        elevation,
+        border,
+        contentPadding,
+        interactionSource,
+    ) {
+        content()
+    }
+}
+
+
+enum class ButtonTextStyle {
+    Bold,
+    SemiBold,
+    Medium,
+    Regular,
+    Small,
 }

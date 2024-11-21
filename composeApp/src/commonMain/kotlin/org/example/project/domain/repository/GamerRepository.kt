@@ -1,5 +1,6 @@
 package org.example.project.domain.repository
 
+import org.example.project.domain.model.gameType.GameTypeUI
 import org.example.project.domain.model.sportsman.SportsmanUI
 import org.example.project.platform.Either
 import org.example.project.platform.Failure
@@ -12,5 +13,7 @@ interface GamerRepository {
         gamerId: String? = null,
         sportsmanUI: SportsmanUI
     ): Either<Failure, Unit>
+
+    suspend fun getGameTypes(): Either<Failure, List<GameTypeUI>>
 
 }

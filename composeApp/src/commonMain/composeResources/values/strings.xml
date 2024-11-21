@@ -47,8 +47,12 @@
     <string name="date_birthday">Дата рождения</string>
     <string name="stage_sport_ready">Этап спорт. подготовки</string>
     <string name="sport_category">Спортивный разряд</string>
+    <string name="sport">Вид спорта</string>
+    <string name="couch">Тренер</string>
+    <string name="composition_and_group">Состав/группа</string>
     <string name="turn_on_personal_sensor">Подключение индивидуального датчика</string>
     <string name="choose_sensor">Выберите датчик</string>
+    <string name="counting">Рассчитать</string>
     <string name="female">Женский</string>
     <string name="male">Мужской</string>
     <string name="sensor_already_assigned_desc">Данный датчик закреплен за другим спортсменом. Хотите переназначить его?</string>

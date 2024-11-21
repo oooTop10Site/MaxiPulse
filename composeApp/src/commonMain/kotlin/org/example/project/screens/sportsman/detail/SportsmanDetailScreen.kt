@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -50,14 +52,19 @@ import maxipuls.composeapp.generated.resources.mpk
 import maxipuls.composeapp.generated.resources.number_player
 import maxipuls.composeapp.generated.resources.pencil
 import maxipuls.composeapp.generated.resources.profile
+import maxipuls.composeapp.generated.resources.sensor
+import maxipuls.composeapp.generated.resources.sensor_ic
 import maxipuls.composeapp.generated.resources.sportsman_ic
 import maxipuls.composeapp.generated.resources.weight
+import org.example.project.domain.model.ButtonActions
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.sportsman.edit.SportsmanEditScreen
 import org.example.project.theme.MaxiPulsTheme
+import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
+import org.example.project.utils.Constants
 import org.example.project.utils.toStringWithCondition
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -150,10 +157,12 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                             modifier = Modifier.size(200.dp),
                         ) {
                             if (state.sportsmanUI.avatar.isBlank()) {
-                                Box(modifier = Modifier.fillMaxSize().background(
-                                    MaxiPulsTheme.colors.uiKit.sportsmanAvatarBackground,
-                                    shape = CircleShape
-                                ).clip(CircleShape).align(Alignment.Center)) {
+                                Box(
+                                    modifier = Modifier.fillMaxSize().background(
+                                        MaxiPulsTheme.colors.uiKit.sportsmanAvatarBackground,
+                                        shape = CircleShape
+                                    ).clip(CircleShape).align(Alignment.Center)
+                                ) {
                                     Image(
                                         painter = painterResource(Res.drawable.profile),
                                         modifier = Modifier.size(
@@ -258,6 +267,38 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                             )
 
                         }
+
+                        MaxiButton(
+                            modifier = Modifier.width(250.dp),
+                            shape = RoundedCornerShape(15.dp),
+                            buttonActions = ButtonActions.Unlimit,
+                            onClick = {
+                                //todo чо то с датчиком
+                            }) {
+                            Column(
+                                modifier = Modifier,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Image(
+                                    painter = painterResource(Res.drawable.profile),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.FillHeight,
+                                    colorFilter = ColorFilter.tint(color = MaxiPulsTheme.colors.uiKit.lightTextColor),
+                                    modifier = Modifier.size(height = 45.dp, width = 51.dp)
+                                )
+                                Spacer(Modifier.size(10.dp))
+                                Text(
+                                    text = stringResource(
+                                        Res.string.sensor
+                                    ),
+                                    style = MaxiPulsTheme.typography.bold.copy(
+                                        color = MaxiPulsTheme.colors.uiKit.lightTextColor,
+                                        fontSize = 20.sp,
+                                        lineHeight = 20.sp
+                                    )
+                                )
+                            }
+                        }
                     }
 
                     HorizontalDivider(
@@ -277,7 +318,7 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                                 onValueChange = {
                                 },
                                 readOnly = true,
-                                modifier = Modifier.weight(1f).height(34.dp),
+                                modifier = Modifier.weight(1f).height(Constants.TextFieldHeight),
                                 placeholder = stringResource(Res.string.number_player),
                             )
 
@@ -288,7 +329,7 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                                 onValueChange = {
                                 },
                                 readOnly = true,
-                                modifier = Modifier.weight(1f).height(34.dp),
+                                modifier = Modifier.weight(1f).height(Constants.TextFieldHeight),
                                 placeholder = stringResource(Res.string.mpk),
                             )
                         }
@@ -301,7 +342,7 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                                 onValueChange = {
                                 },
                                 readOnly = true,
-                                modifier = Modifier.weight(1f).height(34.dp),
+                                modifier = Modifier.weight(1f).height(Constants.TextFieldHeight),
                                 placeholder = stringResource(Res.string.height),
                             )
 
@@ -312,7 +353,7 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                                 onValueChange = {
                                 },
                                 readOnly = true,
-                                modifier = Modifier.weight(1f).height(34.dp),
+                                modifier = Modifier.weight(1f).height(Constants.TextFieldHeight),
                                 placeholder = stringResource(Res.string.chss_pano),
                             )
                         }
@@ -325,7 +366,7 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                                 onValueChange = {
                                 },
                                 readOnly = true,
-                                modifier = Modifier.weight(1f).height(34.dp),
+                                modifier = Modifier.weight(1f).height(Constants.TextFieldHeight),
                                 placeholder = stringResource(Res.string.weight),
                             )
 
@@ -336,7 +377,7 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                                 onValueChange = {
                                 },
                                 readOnly = true,
-                                modifier = Modifier.weight(1f).height(34.dp),
+                                modifier = Modifier.weight(1f).height(Constants.TextFieldHeight),
                                 placeholder = stringResource(Res.string.chss_pao),
                             )
                         }
@@ -349,7 +390,7 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                                 onValueChange = {
                                 },
                                 readOnly = true,
-                                modifier = Modifier.weight(1f).height(34.dp),
+                                modifier = Modifier.weight(1f).height(Constants.TextFieldHeight),
                                 placeholder = stringResource(Res.string.chss_max),
                             )
 
@@ -360,7 +401,7 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                                 onValueChange = {
                                 },
                                 readOnly = true,
-                                modifier = Modifier.weight(1f).height(34.dp),
+                                modifier = Modifier.weight(1f).height(Constants.TextFieldHeight),
                                 placeholder = stringResource(Res.string.imt),
                             )
                         }
@@ -373,14 +414,14 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                                 onValueChange = {
                                 },
                                 readOnly = true,
-                                modifier = Modifier.weight(1f).height(34.dp),
+                                modifier = Modifier.weight(1f).height(Constants.TextFieldHeight),
                                 placeholder = stringResource(Res.string.chss_resting),
                             )
 
                             Spacer(Modifier.size(52.dp))
 
                             Box(
-                                modifier = Modifier.weight(1f).height(34.dp),
+                                modifier = Modifier.weight(1f).height(Constants.TextFieldHeight),
                             )
                         }
                     }

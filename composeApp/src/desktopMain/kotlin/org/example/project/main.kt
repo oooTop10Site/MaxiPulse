@@ -11,6 +11,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import org.example.project.di.KoinInjector
+import org.example.project.di.platformModule
 import org.example.project.screens.root.RootApp
 import org.koin.core.component.KoinComponent
 import java.awt.Dimension
@@ -25,7 +26,7 @@ fun main() = application {
         )
     ) {
         window.minimumSize = Dimension(450, 750)
-        KoinInjector.koin
+        KoinInjector.koin.loadModules(listOf(platformModule))
         RootApp()
     }
 }
