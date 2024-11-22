@@ -41,6 +41,9 @@ import maxipuls.composeapp.generated.resources.rectangle_listv2
 import maxipuls.composeapp.generated.resources.search
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.group.components.CompositionCard
+import org.example.project.screens.group.groupDetail.GroupDetailScreen
+import org.example.project.screens.group.groupEdit.GroupEditScreen
+import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.root.ScreenSize
 import org.example.project.theme.uiKit.TopBarTitle
 import org.jetbrains.compose.resources.painterResource
@@ -53,6 +56,7 @@ class GroupScreen : Screen {
             GroupViewModel()
         }
         val state by viewModel.stateFlow.collectAsState()
+        val rootNavigator = RootNavigator.currentOrThrow
         val screenSize = ScreenSize.currentOrThrow
         val chunkSize = when  {
             !state.isGrid -> 1
@@ -163,9 +167,13 @@ class GroupScreen : Screen {
                             CompositionCard(
                                 modifier = Modifier.weight(1f).height(100.dp),
                                 title = it.title,
-                                members = it.member
+                                members = it.member,
+                                onClick = {
+                                    rootNavigator.push(GroupDetailScreen(groupId = it.id))
+                                }
                             ) {
-                                //onClick()
+                                rootNavigator.push(GroupEditScreen(groupId = it.id))
+
                             }
                         }
                         if (chunk.size != chunkSize) {

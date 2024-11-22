@@ -49,6 +49,7 @@
     <string name="sport_category">Спортивный разряд</string>
     <string name="sport">Вид спорта</string>
     <string name="couch">Тренер</string>
+    <string name="title_group">Название группы</string>
     <string name="composition_and_group">Состав/группа</string>
     <string name="turn_on_personal_sensor">Подключение индивидуального датчика</string>
     <string name="choose_sensor">Выберите датчик</string>

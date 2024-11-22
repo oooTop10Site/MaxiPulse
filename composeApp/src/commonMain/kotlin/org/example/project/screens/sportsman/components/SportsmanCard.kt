@@ -41,6 +41,7 @@ import org.example.project.ext.clickableBlank
 import org.example.project.screens.root.ScreenSize
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiImage
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -57,6 +58,8 @@ fun SportsmanCard(
     weight: Int,
     avatar: String,
     isMale: Boolean,
+    showEditIcon: Boolean = true,
+    editIcon: @Composable (() -> Unit)? = null,
     onClick: () -> Unit,
     onEdit: () -> Unit,
 ) {
@@ -200,15 +203,18 @@ fun SportsmanCard(
                     }
                 }
             }
-
-            Icon(
-                painterResource(Res.drawable.pencil),
-                contentDescription = null,
-                modifier = Modifier.size(24.dp).clickableBlank {
-                    onEdit()
-                },
-                tint = MaxiPulsTheme.colors.uiKit.primary
-            )
+            if (showEditIcon) {
+                editIcon?.invoke() ?: @Composable {
+                    Icon(
+                        painterResource(Res.drawable.pencil),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp).clickableBlank {
+                            onEdit()
+                        },
+                        tint = MaxiPulsTheme.colors.uiKit.primary
+                    )
+                }
+            }
         }
         Spacer(modifier = Modifier.size((20 / spacerDivision).dp))
 

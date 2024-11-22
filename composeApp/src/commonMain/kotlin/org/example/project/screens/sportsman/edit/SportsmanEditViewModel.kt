@@ -18,13 +18,16 @@ import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import maxipuls.composeapp.generated.resources.success_save
+import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.gameType.GameTypeUI
+import org.example.project.domain.repository.GroupRepository
 
 
 internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, SportsmanEditEvent>(
     SportsmanEditState.InitState
 ) {
     private val gamerRepository: GamerRepository by inject()
+    private val groupRepository: GroupRepository by inject()
     private val observerManager: MessageObserverManager by inject()
     val imagePermissionsService: PermissionsService by inject()
     fun loadSportsman(id: String?) = intent {
@@ -54,6 +57,21 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
                 reduceLocal {
                     state.copy(
                         gameTypes = it
+                    )
+                }
+            }
+        )
+    }
+
+    fun loadGroups() = intent {
+        launchOperation(
+            operation = {
+                groupRepository.getGroups()
+            },
+            success = {
+                reduceLocal {
+                    state.copy(
+                        groups = it
                     )
                 }
             }
@@ -189,7 +207,7 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
     fun changeSex(isMale: Boolean) = intent {
         reduce {
             state.copy(
-                sportsmanUI = state.sportsmanUI.copy( isMale = isMale)
+                sportsmanUI = state.sportsmanUI.copy(isMale = isMale)
             )
         }
     }
@@ -254,10 +272,15 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
         }
     }
 
-    fun changeGroup() = intent {
-
+    fun changeGroup(value: GroupUI) = intent {
+        reduce {
+            state.copy(
+                sportsmanUI = state.sportsmanUI.copy(
+                    group = value
+                )
+            )
+        }
     }
-
 
 
     fun changeExpandCouch() = intent {
@@ -271,7 +294,6 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
     fun changeCouch() = intent {
 
     }
-
 
 
     fun changeChssResting(value: String) = blockingIntent {

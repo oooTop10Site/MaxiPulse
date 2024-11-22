@@ -276,11 +276,11 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                                 //todo чо то с датчиком
                             }) {
                             Column(
-                                modifier = Modifier,
+                                modifier = Modifier.padding(vertical = 10.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Image(
-                                    painter = painterResource(Res.drawable.profile),
+                                    painter = painterResource(Res.drawable.sensor_ic),
                                     contentDescription = null,
                                     contentScale = ContentScale.FillHeight,
                                     colorFilter = ColorFilter.tint(color = MaxiPulsTheme.colors.uiKit.lightTextColor),

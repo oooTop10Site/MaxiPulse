@@ -93,6 +93,7 @@ import maxipuls.composeapp.generated.resources.stage_sport_ready
 import maxipuls.composeapp.generated.resources.turn_on_personal_sensor
 import maxipuls.composeapp.generated.resources.weight
 import org.example.project.domain.model.ButtonActions
+import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.gameType.GameTypeUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.granted
@@ -106,6 +107,7 @@ import org.example.project.theme.uiKit.ButtonTextStyle
 import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
+import org.example.project.theme.uiKit.MaxiTextField
 import org.example.project.theme.uiKit.MaxiTextFieldMenu
 import org.example.project.theme.uiKit.MaxiTextFieldResMenu
 import org.example.project.theme.uiKit.simpleVerticalScrollbar
@@ -144,6 +146,7 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
             LaunchedEffect(viewModel) {
                 viewModel.loadSportsman(id = gamerId)
                 viewModel.loadGameTypes()
+                viewModel.loadGroups()
                 launch {
                     viewModel.container.sideEffectFlow.collect {
                         when (it) {
@@ -346,6 +349,7 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                     Spacer(Modifier.size(20.dp))
 
                                     MaxiTextFieldResMenu<String>(
+                                        currentValue = "",
                                         text = "",
                                         onChangeWorkScope = {
                                             viewModel.changeSportStage()
@@ -357,10 +361,6 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         itemToString = {
                                             Res.string.ok
                                         },
-                                        expanden = state.expandSportStage,
-                                        onExpanded = {
-                                            viewModel.changeExpandSportStage()
-                                        }
                                     )
                                 }
                                 Row(
@@ -368,6 +368,7 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     MaxiTextFieldResMenu<Boolean>(
+                                        currentValue = state.sportsmanUI.isMale,
                                         text = stringResource(state.sportsmanUI.isMale.isMaleToString()),
                                         onChangeWorkScope = {
                                             viewModel.changeSex(it)
@@ -388,14 +389,11 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                                     .heightIn(max = Constants.TextFieldHeight)
                                             )
                                         },
-                                        expanden = state.expandSex,
-                                        onExpanded = {
-                                            viewModel.changeExpandSex()
-                                        }
                                     )
                                     Spacer(Modifier.size(20.dp))
 
                                     MaxiTextFieldResMenu<String>(
+                                        currentValue = "",
                                         text = "",
                                         onChangeWorkScope = {
                                             viewModel.changeSportCategory()
@@ -407,16 +405,13 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         itemToString = {
                                             Res.string.ok
                                         },
-                                        expanden = state.expandSportCategory,
-                                        onExpanded = {
-                                            viewModel.changeExpandSportCategory()
-                                        }
                                     )
                                 }
                                 MaxiButton(
                                     onClick = {},
+                                    buttonTextStyle = ButtonTextStyle.Medium,
                                     text = stringResource(Res.string.turn_on_personal_sensor),
-                                    modifier = Modifier.height(65.dp).width(300.dp),
+                                    modifier = Modifier.height(65.dp).widthIn(max = 320.dp),
                                     shape = RoundedCornerShape(15.dp)
                                 )
                             }
@@ -443,6 +438,7 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                             ) {
                                 MaxiTextFieldMenu<GameTypeUI>(
                                     text = state.sportsmanUI.gameTypeUI.name,
+                                    currentValue = state.sportsmanUI.gameTypeUI,
                                     onChangeWorkScope = {
                                         viewModel.changeSport(it)
                                     },
@@ -453,32 +449,27 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                     itemToString = {
                                         it.name
                                     },
-                                    expanden = state.expandSport,
-                                    onExpanded = {
-                                        viewModel.changeExpandSport()
-                                    }
                                 )
 
-                                MaxiTextFieldResMenu<String>(
-                                    text = "",
+                                MaxiTextFieldMenu<GroupUI>(
+                                    text = state.sportsmanUI.group.title,
+                                    currentValue = state.sportsmanUI.group,
                                     onChangeWorkScope = {
-                                        viewModel.changeGroup()
+                                        viewModel.changeGroup(it)
                                     },
                                     modifier = Modifier.height(Constants.TextFieldHeight)
                                         .weight(1f),
                                     placeholderText = stringResource(Res.string.composition_and_group),
-                                    items = listOf(),
+                                    items = state.groups,
                                     itemToString = {
-                                        Res.string.ok
+                                        it.title
                                     },
-                                    expanden = state.expandGroup,
-                                    onExpanded = {
-                                        viewModel.changeExpandGroup()
-                                    }
+
                                 )
 
                                 MaxiTextFieldResMenu<String>(
                                     text = "",
+                                    currentValue = "",
                                     onChangeWorkScope = {
                                         viewModel.changeCouch()
                                     },
@@ -489,10 +480,6 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                     itemToString = {
                                         Res.string.ok
                                     },
-                                    expanden = state.expandCouch,
-                                    onExpanded = {
-                                        viewModel.changeExpandCouch()
-                                    }
                                 )
                             }
                         }

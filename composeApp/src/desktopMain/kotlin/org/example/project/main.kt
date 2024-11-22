@@ -25,7 +25,7 @@ fun main() = application {
             size = DpSize(800.dp, 600.dp)
         )
     ) {
-        window.minimumSize = Dimension(450, 750)
+        window.minimumSize = Dimension(1280, 800)
         KoinInjector.koin.loadModules(listOf(platformModule))
         RootApp()
     }

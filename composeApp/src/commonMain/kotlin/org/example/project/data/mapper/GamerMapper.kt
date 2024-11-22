@@ -5,6 +5,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format.DateTimeFormat
 import kotlinx.datetime.toLocalDate
 import org.example.project.data.model.sportsman.GamerResponse
+import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.gameType.GameTypeUI
 import org.example.project.domain.model.sportsman.SportsmanUI
 import org.example.project.utils.orEmpty
@@ -29,7 +30,8 @@ fun GamerResponse.toUI(): SportsmanUI {
         mpk = mpk?.toIntOrNull().orEmpty(),
         imt = imt?.toDoubleOrNull().orEmpty(),
         birthDay = birthday?.localDate(),
-        gameTypeUI = GameTypeUI.Default //todo с бэка надо
+        gameTypeUI = GameTypeUI.Default, //todo с бэка надо
+        group = GroupUI.Default //todo с бэка надо
     )
 }
 

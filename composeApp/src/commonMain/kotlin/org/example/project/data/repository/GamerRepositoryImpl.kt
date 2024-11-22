@@ -17,6 +17,7 @@ import org.example.project.platform.checkFileSize
 import org.example.project.utils.Constants
 import org.jetbrains.compose.resources.getString
 import org.koin.core.component.KoinComponent
+import kotlin.collections.orEmpty
 
 class GamerRepositoryImpl(
     private val maxiPulseApi: MaxiPulseApi,
@@ -26,6 +27,17 @@ class GamerRepositoryImpl(
         return apiCall(
             call = {
                 maxiPulseApi.getSportsmans()
+            },
+            mapResponse = {
+                it.data?.map { it.toUI() }.orEmpty()
+            }
+        )
+    }
+
+    override suspend fun getGamersByGroupId(groupId: String): Either<Failure, List<SportsmanUI>> {
+        return apiCall(
+            call = {
+                maxiPulseApi.getSportsmansByGroupId(/***groupId*/)
             },
             mapResponse = {
                 it.data?.map { it.toUI() }.orEmpty()
@@ -64,7 +76,7 @@ class GamerRepositoryImpl(
             }
         }
         val list = buildList<Form> {
-            if (!sportsmanUI.avatar.startsWith("http")) {
+            if (!sportsmanUI.avatar.startsWith("http") && sportsmanUI.avatar.isNotBlank()) {
                 add(Form.FormFile("image", sportsmanUI.avatar))
             }
             if (gamerId != null) {

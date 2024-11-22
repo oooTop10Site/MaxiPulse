@@ -8,6 +8,7 @@ import org.example.project.platform.Failure
 interface GamerRepository {
 
     suspend fun getGamers(): Either<Failure, List<SportsmanUI>>
+    suspend fun getGamersByGroupId(groupId: String): Either<Failure, List<SportsmanUI>>
     suspend fun getGamer(gamerId: String): Either<Failure, SportsmanUI>
     suspend fun editGamer(
         gamerId: String? = null,
@@ -15,5 +16,4 @@ interface GamerRepository {
     ): Either<Failure, Unit>
 
     suspend fun getGameTypes(): Either<Failure, List<GameTypeUI>>
-
 }

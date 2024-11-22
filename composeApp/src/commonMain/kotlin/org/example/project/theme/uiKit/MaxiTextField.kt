@@ -137,7 +137,7 @@ fun MaxiOutlinedTextField(
     minLines: Int = 1,
     onClick: (() -> Unit)? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Dp = 20.dp,
+    shape: Shape = RoundedCornerShape(20.dp),
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
         unfocusedBorderColor = MaxiPulsTheme.colors.uiKit.textFieldStroke,
         errorBorderColor = Color.Transparent,
@@ -217,7 +217,7 @@ fun MaxiOutlinedTextField(
                             interactionSource = interactionSource,
                             modifier = Modifier.align(Alignment.CenterStart),
                             colors = colors,
-                            shape = RoundedCornerShape(shape),
+                            shape = shape ,
                             focusedBorderThickness = FocusedBorderThickness,
                             unfocusedBorderThickness = UnfocusedBorderThickness,
                         )

@@ -19,7 +19,7 @@ class UIKitColors(
     val divider: Color,
     val card: Color,
     val sportsmanAvatarBackground: Color,
-
+    val textDropDown: Color,
     val grey500: Color,
     val grey800: Color,
     val grey400: Color,
@@ -48,6 +48,8 @@ fun uiKitColors() = UIKitColors(
     divider = Color(0xFFA0A0A0),
     card = Color(0xFFF0F0F0),
     sportsmanAvatarBackground = Color(0xFFD9D9D9),
+    textDropDown = Color(0xFFC5C5C5),
+
 
     grey800 = Color(0xFF696969),
     grey500 = Color(0xFFDFDFDF),

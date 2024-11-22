@@ -32,7 +32,8 @@ fun CompositionCard(
     modifier: Modifier = Modifier,
     title: String,
     members: Int,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onEdit: () -> Unit,
 ) {
     Column(
         modifier.background(
@@ -63,7 +64,9 @@ fun CompositionCard(
             Icon(
                 painterResource(Res.drawable.pencil),
                 contentDescription = null,
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(24.dp).clickableBlank {
+                    onEdit()
+                },
                 tint = MaxiPulsTheme.colors.uiKit.primary
             )
 

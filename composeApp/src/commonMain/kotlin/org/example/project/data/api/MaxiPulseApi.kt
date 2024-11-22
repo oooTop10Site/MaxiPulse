@@ -26,6 +26,9 @@ interface MaxiPulseApi {
     @GET("api/gamer")
     suspend fun getSportsmans(): BaseResponse<List<GamerResponse>>
 
+    @GET("api/gamer")
+    suspend fun getSportsmansByGroupId(): BaseResponse<List<GamerResponse>> //todo на бэке тоже надо
+
     @GET("api/gamer/{id}")
     suspend fun getSportsmanById(@Path("id") id: String): BaseResponse<GamerResponse>
 
@@ -42,6 +45,12 @@ interface MaxiPulseApi {
 
     @GET("api/game-type")
     suspend fun getGameTypes(): BaseResponse<List<GameTypeResponse>>
+
+    @GET("api/training-stage")
+    suspend fun getTrainingStages(): BaseResponse<List<GameTypeResponse>>
+
+    @GET("api/rank")
+    suspend fun getRanks(): BaseResponse<List<GameTypeResponse>>
 
 
     //group
