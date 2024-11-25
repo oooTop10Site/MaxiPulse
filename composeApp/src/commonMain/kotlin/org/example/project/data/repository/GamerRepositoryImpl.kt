@@ -7,6 +7,7 @@ import org.example.project.data.mapper.toUI
 import org.example.project.domain.model.gameType.GameTypeUI
 import org.example.project.domain.model.sportsman.SportsmanUI
 import org.example.project.domain.repository.GamerRepository
+import org.example.project.ext.toInt
 import org.example.project.ext.toServer
 import org.example.project.platform.Either
 import org.example.project.platform.Failure
@@ -95,7 +96,7 @@ class GamerRepositoryImpl(
             add(Form.FormBody("imt", sportsmanUI.imt.toString()))
             add(Form.FormBody("mpk", sportsmanUI.mpk.toString()))
             add(Form.FormBody("game_type_id", sportsmanUI.gameTypeUI.id))
-            add(Form.FormBodyBool("is_male", sportsmanUI.isMale))
+            add(Form.FormBodyInt("is_male", sportsmanUI.isMale.toInt()))
             if (sportsmanUI.birthDay != null) {
                 add(Form.FormBody("birthday", sportsmanUI.birthDay.toServer()))
             }

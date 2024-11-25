@@ -60,8 +60,21 @@
     <string name="sensor_already_assigned">Датчик уже назначен</string>
     <string name="max_file_size">Максимальный размер медиа и файла - %1$d МБ</string>
     <string name="biometrics_indicators">Показатели биометрии</string>
+    <string name="utp_title">Планирование учебно-тренировочного процесса</string>
+    <string name="stage_readiness">Этап подготовки</string>
+    <string name="year_education">Год обучения</string>
+    <string name="period_readiness">Период подготовки</string>
+    <string name="mesocycle">Мезоцикл</string>
+    <string name="microcycle">Микроцикл</string>
     <string name="sport_training_indicators">Показатели спортивной подготовки</string>
     <string name="attention_user_with_not_active_sensor_desc">Выбран игрок с неактивным или находящимся вне зоны доступа датчиком. Вы уверены, что хотите начать тренировку?</string>
     <string name="what_do_if_sensor_not_active">Что делать, если датчик неактивен?</string>
     <string name="what_do_if_sensor_not_active_desc">1. Убедитесь, что датчик включен и горит индикатор.\n\n2. Убедитесь, что датчик имеет хороший контакт с кожей.\n\n3. Попробуйте заменить батарейки внутри датчика.\n\n4. Переподключите или замените датчик.</string>
+    <string name="monday">Понедельник</string>
+    <string name="tuesday">Вторник</string>
+    <string name="wednesday">Среда</string>
+    <string name="thursday">Четверг</string>
+    <string name="friday">Пятница</string>
+    <string name="saturday">Суббота</string>
+    <string name="sunday">Воскресенье</string>
 </resources>
