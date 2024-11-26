@@ -33,7 +33,11 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.style.TextOverflow
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.big_arrow_down
+import maxipuls.composeapp.generated.resources.calendar
 import maxipuls.composeapp.generated.resources.load_analysis
+import maxipuls.composeapp.generated.resources.period
+import maxipuls.composeapp.generated.resources.training
+import maxipuls.composeapp.generated.resources.training_day
 import org.example.project.ext.getCurrentWeekDates
 import org.example.project.ext.toAnalizeColor
 import org.example.project.ext.toText
@@ -41,6 +45,9 @@ import org.example.project.ext.toTextShort
 import org.example.project.ext.toUI
 import org.example.project.ext.toUIDayOfMonth
 import org.example.project.theme.MaxiPulsTheme
+import org.example.project.theme.uiKit.MaxiSwitch
+import org.example.project.theme.uiKit.MaxiTextFieldMenu
+import org.example.project.utils.Constants
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -58,7 +65,7 @@ class LoadAnalizeScreen : Screen {
             DayOfWeekTrainingUI(expectTrainingMark = 450, trainingMark = 321),
             DayOfWeekTrainingUI(expectTrainingMark = 300, trainingMark = 123),
             DayOfWeekTrainingUI(expectTrainingMark = 390, trainingMark = 490),
-            DayOfWeekTrainingUI(expectTrainingMark = 440, trainingMark = 130),
+            DayOfWeekTrainingUI(expectTrainingMark = 440, trainingMark = 800),
             DayOfWeekTrainingUI(expectTrainingMark = 0, trainingMark = 0),
         )
         val daysOfWeek = getCurrentWeekDates()
@@ -72,11 +79,64 @@ class LoadAnalizeScreen : Screen {
                     color = MaxiPulsTheme.colors.uiKit.textColor,
                     textAlign = TextAlign.Center
                 ),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp)
             )
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 30.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(Modifier.weight(1f, false), verticalAlignment = Alignment.CenterVertically) {
+                    MaxiTextFieldMenu<String>(
+                        items = emptyList(),
+                        currentValue = "",
+                        placeholderText = stringResource(Res.string.period),
+                        itemToString = { it },
+                        text = "",
+                        modifier = Modifier.height(Constants.TextFieldHeight).weight(1f)
+                    )
+                    Spacer(Modifier.size(20.dp))
+                    Box(modifier = Modifier.weight(1f)) {
+                        Icon(
+                            painterResource(Res.drawable.calendar),
+                            modifier = Modifier.size(30.dp),
+                            contentDescription = null
+                        )
+                    }
+                }
+                Row(
+                    Modifier.weight(1f, false),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Text(
+                        text = stringResource(Res.string.training),
+                        style = MaxiPulsTheme.typography.regular.copy(
+                            fontSize = 16.sp,
+                            lineHeight = 16.sp,
+                            color = MaxiPulsTheme.colors.uiKit.textColor,
+                        )
+                    )
+                    Spacer(Modifier.size(20.dp))
+                    MaxiSwitch(
+                        checked = false,
+                        onCheckedChange = {},
+                        modifier = Modifier.height(25.dp)
+                    )
+                    Spacer(Modifier.size(20.dp))
+                    Text(
+                        text = stringResource(Res.string.training_day),
+                        style = MaxiPulsTheme.typography.regular.copy(
+                            fontSize = 16.sp,
+                            lineHeight = 16.sp,
+                            color = MaxiPulsTheme.colors.uiKit.textColor,
+                        ),
+                        modifier = Modifier.weight(1f,false)
+                    )
+                }
+            }
             Column(modifier = Modifier) {
                 Box(modifier = Modifier.weight(1f)) {
-                    var ratingWidth by remember { mutableStateOf(0.dp) }
                     Column(modifier = Modifier.fillMaxSize()) {
                         ratings.forEachIndexed { index, item ->
                             val shape = when {
@@ -94,10 +154,10 @@ class LoadAnalizeScreen : Screen {
                                     0.dp
                                 )
                             }
-                            Row(modifier = Modifier.weight(1f)) {
+                            val next = ratings.getOrNull(index + 1) ?: 0
+                            Row(modifier = Modifier.weight(((item - next).toDouble() / 800.0).toFloat())) {
                                 Box(
-                                    modifier = Modifier.width(55.dp).fillMaxHeight()
-                                        ,
+                                    modifier = Modifier.width(55.dp).fillMaxHeight(),
                                     contentAlignment = Alignment.TopStart
                                 ) {
                                     Text(
@@ -125,7 +185,7 @@ class LoadAnalizeScreen : Screen {
                     }
                     Row(
                         modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth()
-                            .padding(start = 95.dp,end = 40.dp,),
+                            .padding(start = 95.dp, end = 40.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.Bottom
                     ) {
@@ -190,7 +250,7 @@ class LoadAnalizeScreen : Screen {
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth()
-                        .padding(start = 95.dp,end = 40.dp, bottom = 20.dp, top = 20.dp),
+                        .padding(start = 95.dp, end = 40.dp, bottom = 20.dp, top = 20.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Bottom
                 ) {

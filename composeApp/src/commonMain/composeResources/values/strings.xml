@@ -84,4 +84,7 @@
     <string name="friday_sh">Пт</string>
     <string name="saturday_sh">Сб</string>
     <string name="sunday_sh">Вс</string>
+    <string name="period">Период</string>
+    <string name="training_day">Тренеровочный день</string>
+    <string name="training">Тренеровка</string>
 </resources>
