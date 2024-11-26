@@ -77,4 +77,11 @@
     <string name="friday">Пятница</string>
     <string name="saturday">Суббота</string>
     <string name="sunday">Воскресенье</string>
+    <string name="monday_sh">Пн</string>
+    <string name="tuesday_sh">Вт</string>
+    <string name="wednesday_sh">Ср</string>
+    <string name="thursday_sh">Чт</string>
+    <string name="friday_sh">Пт</string>
+    <string name="saturday_sh">Сб</string>
+    <string name="sunday_sh">Вс</string>
 </resources>
