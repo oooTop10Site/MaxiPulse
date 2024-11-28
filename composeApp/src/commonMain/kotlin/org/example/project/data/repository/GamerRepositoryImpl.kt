@@ -5,7 +5,9 @@ import maxipuls.composeapp.generated.resources.max_file_size
 import org.example.project.data.api.MaxiPulseApi
 import org.example.project.data.mapper.toUI
 import org.example.project.domain.model.gameType.GameTypeUI
+import org.example.project.domain.model.rank.RankUI
 import org.example.project.domain.model.sportsman.SportsmanUI
+import org.example.project.domain.model.trainingStage.TrainingStageUI
 import org.example.project.domain.repository.GamerRepository
 import org.example.project.ext.toInt
 import org.example.project.ext.toServer
@@ -38,7 +40,7 @@ class GamerRepositoryImpl(
     override suspend fun getGamersByGroupId(groupId: String): Either<Failure, List<SportsmanUI>> {
         return apiCall(
             call = {
-                maxiPulseApi.getSportsmansByGroupId(/***groupId*/)
+                maxiPulseApi.getSportsmansByGroupId(groupId)
             },
             mapResponse = {
                 it.data?.map { it.toUI() }.orEmpty()
@@ -83,6 +85,8 @@ class GamerRepositoryImpl(
             if (gamerId != null) {
                 add(Form.FormBody("_method", "PUT"))
             }
+            add(Form.FormBodyInt("is_trainer", false.toInt()))
+            add(Form.FormBodyInt("age", sportsmanUI.age))
             add(Form.FormBody("firstname", sportsmanUI.name))
             add(Form.FormBody("lastname", sportsmanUI.lastname))
             add(Form.FormBody("middlename", sportsmanUI.middleName))
@@ -95,7 +99,11 @@ class GamerRepositoryImpl(
             add(Form.FormBodyInt("chss_pao", sportsmanUI.chssPao))
             add(Form.FormBody("imt", sportsmanUI.imt.toString()))
             add(Form.FormBody("mpk", sportsmanUI.mpk.toString()))
-            add(Form.FormBody("game_type_id", sportsmanUI.gameTypeUI.id))
+            if (sportsmanUI.gameTypeId.isNotBlank()) {
+                add(Form.FormBody("game_type_id", sportsmanUI.gameTypeId))
+                add(Form.FormBody("training_stage_id", sportsmanUI.trainigStageId))
+                add(Form.FormBody("rank_id", sportsmanUI.rankId))
+            }
             add(Form.FormBodyInt("is_male", sportsmanUI.isMale.toInt()))
             if (sportsmanUI.birthDay != null) {
                 add(Form.FormBody("birthday", sportsmanUI.birthDay.toServer()))
@@ -124,6 +132,30 @@ class GamerRepositoryImpl(
         return apiCall(
             call = {
                 maxiPulseApi.getGameTypes()
+            },
+            mapResponse = {
+                it.data?.map { it.toUI() }.orEmpty()
+            }
+        )
+    }
+
+    override suspend fun getRank(gameTypeId: String): Either<Failure, List<RankUI>> {
+        return apiCall(
+            call = {
+                maxiPulseApi.getRanks(gameTypeId)
+
+            },
+            mapResponse =  {
+                it.data?.map { it.toUI() }.orEmpty()
+
+            }
+        )
+    }
+
+    override suspend fun getTrainingStage(gameTypeId: String): Either<Failure, List<TrainingStageUI>> {
+        return apiCall(
+            call = {
+                maxiPulseApi.getTrainingStages(gameTypeId)
             },
             mapResponse = {
                 it.data?.map { it.toUI() }.orEmpty()

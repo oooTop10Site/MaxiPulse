@@ -30,8 +30,10 @@ fun GamerResponse.toUI(): SportsmanUI {
         mpk = mpk?.toIntOrNull().orEmpty(),
         imt = imt?.toDoubleOrNull().orEmpty(),
         birthDay = birthday?.localDate(),
-        gameTypeUI = GameTypeUI.Default, //todo с бэка надо
-        group = GroupUI.Default //todo с бэка надо
+        gameTypeId = "", //todo с бэка надо
+        groupId = "", //todo с бэка надо
+        rankId = "", //todo с бэка надо
+        trainigStageId = "", //todo с бэка надо
     )
 }
 

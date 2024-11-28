@@ -81,10 +81,11 @@ fun <T> MaxiTextFieldResMenu(
                     .fillMaxWidth()
                     .height(Constants.TextFieldHeight),
                 value = text,
+                enabled = enabled,
                 isError = isError,
                 readOnly = true,
                 onClick = {
-                    if (!isExpand) {
+                    if(enabled) {
                         isExpand = !isExpand
                     }
                 },
@@ -125,7 +126,7 @@ fun <T> MaxiTextFieldResMenu(
                     ) {
                         Column(
                             modifier = Modifier.width(width)
-                                .heightIn(max = 150.dp).verticalScroll(rememberScrollState())
+                                .heightIn(max = 163.dp)
                                 .clip(RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp))
                                 .background(
                                     color = MaxiPulsTheme.colors.uiKit.white,
@@ -143,35 +144,37 @@ fun <T> MaxiTextFieldResMenu(
                                     width = 1.dp
                                 ),
                         ) {
-                            items.forEachIndexed { index, item ->
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().clickableBlank {
-                                        onChangeWorkScope(item)
-                                        isExpand = !isExpand
-                                    },
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = stringResource(itemToString(item)),
-                                        style = MaxiPulsTheme.typography.medium.copy(
-                                            color = if (currentValue == item) MaxiPulsTheme.colors.uiKit.textColor else MaxiPulsTheme.colors.uiKit.placeholder,
-                                            fontSize = 14.sp,
-                                            lineHeight = 14.sp
-                                        ),
-                                        modifier = Modifier.padding(
-                                            top = 10.dp,
-                                            bottom = 10.dp,
-                                            start = 16.dp,
-                                            end = 16.dp
+                            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                                items.forEachIndexed { index, item ->
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().clickableBlank {
+                                            onChangeWorkScope(item)
+                                            isExpand = !isExpand
+                                        },
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = stringResource(itemToString(item)),
+                                            style = MaxiPulsTheme.typography.medium.copy(
+                                                color = if (currentValue == item) MaxiPulsTheme.colors.uiKit.textColor else MaxiPulsTheme.colors.uiKit.placeholder,
+                                                fontSize = 14.sp,
+                                                lineHeight = 14.sp
+                                            ),
+                                            modifier = Modifier.padding(
+                                                top = 10.dp,
+                                                bottom = 10.dp,
+                                                start = 16.dp,
+                                                end = 16.dp
+                                            )
                                         )
-                                    )
-                                }
+                                    }
 
-                                if (index != items.size - 1) {
-                                    HorizontalDivider(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        color = MaxiPulsTheme.colors.uiKit.grey500
-                                    )
+                                    if (index != items.size - 1) {
+                                        HorizontalDivider(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            color = MaxiPulsTheme.colors.uiKit.grey500
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -256,7 +259,7 @@ fun <T> MaxiTextFieldMenu(
                     ) {
                         Column(
                             modifier = Modifier.width(width)
-                                .heightIn(max = 150.dp).verticalScroll(rememberScrollState())
+                                .heightIn(max = 163.dp)
                                 .clip(RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp))
                                 .background(
                                     color = MaxiPulsTheme.colors.uiKit.white,
@@ -274,35 +277,37 @@ fun <T> MaxiTextFieldMenu(
                                     width = 1.dp
                                 ),
                         ) {
-                            items.forEachIndexed { index, item ->
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().clickableBlank {
-                                        onChangeWorkScope(item)
-                                        isExpand = !isExpand
-                                    },
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = itemToString(item),
-                                        style = MaxiPulsTheme.typography.medium.copy(
-                                            color = if (currentValue == item) MaxiPulsTheme.colors.uiKit.textColor else MaxiPulsTheme.colors.uiKit.placeholder,
-                                            fontSize = 14.sp,
-                                            lineHeight = 14.sp
-                                        ),
-                                        modifier = Modifier.padding(
-                                            top = 10.dp,
-                                            bottom = 10.dp,
-                                            start = 16.dp,
-                                            end = 16.dp
+                            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                                items.forEachIndexed { index, item ->
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().clickableBlank {
+                                            onChangeWorkScope(item)
+                                            isExpand = !isExpand
+                                        },
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = itemToString(item),
+                                            style = MaxiPulsTheme.typography.medium.copy(
+                                                color = if (currentValue == item) MaxiPulsTheme.colors.uiKit.textColor else MaxiPulsTheme.colors.uiKit.placeholder,
+                                                fontSize = 14.sp,
+                                                lineHeight = 14.sp
+                                            ),
+                                            modifier = Modifier.padding(
+                                                top = 10.dp,
+                                                bottom = 10.dp,
+                                                start = 16.dp,
+                                                end = 16.dp
+                                            )
                                         )
-                                    )
-                                }
+                                    }
 
-                                if (index != items.size - 1) {
-                                    HorizontalDivider(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        color = MaxiPulsTheme.colors.uiKit.grey500
-                                    )
+                                    if (index != items.size - 1) {
+                                        HorizontalDivider(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            color = MaxiPulsTheme.colors.uiKit.grey500
+                                        )
+                                    }
                                 }
                             }
                         }

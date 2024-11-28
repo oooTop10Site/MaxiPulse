@@ -4,11 +4,18 @@ import org.example.project.data.api.MaxiPulseApi
 import org.example.project.data.mapper.toUI
 import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.repository.GroupRepository
+import org.example.project.ext.toInt
+import org.example.project.ext.toServer
 import org.example.project.platform.Either
 import org.example.project.platform.Failure
+import org.example.project.platform.Form
+import org.example.project.platform.MultipartManager
 import org.example.project.platform.apiCall
 
-class GroupRepositoryImpl(private val maxiPulseApi: MaxiPulseApi) : GroupRepository {
+class GroupRepositoryImpl(
+    private val maxiPulseApi: MaxiPulseApi,
+    private val multipartManager: MultipartManager
+) : GroupRepository {
     override suspend fun getGroups(): Either<Failure, List<GroupUI>> {
         return apiCall(
             call = {
@@ -27,6 +34,63 @@ class GroupRepositoryImpl(private val maxiPulseApi: MaxiPulseApi) : GroupReposit
             },
             mapResponse = {
                 it.data?.toUI() ?: GroupUI.Default
+            }
+        )
+    }
+
+    override suspend fun createGroup(
+        name: String,
+        image: String,
+        sportmans: List<String>
+    ): Either<Failure, Unit> {
+        val list = buildList<Form> {
+            add(Form.FormBody("name", name))
+            if (!image.startsWith("http") && image.isNotBlank()) {
+                add(Form.FormFile("image", image))
+            }
+            sportmans.map {
+                add(Form.FormBody("gamers[][gamer_id]", it))
+            }
+        }
+
+        val body = multipartManager.createMultipart(
+            list
+        )
+        return apiCall(
+            call = {
+                maxiPulseApi.createGroup(
+                    body
+                )
+            }
+        )
+    }
+
+    override suspend fun editGroup(
+        groupId: String,
+        name: String,
+        image: String,
+        sportmans: List<String>
+    ): Either<Failure, Unit> {
+        val list = buildList<Form> {
+            add(Form.FormBody("_method", "PUT"))
+            add(Form.FormBody("name", name))
+            if (!image.startsWith("http") && image.isNotBlank()) {
+                add(Form.FormFile("image", image))
+            }
+            sportmans.map {
+                add(Form.FormBody("gamers[][gamer_id]", it))
+            }
+        }
+
+        val body = multipartManager.createMultipart(
+            list
+        )
+        return apiCall(
+
+            call = {
+                maxiPulseApi.editGroup(
+                    id = groupId, request = body
+                )
             }
         )
     }

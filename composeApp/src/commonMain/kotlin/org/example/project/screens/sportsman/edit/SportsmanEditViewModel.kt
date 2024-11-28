@@ -20,7 +20,10 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 import maxipuls.composeapp.generated.resources.success_save
 import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.gameType.GameTypeUI
+import org.example.project.domain.model.rank.RankUI
+import org.example.project.domain.model.trainingStage.TrainingStageUI
 import org.example.project.domain.repository.GroupRepository
+import org.example.project.ext.calculateAge
 
 
 internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, SportsmanEditEvent>(
@@ -37,6 +40,8 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
                     gamerRepository.getGamer(gamerId = id)
                 },
                 success = {
+                    loadTrainingStages(it.gameTypeId)
+                    loadRanks(it.gameTypeId)
                     reduceLocal {
                         state.copy(
                             sportsmanUI = it,
@@ -58,6 +63,31 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
                     state.copy(
                         gameTypes = it
                     )
+                }
+            }
+        )
+    }
+
+    fun loadRanks(gameTypeId: String = state.sportsmanUI.gameTypeId) = intent {
+        launchOperation(
+            operation = {
+                gamerRepository.getRank(gameTypeId)
+            },
+            success = {
+                reduceLocal {
+                    state.copy(ranks = it)
+                }
+            }
+        )
+    }
+    fun loadTrainingStages(gameTypeId: String = state.sportsmanUI.gameTypeId) = intent {
+        launchOperation(
+            operation = {
+                gamerRepository.getTrainingStage(gameTypeId)
+            },
+            success = {
+                reduceLocal {
+                    state.copy(trainingStages = it)
                 }
             }
         )
@@ -88,13 +118,14 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
 
     fun changeDate(year: Int, month: Int, day: Int) = intent {
         reduce {
+            val birthday = LocalDate(year = year, monthNumber = month, dayOfMonth = day)
             state.copy(
                 sportsmanUI = state.sportsmanUI.copy(
-                    birthDay = LocalDate(year = year, monthNumber = month, dayOfMonth = day)
+                    age = birthday.calculateAge(),
+                    birthDay = birthday
                 )
             )
         }
-
     }
 
     fun save() = intent {
@@ -212,87 +243,49 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
         }
     }
 
-    fun changeExpandSex() = intent {
-        reduce {
-            state.copy(
-                expandSex = !state.expandSex
-            )
-        }
-    }
-
-    fun changeExpandSportStage() = intent {
-        reduce {
-            state.copy(
-                expandSportStage = !state.expandSportStage
-            )
-        }
-    }
-
-    fun changeSportStage() = intent {
-
-    }
-
-    fun changeExpandSportCategory() = intent {
-        reduce {
-            state.copy(
-                expandSportCategory = !state.expandSportCategory
-            )
-        }
-    }
-
-    fun changeSportCategory() = intent {
-
-    }
-
-
-    fun changeExpandSport() = intent {
-        reduce {
-            state.copy(
-                expandSport = !state.expandSport
-            )
-        }
-    }
-
     fun changeSport(gameTypeUI: GameTypeUI) = intent {
-        reduce {
-            state.copy(
-                sportsmanUI = state.sportsmanUI.copy(
-                    gameTypeUI = gameTypeUI
+        if(gameTypeUI.id != state.sportsmanUI.gameTypeId) {
+            reduce {
+                state.copy(
+                    sportsmanUI = state.sportsmanUI.copy(
+                        gameTypeId = gameTypeUI.id, trainigStageId = "", rankId = ""
+                    )
                 )
-            )
+            }
         }
+        loadRanks(gameTypeUI.id)
+        loadTrainingStages(gameTypeUI.id)
     }
 
-
-    fun changeExpandGroup() = intent {
-        reduce {
-            state.copy(
-                expandGroup = !state.expandGroup
-            )
-        }
-    }
 
     fun changeGroup(value: GroupUI) = intent {
         reduce {
             state.copy(
                 sportsmanUI = state.sportsmanUI.copy(
-                    group = value
+                    groupId = value.id
                 )
             )
         }
     }
 
-
-    fun changeExpandCouch() = intent {
+    fun changeRank(value: RankUI) = intent {
         reduce {
             state.copy(
-                expandCouch = !state.expandCouch
+                sportsmanUI = state.sportsmanUI.copy(
+                    rankId = value.id
+                )
             )
         }
     }
 
-    fun changeCouch() = intent {
-
+    fun changeTrainingStage(value: TrainingStageUI) = intent {
+        reduce {
+            state.copy(
+                sportsmanUI = state.sportsmanUI.copy(
+                    trainigStageId = value.id
+                )
+            )
+        }
     }
 
 

@@ -22,16 +22,18 @@ data class SportsmanUI(
     val chssMax: Int,
     val chssResting: Int,
     val birthDay: LocalDate?,
-    val gameTypeUI: GameTypeUI,
-    val group: GroupUI
+    val gameTypeId: String,
+    val rankId: String,
+    val groupId: String,
+    val trainigStageId: String
 ) {
     val fio: String
         get() = "$lastname $name $middleName"
 
     companion object {
         val Default = SportsmanUI(
-            "", 0, "", "", "", 0, 0, 0, "", true, 0, 0.0, 0, 0, 0, 0, null, GameTypeUI.Default,
-            GroupUI.Default
+            "", 0, "", "", "", 0, 0, 0, "", true, 0, 0.0, 0, 0, 0, 0, null, "",
+            "", "", ""
         )
     }
 }

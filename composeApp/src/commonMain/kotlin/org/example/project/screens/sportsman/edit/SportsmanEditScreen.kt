@@ -95,6 +95,8 @@ import maxipuls.composeapp.generated.resources.weight
 import org.example.project.domain.model.ButtonActions
 import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.gameType.GameTypeUI
+import org.example.project.domain.model.rank.RankUI
+import org.example.project.domain.model.trainingStage.TrainingStageUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.granted
 import org.example.project.ext.isMaleToString
@@ -347,20 +349,21 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         placeholder = stringResource(Res.string.date_birthday),
                                     )
                                     Spacer(Modifier.size(20.dp))
-
-                                    MaxiTextFieldResMenu<String>(
-                                        currentValue = "",
-                                        text = "",
+                                    val currentTrainingStage = state.trainingStages.find { it.id == state.sportsmanUI.trainigStageId }
+                                    MaxiTextFieldMenu<TrainingStageUI>(
+                                        currentValue = currentTrainingStage?: TrainingStageUI.Default,
+                                        text = currentTrainingStage?.name.orEmpty(),
                                         onChangeWorkScope = {
-                                            viewModel.changeSportStage()
+                                            viewModel.changeTrainingStage(it)
                                         },
                                         modifier = Modifier.height(Constants.TextFieldHeight)
                                             .weight(1f),
                                         placeholderText = stringResource(Res.string.stage_sport_ready),
-                                        items = listOf(),
+                                        items = state.trainingStages,
                                         itemToString = {
-                                            Res.string.ok
+                                            it.name
                                         },
+//                                        enabled = state.sportsmanUI.gameTypeId.isNotBlank()
                                     )
                                 }
                                 Row(
@@ -391,20 +394,21 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         },
                                     )
                                     Spacer(Modifier.size(20.dp))
-
-                                    MaxiTextFieldResMenu<String>(
-                                        currentValue = "",
-                                        text = "",
+                                    val currentRankUI = state.ranks.find { it.id == state.sportsmanUI.rankId }
+                                    MaxiTextFieldMenu<RankUI>(
+                                        currentValue = currentRankUI?: RankUI.Default,
+                                        text = currentRankUI?.name.orEmpty(),
                                         onChangeWorkScope = {
-                                            viewModel.changeSportCategory()
+                                            viewModel.changeRank(it)
                                         },
                                         modifier = Modifier.height(Constants.TextFieldHeight)
                                             .weight(1f),
                                         placeholderText = stringResource(Res.string.sport_category),
-                                        items = listOf(),
+                                        items = state.ranks,
                                         itemToString = {
-                                            Res.string.ok
+                                            it.name
                                         },
+//                                        enabled = state.sportsmanUI.gameTypeId.isNotBlank()
                                     )
                                 }
                                 MaxiButton(
@@ -436,9 +440,10 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(80.dp)
                             ) {
+                                val currentGameType = state.gameTypes.find { it.id == state.sportsmanUI.gameTypeId }
                                 MaxiTextFieldMenu<GameTypeUI>(
-                                    text = state.sportsmanUI.gameTypeUI.name,
-                                    currentValue = state.sportsmanUI.gameTypeUI,
+                                    text = currentGameType?.name.orEmpty(),
+                                    currentValue = currentGameType?: GameTypeUI.Default,
                                     onChangeWorkScope = {
                                         viewModel.changeSport(it)
                                     },
@@ -450,10 +455,10 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         it.name
                                     },
                                 )
-
+                                val currentGroup = state.groups.find { it.id == state.sportsmanUI.groupId }
                                 MaxiTextFieldMenu<GroupUI>(
-                                    text = state.sportsmanUI.group.title,
-                                    currentValue = state.sportsmanUI.group,
+                                    text = currentGroup?.title.orEmpty(),
+                                    currentValue = currentGroup?: GroupUI.Default,
                                     onChangeWorkScope = {
                                         viewModel.changeGroup(it)
                                     },
@@ -465,13 +470,13 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         it.title
                                     },
 
-                                )
+                                    )
 
                                 MaxiTextFieldResMenu<String>(
                                     text = "",
                                     currentValue = "",
                                     onChangeWorkScope = {
-                                        viewModel.changeCouch()
+
                                     },
                                     modifier = Modifier.height(Constants.TextFieldHeight)
                                         .weight(1f),

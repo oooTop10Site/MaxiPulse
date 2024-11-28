@@ -8,5 +8,7 @@ interface GroupRepository {
 
     suspend fun getGroups(): Either<Failure, List<GroupUI>>
     suspend fun getGroupById(groupId: String): Either<Failure, GroupUI>
+    suspend fun createGroup(name: String, image: String, sportmans: List<String>): Either<Failure, Unit>
+    suspend fun editGroup(groupId: String, name: String, image: String, sportmans: List<String>): Either<Failure, Unit>
 
 }

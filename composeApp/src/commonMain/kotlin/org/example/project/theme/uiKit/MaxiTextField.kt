@@ -142,7 +142,7 @@ fun MaxiOutlinedTextField(
         unfocusedBorderColor = MaxiPulsTheme.colors.uiKit.textFieldStroke,
         errorBorderColor = Color.Transparent,
         focusedBorderColor = MaxiPulsTheme.colors.uiKit.textFieldStroke,
-        disabledBorderColor = Color.Transparent
+//        disabledBorderColor = Color.Transparent
     )
 ) {
     val focusManager = LocalFocusManager.current

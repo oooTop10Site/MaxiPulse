@@ -2,14 +2,29 @@ package org.example.project.ext
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.until
 import maxipuls.composeapp.generated.resources.Res
+import maxipuls.composeapp.generated.resources.by_april
+import maxipuls.composeapp.generated.resources.by_august
+import maxipuls.composeapp.generated.resources.by_december
+import maxipuls.composeapp.generated.resources.by_february
+import maxipuls.composeapp.generated.resources.by_january
+import maxipuls.composeapp.generated.resources.by_july
+import maxipuls.composeapp.generated.resources.by_june
+import maxipuls.composeapp.generated.resources.by_march
+import maxipuls.composeapp.generated.resources.by_may
+import maxipuls.composeapp.generated.resources.by_november
+import maxipuls.composeapp.generated.resources.by_october
+import maxipuls.composeapp.generated.resources.by_september
 import maxipuls.composeapp.generated.resources.friday
 import maxipuls.composeapp.generated.resources.friday_sh
 import maxipuls.composeapp.generated.resources.monday
@@ -89,6 +104,31 @@ fun DayOfWeek.toTextShort(): StringResource {
         DayOfWeek.SUNDAY -> Res.string.sunday_sh
         else -> Res.string.monday_sh
     }
+}
+
+fun Month?.toByText(): StringResource {
+    return when (this) {
+        Month.JANUARY -> Res.string.by_january
+        Month.FEBRUARY -> Res.string.by_february
+        Month.MARCH -> Res.string.by_march
+        Month.APRIL -> Res.string.by_april
+        Month.MAY -> Res.string.by_may
+        Month.JUNE -> Res.string.by_june
+        Month.JULY -> Res.string.by_july
+        Month.AUGUST -> Res.string.by_august
+        Month.SEPTEMBER -> Res.string.by_september
+        Month.OCTOBER -> Res.string.by_october
+        Month.NOVEMBER -> Res.string.by_november
+        Month.DECEMBER -> Res.string.by_december
+        else -> {
+            Res.string.by_january
+        }
+    }
+}
+
+fun LocalDate.calculateAge(): Int {
+    val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+    return this.until(today, DateTimeUnit.YEAR)
 }
 
 fun getCurrentWeekDates(): List<LocalDate> {

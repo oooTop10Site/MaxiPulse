@@ -34,6 +34,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.currentOrThrow
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.back_ic
+import maxipuls.composeapp.generated.resources.close_ic
+import maxipuls.composeapp.generated.resources.close_solid_ic
 import maxipuls.composeapp.generated.resources.pencil
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.group.groupEdit.GroupEditScreen
@@ -107,22 +109,45 @@ class GroupDetailScreen(private val groupId: String) : Screen {
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-
-                        Box(
-                            modifier = Modifier.size(40.dp)
-                                .background(MaxiPulsTheme.colors.uiKit.primary, shape = CircleShape)
-                                .clip(CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                painterResource(Res.drawable.pencil),
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp).clickableBlank {
-                                    rootNavigator.push(GroupEditScreen(groupId = groupId))
-                                },
-                                tint = MaxiPulsTheme.colors.uiKit.lightTextColor
-                            )
-                        }
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(40.dp)) {
+                            Box(
+                                modifier = Modifier.size(40.dp)
+                                    .background(
+                                        MaxiPulsTheme.colors.uiKit.primary,
+                                        shape = CircleShape
+                                    )
+                                    .clip(CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painterResource(Res.drawable.pencil),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp).clickableBlank {
+                                        rootNavigator.push(GroupEditScreen(groupId = groupId))
+                                    },
+                                    tint = MaxiPulsTheme.colors.uiKit.lightTextColor
+                                )
+                            }
+//                            Box(
+//                                modifier = Modifier.size(40.dp)
+//                                    .background(
+//                                        MaxiPulsTheme.colors.uiKit.primary,
+//                                        shape = CircleShape
+//                                    )
+//                                    .clip(CircleShape),
+//                                contentAlignment = Alignment.Center
+//                            ) {
+                                Icon(
+                                    painterResource(Res.drawable.close_solid_ic),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(40.dp).clickableBlank {
+                                        //todo я хз чо тут надо
+//                                        rootNavigator.push(GroupEditScreen(groupId = groupId))
+                                    },
+                                    tint = MaxiPulsTheme.colors.uiKit.primary
+                                )
+                            }
+//                        }
                     }
                     Spacer(
                         Modifier.size(20.dp)

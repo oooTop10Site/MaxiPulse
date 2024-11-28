@@ -11,3 +11,10 @@ fun Int.toAnalizeColor(): Color {
         else -> Color.Unspecified
     }
 }
+
+//fun Int.toRightMark(): Double {
+//    var result = this
+//    if (result > 140) {
+//        result += result +
+//    }
+//}

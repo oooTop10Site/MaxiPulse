@@ -2,13 +2,19 @@
 
 package org.example.project.screens.group.groupEdit
 
+import maxipuls.composeapp.generated.resources.Res
+import maxipuls.composeapp.generated.resources.success_save
+import org.example.project.domain.manager.MessageObserverManager
+import org.example.project.domain.model.sportsman.SportsmanUI
 import org.example.project.domain.repository.GamerRepository
 import org.example.project.domain.repository.GroupRepository
 import org.example.project.platform.BaseScreenModel
+import org.jetbrains.compose.resources.getString
 import org.koin.core.component.inject
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import kotlin.getValue
 
@@ -17,9 +23,38 @@ internal class GroupEditViewModel :
 
     private val groupRepository: GroupRepository by inject()
     private val gamerRepository: GamerRepository by inject()
+    private val observerManager: MessageObserverManager by inject()
 
-    fun save() = intent {
+    fun save(addSportsmans: List<String> = emptyList<String>()) = intent {
+        val message = getString(Res.string.success_save)
+        launchOperation(operation = {
+            println("state.filteredSportsmans.map { it.id } + addSportsmans ${state.filteredSportsmans.map { it.id } + addSportsmans}")
+            groupRepository.editGroup(
+                groupId = state.groupUI.id,
+                name = state.groupUI.title,
+                image = state.groupUI.avatar,
+                sportmans = state.filteredSportsmans.map { it.id } + addSportsmans
+            )
+        },
+            success = {
+                observerManager.putMessage(message)
+                postSideEffectLocal(GroupEditEvent.Success)
+            })
+    }
 
+    fun allSportsman() = intent {
+        launchOperation(
+            operation = {
+                gamerRepository.getGamers()
+            },
+            success = {
+                reduceLocal {
+                    state.copy(
+                        allSportsmans = it
+                    )
+                }
+            }
+        )
     }
 
     fun changeGroupTitle(value: String) = blockingIntent {
@@ -68,4 +103,11 @@ internal class GroupEditViewModel :
         }
     }
 
+    fun changeSearch(value: String) = blockingIntent {
+        reduce {
+            state.copy(
+                search = value
+            )
+        }
+    }
 }

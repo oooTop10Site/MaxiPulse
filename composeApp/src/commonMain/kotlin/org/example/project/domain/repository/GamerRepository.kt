@@ -1,7 +1,9 @@
 package org.example.project.domain.repository
 
 import org.example.project.domain.model.gameType.GameTypeUI
+import org.example.project.domain.model.rank.RankUI
 import org.example.project.domain.model.sportsman.SportsmanUI
+import org.example.project.domain.model.trainingStage.TrainingStageUI
 import org.example.project.platform.Either
 import org.example.project.platform.Failure
 
@@ -16,4 +18,6 @@ interface GamerRepository {
     ): Either<Failure, Unit>
 
     suspend fun getGameTypes(): Either<Failure, List<GameTypeUI>>
+    suspend fun getRank(gameTypeId: String): Either<Failure, List<RankUI>>
+    suspend fun getTrainingStage(gameTypeId: String): Either<Failure, List<TrainingStageUI>>
 }

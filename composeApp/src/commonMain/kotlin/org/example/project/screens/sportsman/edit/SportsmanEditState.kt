@@ -2,8 +2,10 @@ package org.example.project.screens.sportsman.edit
 
 import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.gameType.GameTypeUI
+import org.example.project.domain.model.rank.RankUI
 import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.domain.model.sportsman.SportsmanUI
+import org.example.project.domain.model.trainingStage.TrainingStageUI
 
 data class SportsmanEditState(
     val sportsmanUI: SportsmanUI,
@@ -16,7 +18,9 @@ data class SportsmanEditState(
     val expandSport: Boolean,
     val expandGroup: Boolean,
     val expandCouch: Boolean,
-    val groups: List<GroupUI>
+    val groups: List<GroupUI>,
+    val ranks: List<RankUI>,
+    val trainingStages: List<TrainingStageUI>,
 ) {
     companion object {
         val InitState = SportsmanEditState(
@@ -30,6 +34,8 @@ data class SportsmanEditState(
             false,
             false,
             false,
+            emptyList(),
+            emptyList(),
             emptyList()
         )
     }

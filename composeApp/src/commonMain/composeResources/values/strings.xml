@@ -87,4 +87,16 @@
     <string name="period">Период</string>
     <string name="training_day">Тренеровочный день</string>
     <string name="training">Тренеровка</string>
+    <string name="by_january">января</string>
+    <string name="by_february">февраля</string>
+    <string name="by_march">марта</string>
+    <string name="by_april">апреля</string>
+    <string name="by_may">мая</string>
+    <string name="by_june">июня</string>
+    <string name="by_july">июля</string>
+    <string name="by_august">августа</string>
+    <string name="by_september">сентября</string>
+    <string name="by_october">октября</string>
+    <string name="by_november">ноября</string>
+    <string name="by_december">декабря</string>
 </resources>

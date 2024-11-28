@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,6 +27,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,13 +41,17 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.currentOrThrow
+import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.Res
+import maxipuls.composeapp.generated.resources.add_ic
 import maxipuls.composeapp.generated.resources.back_ic
 import maxipuls.composeapp.generated.resources.cancel
 import maxipuls.composeapp.generated.resources.close_ic
 import maxipuls.composeapp.generated.resources.pencil
 import maxipuls.composeapp.generated.resources.save
+import maxipuls.composeapp.generated.resources.search
 import maxipuls.composeapp.generated.resources.title_group
+import org.example.project.domain.model.sportsman.SportsmanUI
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.group.groupDetail.GroupDetailViewModel
 import org.example.project.screens.root.RootNavigator
@@ -51,7 +59,10 @@ import org.example.project.screens.root.ScreenSize
 import org.example.project.screens.sportsman.components.SportsmanCard
 import org.example.project.screens.sportsman.detail.SportsmanDetailScreen
 import org.example.project.theme.MaxiPulsTheme
+import org.example.project.theme.uiKit.MaxiAlertDialog
+import org.example.project.theme.uiKit.MaxiAlertDialogButtons
 import org.example.project.theme.uiKit.MaxiButton
+import org.example.project.theme.uiKit.MaxiCheckbox
 import org.example.project.theme.uiKit.MaxiOutlinedButton
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.theme.uiKit.MaxiPageContainer
@@ -71,6 +82,9 @@ class GroupEditScreen(private val groupId: String) : Screen {
         val rootNavigator = RootNavigator.currentOrThrow
         val state by viewModel.stateFlow.collectAsState()
         val screenSize = ScreenSize.currentOrThrow
+        var isOpen by remember {
+            mutableStateOf(false)
+        }
         val chunkSize = when (screenSize.widthSizeClass) {
             WindowWidthSizeClass.Medium -> 1
             WindowWidthSizeClass.Expanded -> 2
@@ -80,6 +94,26 @@ class GroupEditScreen(private val groupId: String) : Screen {
 
         LaunchedEffect(viewModel) {
             viewModel.loadData(groupId)
+            launch {
+                viewModel.container.sideEffectFlow.collect {
+                    when (it) {
+                        GroupEditEvent.Success -> {
+                            if (!isOpen) {
+                                rootNavigator.pop()
+                            } else {
+                                isOpen = false
+                                viewModel.loadData(groupId)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        LaunchedEffect(isOpen) {
+            if (isOpen) {
+                viewModel.allSportsman()
+            }
         }
 
         MaxiPageContainer(
@@ -160,10 +194,10 @@ class GroupEditScreen(private val groupId: String) : Screen {
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                painterResource(Res.drawable.pencil),
+                                painterResource(Res.drawable.add_ic),
                                 contentDescription = null,
                                 modifier = Modifier.size(24.dp).clickableBlank {
-                                    rootNavigator.push(GroupEditScreen(groupId = groupId))
+                                    isOpen = !isOpen
                                 },
                                 tint = MaxiPulsTheme.colors.uiKit.lightTextColor
                             )
@@ -230,5 +264,132 @@ class GroupEditScreen(private val groupId: String) : Screen {
             }
 
         }
+        SelectSportsmansDialog(
+            existSportsmans = state.filteredSportsmans,
+            sportsmans = state.allSportsmans,
+            changeIsOpened = {
+                isOpen = !isOpen
+            },
+            isOpen = isOpen,
+            save = {
+                viewModel.save(it)
+            },
+            text = state.search,
+            changeText = {
+                viewModel.changeSearch(it)
+            }
+        )
+    }
+}
+
+@Composable
+internal fun SelectSportsmansDialog(
+    existSportsmans: List<SportsmanUI>,
+    sportsmans: List<SportsmanUI>,
+    changeIsOpened: () -> Unit,
+    isOpen: Boolean,
+    text: String,
+    save: (List<String>) -> Unit,
+    changeText: (String) -> Unit,
+) {
+    val screenSize = ScreenSize.currentOrThrow
+    val rootNavigator = RootNavigator.currentOrThrow
+    val chunkSize = when (screenSize.widthSizeClass) {
+        WindowWidthSizeClass.Medium -> 1
+        WindowWidthSizeClass.Expanded -> 2
+        WindowWidthSizeClass.Compact -> 1
+        else -> 1
+    }
+    val selectSportsman by remember {
+        mutableStateOf(existSportsmans)
+    }
+    if (isOpen) {
+        MaxiAlertDialog(
+            modifier = Modifier.fillMaxWidth().padding(50.dp),
+            descriptionContent = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    MaxiOutlinedTextField(value = text, onValueChange = {
+                        changeText(it)
+                    }, modifier = Modifier.height(Constants.TextFieldHeight).fillMaxWidth(),
+                        placeholder = stringResource(Res.string.search), trailingIcon = {
+                            Icon(
+                                painterResource(Res.drawable.search),
+                                contentDescription = null,
+                                tint = MaxiPulsTheme.colors.uiKit.textColor,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        })
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
+                        contentPadding = PaddingValues(20.dp)
+                    ) {
+                        items(
+                            sportsmans
+                                .chunked(chunkSize)
+                        ) { chunk ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth().animateItem(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(25.dp)
+                            ) {
+                                chunk.forEach { item ->
+                                    SportsmanCard(
+                                        modifier = Modifier.weight(1f),
+                                        name = item.name,
+                                        number = item.number,
+                                        middleName = item.middleName,
+                                        lastname = item.lastname,
+                                        age = item.age,
+                                        height = item.height,
+                                        weight = item.weight,
+                                        avatar = item.avatar,
+                                        isMale = item.isMale,
+                                        showEditIcon = true,
+                                        editIcon = {
+                                            val isExits = item.id in selectSportsman.map { it.id }
+                                            MaxiCheckbox(
+                                                checked = isExits,
+                                                onCheckedChange = {
+                                                    if (isExits) {
+                                                        selectSportsman.filter { it.id != item.id }
+                                                    } else {
+                                                        selectSportsman + item
+                                                    }
+                                                })
+                                        },
+                                        onClick = {
+                                            rootNavigator.push(SportsmanDetailScreen(item.id))
+                                        }
+                                    ) {
+                                    }
+                                }
+                                if (chunk.size != chunkSize) {
+                                    for (i in 1..chunkSize - chunk.size) {
+                                        Box(modifier = Modifier.weight(1f))
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            },
+            onDismiss = {
+                changeIsOpened()
+            },
+            accept = {
+                save(selectSportsman.map { it.id })
+            },
+            alertDialogButtons = MaxiAlertDialogButtons.CancelAccept,
+            acceptText = stringResource(Res.string.save),
+            cancel = {
+                changeIsOpened()
+            },
+            cancelText = stringResource(Res.string.cancel)
+        )
     }
 }
