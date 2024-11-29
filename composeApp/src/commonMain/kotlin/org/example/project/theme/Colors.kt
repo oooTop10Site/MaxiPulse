@@ -20,6 +20,8 @@ class UIKitColors(
     val card: Color,
     val sportsmanAvatarBackground: Color,
     val textDropDown: Color,
+    val disable: Color,
+
     val grey500: Color,
     val grey800: Color,
     val grey400: Color,
@@ -49,7 +51,7 @@ fun uiKitColors() = UIKitColors(
     card = Color(0xFFF0F0F0),
     sportsmanAvatarBackground = Color(0xFFD9D9D9),
     textDropDown = Color(0xFFC5C5C5),
-
+    disable = Color(0xFF3093F9),
 
     grey800 = Color(0xFF696969),
     grey500 = Color(0xFFDFDFDF),
@@ -57,6 +59,7 @@ fun uiKitColors() = UIKitColors(
 
     green500 = Color(0xFF7ECA22),
     white = Color.White,
+
     shimmerColor = listOf(
         Color(0xFFB8B5B5),
         Color(0xFF8F8B8B),

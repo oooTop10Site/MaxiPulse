@@ -73,16 +73,18 @@ fun MaxiAlertDialog(
                             textAlign = TextAlign.Center
                         )
                     }
-
-                    descriptionContent?.invoke() ?: Text(
-                        text = description.orEmpty(), style = MaxiPulsTheme.typography.regular.copy(
-                            color = MaxiPulsTheme.colors.uiKit.textColor,
-                            fontSize = 20.sp,
-                            lineHeight = 20.sp
-                        ),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(bottom = 40.dp)
-                    )
+                    Box(modifier = Modifier.weight(1f, false)) {
+                        descriptionContent?.invoke() ?: Text(
+                            text = description.orEmpty(),
+                            style = MaxiPulsTheme.typography.regular.copy(
+                                color = MaxiPulsTheme.colors.uiKit.textColor,
+                                fontSize = 20.sp,
+                                lineHeight = 20.sp
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(bottom = 40.dp)
+                        )
+                    }
                     when (alertDialogButtons) {
                         Accept -> {
                             MaxiButton(

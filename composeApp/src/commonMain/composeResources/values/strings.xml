@@ -99,4 +99,10 @@
     <string name="by_october">октября</string>
     <string name="by_november">ноября</string>
     <string name="by_december">декабря</string>
+    <string name="accessed_devices">Доступные устройства</string>
+    <string name="saved_devices">Сохраненные устройства</string>
+    <string name="active">Активен</string>
+    <string name="disable">Неактивен</string>
+    <string name="search_available_devices">Поиск доступных устройств...</string>
+    <string name="empty_string" />
 </resources>

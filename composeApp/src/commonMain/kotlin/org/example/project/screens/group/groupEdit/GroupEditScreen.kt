@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -300,8 +301,11 @@ internal fun SelectSportsmansDialog(
         WindowWidthSizeClass.Compact -> 1
         else -> 1
     }
-    val selectSportsman by remember {
-        mutableStateOf(existSportsmans)
+    var selectSportsman: List<SportsmanUI> by remember {
+        mutableStateOf(listOf())
+    }
+    LaunchedEffect(existSportsmans) {
+        selectSportsman += existSportsmans
     }
     if (isOpen) {
         MaxiAlertDialog(
@@ -323,9 +327,9 @@ internal fun SelectSportsmansDialog(
                             )
                         })
                     LazyColumn(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().fillMaxHeight(0.9f),
                         verticalArrangement = Arrangement.spacedBy(20.dp),
-                        contentPadding = PaddingValues(20.dp)
+                        contentPadding = PaddingValues(vertical = 20.dp)
                     ) {
                         items(
                             sportsmans
@@ -337,6 +341,7 @@ internal fun SelectSportsmansDialog(
                                 horizontalArrangement = Arrangement.spacedBy(25.dp)
                             ) {
                                 chunk.forEach { item ->
+                                    val isExits = item.id in selectSportsman.map { it.id }
                                     SportsmanCard(
                                         modifier = Modifier.weight(1f),
                                         name = item.name,
@@ -350,11 +355,11 @@ internal fun SelectSportsmansDialog(
                                         isMale = item.isMale,
                                         showEditIcon = true,
                                         editIcon = {
-                                            val isExits = item.id in selectSportsman.map { it.id }
+                                            println("CLICK ")
                                             MaxiCheckbox(
                                                 checked = isExits,
                                                 onCheckedChange = {
-                                                    if (isExits) {
+                                                    selectSportsman = if (isExits) {
                                                         selectSportsman.filter { it.id != item.id }
                                                     } else {
                                                         selectSportsman + item
@@ -362,7 +367,12 @@ internal fun SelectSportsmansDialog(
                                                 })
                                         },
                                         onClick = {
-                                            rootNavigator.push(SportsmanDetailScreen(item.id))
+                                            println("CLICK ")
+                                            selectSportsman = if (isExits) {
+                                                selectSportsman.filter { it.id != item.id }
+                                            } else {
+                                                selectSportsman + item
+                                            }
                                         }
                                     ) {
                                     }
