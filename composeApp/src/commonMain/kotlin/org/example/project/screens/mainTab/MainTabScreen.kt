@@ -83,10 +83,10 @@ import org.example.project.theme.uiKit.MaxiSnackbarHost
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class MainTabScreen(private val tab: Tab = MainTab) : Screen, KoinComponent {
+class MainTabScreen(private val tab: Tab = MainTab()) : Screen, KoinComponent {
     @Composable
     override fun Content() {
-        val tabsFirst = listOf(MainTab, TestTab, LogTab, UTPTab, LoadAnalizeTab)
+        val tabsFirst = listOf(MainTab(), TestTab, LogTab, UTPTab, LoadAnalizeTab)
         val tabsSecond = listOf(CompositionsTab, SportsmanTab, SensorTab, SettingsTab)
         val navigator = LocalNavigator.currentOrThrow
         var isOpen by remember { mutableStateOf(false) }

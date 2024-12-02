@@ -3,10 +3,12 @@ package org.example.project.screens.main
 import org.example.project.domain.model.MainAlertDialog
 import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.domain.model.sportsman.SportsmanSensorUI
+import org.example.project.domain.model.test.TestUI
 import org.example.project.platform.BaseScreenModel
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 
 internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.InitState) {
@@ -36,14 +38,28 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
         }
     }
 
-    fun startTraining() = intent {
+    fun startTraining(testUI: TestUI?) = intent {
+        val alertDialog = when {
+            state.sportsmans.find { it.sensor == null && it.id in state.selectSportsmans } != null -> MainAlertDialog.PlayerWithNoActiveSensor
+            else -> null
+        }
         reduce {
             state.copy(
-                alertDialog = when {
-                    state.sportsmans.find { it.sensor == null && it.id in state.selectSportsmans } != null -> MainAlertDialog.PlayerWithNoActiveSensor
-                    else -> null
-                }
+                alertDialog = alertDialog
             )
+        }
+        if(alertDialog == null) {
+            when(testUI) {
+                TestUI.ReadiesForUpload -> {
+                    //todo
+                }
+                TestUI.ShuttleRun -> {
+                    postSideEffect(MainEvent.ShuttleRun)
+                }
+                null -> {
+                    //todo
+                }
+            }
         }
     }
 

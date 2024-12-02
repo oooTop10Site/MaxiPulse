@@ -7,11 +7,12 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.house_blank
 import maxipuls.composeapp.generated.resources.main
+import org.example.project.domain.model.test.TestUI
 import org.example.project.screens.main.MainScreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-object MainTab : Tab {
+class MainTab(val testUI: TestUI? = null) : Tab {
     override val options: TabOptions
         @Composable
         get() = TabOptions(
@@ -23,7 +24,7 @@ object MainTab : Tab {
     @Composable
     override fun Content() {
         Navigator(
-            MainScreen()
+            MainScreen(testUI = testUI)
         )
     }
 }

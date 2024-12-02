@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -45,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.currentOrThrow
+import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.attention
 import maxipuls.composeapp.generated.resources.attention_user_with_not_active_sensor_desc
@@ -67,9 +69,12 @@ import maxipuls.composeapp.generated.resources.what_do_if_sensor_not_active
 import maxipuls.composeapp.generated.resources.what_do_if_sensor_not_active_desc
 import org.example.project.domain.model.ButtonActions
 import org.example.project.domain.model.MainAlertDialog
+import org.example.project.domain.model.test.TestUI
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.main.components.SportsmanSensorCard
+import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.root.ScreenSize
+import org.example.project.screens.tests.shuttleRun.ShuttleRunScreen
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiAlertDialog
 import org.example.project.theme.uiKit.MaxiAlertDialogButtons
@@ -82,13 +87,14 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.collections.chunked
 
-class MainScreen : Screen {
+class MainScreen(val testUI: TestUI? = null) : Screen {
     @Composable
     override fun Content() {
         MaxiPageContainer() {
             val viewModel = rememberScreenModel {
                 MainViewModel()
             }
+            val rootNavigator = RootNavigator.currentOrThrow
             val state by viewModel.stateFlow.collectAsState()
             val screenSize = ScreenSize.currentOrThrow
             val chunkSize = when (screenSize.widthSizeClass) {
@@ -102,6 +108,16 @@ class MainScreen : Screen {
                 WindowHeightSizeClass.Expanded -> 1.0
                 WindowHeightSizeClass.Compact -> 1.7
                 else -> 1.5
+            }
+
+            LaunchedEffect(viewModel) {
+                launch {
+                    viewModel.container.sideEffectFlow.collect {
+                        when (it) {
+                            MainEvent.ShuttleRun -> rootNavigator.push(ShuttleRunScreen())
+                        }
+                    }
+                }
             }
 
             MaxiPageContainer(
@@ -130,7 +146,7 @@ class MainScreen : Screen {
                             if (!state.isStartTraining) {
                                 viewModel.changeIsStartTraining()
                             } else {
-                                viewModel.startTraining()
+                                viewModel.startTraining(testUI)
                             }
                         }, shape = RoundedCornerShape(0.dp), text = stringResource(
                             Res.string.start_tarining
@@ -208,12 +224,9 @@ class MainScreen : Screen {
                                     }
                                 )
                             }
-
                             Spacer(
                                 Modifier.size(20.dp)
                             )
-
-
                         }
                     }
                 }
@@ -447,5 +460,4 @@ class MainScreen : Screen {
             }
         }
     }
-
 }

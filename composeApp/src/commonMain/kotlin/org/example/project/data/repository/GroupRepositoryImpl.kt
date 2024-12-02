@@ -43,6 +43,9 @@ class GroupRepositoryImpl(
         image: String,
         sportmans: List<String>
     ): Either<Failure, Unit> {
+        println(
+            "sportmans - $sportmans"
+        )
         val list = buildList<Form> {
             add(Form.FormBody("name", name))
             if (!image.startsWith("http") && image.isNotBlank()) {
@@ -71,16 +74,21 @@ class GroupRepositoryImpl(
         image: String,
         sportmans: List<String>
     ): Either<Failure, Unit> {
+        println(
+            "sportmans - $sportmans"
+        )
+        val sportmansForms = sportmans.map {
+            Form.FormBody("gamers[][gamer_id]", it)
+        }.toTypedArray()
         val list = buildList<Form> {
             add(Form.FormBody("_method", "PUT"))
             add(Form.FormBody("name", name))
-            if (!image.startsWith("http") && image.isNotBlank()) {
-                add(Form.FormFile("image", image))
-            }
-            sportmans.map {
-                add(Form.FormBody("gamers[][gamer_id]", it))
-            }
+            addAll(sportmansForms)
+//            if (!image.startsWith("http") && image.isNotBlank()) {
+//                add(Form.FormFile("image", image))
+//            }
         }
+
 
         val body = multipartManager.createMultipart(
             list

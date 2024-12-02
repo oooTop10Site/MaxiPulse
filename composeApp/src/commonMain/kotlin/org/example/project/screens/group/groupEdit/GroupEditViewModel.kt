@@ -38,6 +38,8 @@ internal class GroupEditViewModel :
         },
             success = {
                 observerManager.putMessage(message)
+                loadData(state.groupUI.id)
+                allSportsman()
                 postSideEffectLocal(GroupEditEvent.Success)
             })
     }
