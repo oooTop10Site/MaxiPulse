@@ -65,6 +65,7 @@ import maxipuls.composeapp.generated.resources.search
 import maxipuls.composeapp.generated.resources.sensor_already_assigned
 import maxipuls.composeapp.generated.resources.sensor_already_assigned_desc
 import maxipuls.composeapp.generated.resources.start_tarining
+import maxipuls.composeapp.generated.resources.start_test
 import maxipuls.composeapp.generated.resources.what_do_if_sensor_not_active
 import maxipuls.composeapp.generated.resources.what_do_if_sensor_not_active_desc
 import org.example.project.domain.model.ButtonActions
@@ -115,6 +116,7 @@ class MainScreen(val testUI: TestUI? = null) : Screen {
                     viewModel.container.sideEffectFlow.collect {
                         when (it) {
                             MainEvent.ShuttleRun -> rootNavigator.push(ShuttleRunScreen())
+                            MainEvent.ReadiesForUpload -> rootNavigator.push(ShuttleRunScreen())
                         }
                     }
                 }
@@ -148,8 +150,9 @@ class MainScreen(val testUI: TestUI? = null) : Screen {
                             } else {
                                 viewModel.startTraining(testUI)
                             }
-                        }, shape = RoundedCornerShape(0.dp), text = stringResource(
-                            Res.string.start_tarining
+                        }, shape = RoundedCornerShape(0.dp),
+                        text = stringResource(
+                            if (testUI == null) Res.string.start_tarining else Res.string.start_test
                         ), modifier = Modifier.fillMaxWidth().height((94 / buttonDivision).dp),
                         buttonActions = ButtonActions.Unlimit,
                         enabled = (state.alertDialog == null && state.selectSportsmans.isNotEmpty()) || !state.isStartTraining

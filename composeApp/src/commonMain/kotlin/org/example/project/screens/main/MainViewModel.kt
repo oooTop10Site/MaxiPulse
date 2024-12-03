@@ -51,7 +51,7 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
         if(alertDialog == null) {
             when(testUI) {
                 TestUI.ReadiesForUpload -> {
-                    //todo
+                    postSideEffect(MainEvent.ReadiesForUpload)
                 }
                 TestUI.ShuttleRun -> {
                     postSideEffect(MainEvent.ShuttleRun)

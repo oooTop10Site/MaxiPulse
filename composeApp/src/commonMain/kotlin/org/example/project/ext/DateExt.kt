@@ -12,6 +12,7 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.until
+import kotlinx.serialization.descriptors.PrimitiveKind
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.by_april
 import maxipuls.composeapp.generated.resources.by_august
@@ -140,4 +141,23 @@ fun getCurrentWeekDates(): List<LocalDate> {
     return List(7) { startOfWeek.plus(DatePeriod(days = it)) }
 }
 
+fun Long.formatSeconds(returnEmptyIfZero: Boolean = false): String {
+    val hours = this / 3600
+    val minutes = (this % 3600) / 60
+    val remainingSeconds = this % 60
+
+    val result = buildString {
+        if(hours != 0L) {
+            append(if (hours < 10) "0$hours" else "$hours")
+            append(":")
+        }
+        append(if (minutes < 10) "0$minutes" else "$minutes")
+        append(":")
+        append(if (remainingSeconds < 10) "0$remainingSeconds" else "$remainingSeconds")
+    }
+
+    return if (returnEmptyIfZero && this == 0L) {
+        ""
+    } else result
+}
 

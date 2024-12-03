@@ -186,16 +186,17 @@ class MainTabScreen(private val tab: Tab = MainTab()) : Screen, KoinComponent {
                                             modifier = Modifier.size(30.dp)
                                                 .align(Alignment.CenterVertically),
                                             contentDescription = null,
-                                            tint = if (tabNavigator.current == tabEach) MaxiPulsTheme.colors.uiKit.primary
+                                            tint = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
                                             else MaxiPulsTheme.colors.uiKit.lightTextColor
                                         )
                                     }
                                     if (isOpen) {
+
                                         Text(
                                             text = tabEach.options.title,
                                             style = MaxiPulsTheme.typography.medium.copy(
                                                 fontSize = 14.sp,
-                                                color = if (tabNavigator.current == tabEach) MaxiPulsTheme.colors.uiKit.primary
+                                                color = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
                                                 else MaxiPulsTheme.colors.uiKit.lightTextColor
                                             ),
                                             modifier = Modifier.padding(start = 18.dp).weight(1f)

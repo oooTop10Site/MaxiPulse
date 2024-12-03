@@ -4,17 +4,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
@@ -22,18 +27,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.Res
+import maxipuls.composeapp.generated.resources.arrow_right
+import maxipuls.composeapp.generated.resources.cone_ic
 import maxipuls.composeapp.generated.resources.shuttle_run
 import maxipuls.composeapp.generated.resources.start
+import maxipuls.composeapp.generated.resources.stop
 import maxipuls.composeapp.generated.resources.tests
 import org.example.project.domain.model.test.ShuttleRunSportsmanUI
+import org.example.project.domain.model.test.ShuttleRunStatus
+import org.example.project.ext.clickableBlank
+import org.example.project.ext.formatSeconds
 import org.example.project.ext.toUI
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiPageContainer
 import org.example.project.theme.uiKit.TopBarTitle
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 class ShuttleRunScreen : Screen {
@@ -44,6 +61,15 @@ class ShuttleRunScreen : Screen {
             ShuttleRunViewModel()
         }
         val state by viewModel.stateFlow.collectAsState()
+
+        LaunchedEffect(state.isStart) {
+            launch() {
+                while (state.isStart) {
+                    delay(999L)
+                    viewModel.incrementTime()
+                }
+            }
+        }
 
         MaxiPageContainer(topBar = {
             Column(
@@ -59,17 +85,61 @@ class ShuttleRunScreen : Screen {
                     ),
                 )
                 Spacer(Modifier.size(20.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Spacer(Modifier.weight(1f))
-                    Row(Modifier.weight(1f)) {
+                    Row(
+                        Modifier,
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.cone_ic),
+                            contentDescription = null,
+                            tint = if (!state.isLeft) MaxiPulsTheme.colors.uiKit.placeholder else MaxiPulsTheme.colors.uiKit.green500
+                        )
+                        Spacer(Modifier.size(77.dp))
+                        if (state.isLeft) {
+                            Icon(
+                                painter = painterResource(Res.drawable.arrow_right),
+                                contentDescription = null,
+                                modifier = Modifier.rotate(180f).size(52.dp),
+                                tint = MaxiPulsTheme.colors.uiKit.green500
+                            )
+                        } else {
+                            Box(Modifier.size(52.dp))
+                        }
+                        Spacer(Modifier.size(77.dp))
+
                         Text(
-                            text = state.time.toUI(),
+                            text = state.time.formatSeconds(),
                             style = MaxiPulsTheme.typography.bold.copy(
                                 fontSize = 40.sp,
                                 lineHeight = 40.sp,
                                 color = MaxiPulsTheme.colors.uiKit.primary
                             ),
                         )
+                        Spacer(Modifier.size(77.dp))
+                        if (!state.isLeft) {
+                            Icon(
+                                painter = painterResource(Res.drawable.arrow_right),
+                                contentDescription = null,
+                                modifier = Modifier.size(52.dp),
+                                tint = MaxiPulsTheme.colors.uiKit.secondary
+                            )
+                        } else {
+                            Box(Modifier.size(52.dp))
+                        }
+                        Spacer(Modifier.size(77.dp))
+                        Icon(
+                            painter = painterResource(Res.drawable.cone_ic),
+                            contentDescription = null,
+                            tint = if (state.isLeft) MaxiPulsTheme.colors.uiKit.placeholder else MaxiPulsTheme.colors.uiKit.secondary
+                        )
+
+
                     }
                     Spacer(Modifier.weight(1f))
                 }
@@ -80,16 +150,33 @@ class ShuttleRunScreen : Screen {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                MaxiButton(onClick = {}, text = stringResource(Res.string.start))
                 LazyVerticalGrid(
-                    columns = GridCells.FixedSize(150.dp),
+                    modifier = Modifier.weight(1f),
+                    columns = GridCells.Adaptive(150.dp),
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
+                    contentPadding = PaddingValues(20.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     items(state.users) {
-                        //todo
+                        SportsmanShuttleTestItem(modifier = Modifier.height(200.dp), it) {
+                            //todo
+                        }
                     }
                 }
+
+                MaxiButton(
+                    onClick = {
+                        if (state.isStart) {
+                            viewModel.stop()
+                        } else {
+                            viewModel.start()
+                        }
+                    },
+                    text = if (!state.isStart) stringResource(Res.string.start) else stringResource(
+                        Res.string.stop
+                    )
+                )
+
                 Spacer(Modifier.size(20.dp))
             }
         }
@@ -97,33 +184,38 @@ class ShuttleRunScreen : Screen {
 }
 
 @Composable
-fun SportsmanShuttleTestItem(modifier: Modifier = Modifier, sportsmanUI: ShuttleRunSportsmanUI) {
+fun SportsmanShuttleTestItem(
+    modifier: Modifier = Modifier,
+    sportsmanUI: ShuttleRunSportsmanUI,
+    onClick: () -> Unit
+) {
     Column(
         modifier = modifier.background(
             color = sportsmanUI.status.color,
             shape = RoundedCornerShape(25.dp)
         ).clip(RoundedCornerShape(25.dp)),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(25.dp)
     ) {
         Text(
-            text = "${sportsmanUI.lastname} ${sportsmanUI.firstname}",
+            text = "${sportsmanUI.lastname}\n${sportsmanUI.firstname}",
             style = MaxiPulsTheme.typography.semiBold.copy(
                 fontSize = 20.sp,
                 lineHeight = 20.sp,
                 color = MaxiPulsTheme.colors.uiKit.lightTextColor
             ),
             maxLines = 2,
+            textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 7.dp, start = 3.dp, end = 3.dp)
         )
-
-        Box(
-            modifier = Modifier.size(height = 49.dp, width = 94.dp)
+        Spacer(Modifier.weight(1f))
+        Column(
+            modifier = Modifier.width(94.dp)
                 .background(
                     color = MaxiPulsTheme.colors.uiKit.white.copy(alpha = 0.25f),
                     shape = RoundedCornerShape(25.dp)
                 ).clip(RoundedCornerShape(25.dp)),
-            contentAlignment = Alignment.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = sportsmanUI.chss.toString(),
@@ -135,8 +227,74 @@ fun SportsmanShuttleTestItem(modifier: Modifier = Modifier, sportsmanUI: Shuttle
                 maxLines = 1,
                 modifier = Modifier
             )
-        }
 
-        //todo кнопка по статусу
+            when(val status = sportsmanUI.status) {
+                is ShuttleRunStatus.Chill -> {
+                    Spacer(Modifier.size(10.dp))
+                    Text(
+                        text = status.timer.formatSeconds(),
+                        style = MaxiPulsTheme.typography.semiBold.copy(
+                            color = MaxiPulsTheme.colors.uiKit.lightTextColor,
+                            fontSize = 20.sp,
+                            lineHeight = 20.sp
+                        ),
+                        modifier = Modifier,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(Modifier.size(5.dp))
+                }
+                else -> {}
+            }
+        }
+        Spacer(Modifier.weight(1f))
+
+        when (val status = sportsmanUI.status) {
+            is ShuttleRunStatus.Chill, ShuttleRunStatus.TestEnd -> {
+                Box(
+                    modifier = Modifier.clip(RoundedCornerShape(25.dp)).fillMaxWidth()
+                        .padding(start = 7.dp, end = 7.dp, bottom = 8.dp).height(40.dp).clickableBlank() {
+                            onClick()
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(status.action),
+                        style = MaxiPulsTheme.typography.semiBold.copy(
+                            color = MaxiPulsTheme.colors.uiKit.lightTextColor,
+                            fontSize = 16.sp,
+                            lineHeight = 16.sp
+                        ),
+                        modifier = Modifier,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+
+            ShuttleRunStatus.Running -> {
+                Box(
+                    modifier = Modifier.padding(start = 7.dp, end = 7.dp, bottom = 8.dp).background(
+                        color = MaxiPulsTheme.colors.uiKit.white,
+                        shape = RoundedCornerShape(25.dp)
+                    ).clip(RoundedCornerShape(25.dp)).fillMaxWidth()
+                        .height(40.dp).clickableBlank() {
+                            onClick()
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(status.action),
+                        style = MaxiPulsTheme.typography.semiBold.copy(
+                            color = status.color,
+                            fontSize = 16.sp,
+                            lineHeight = 16.sp
+                        ),
+                        modifier = Modifier,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
     }
 }

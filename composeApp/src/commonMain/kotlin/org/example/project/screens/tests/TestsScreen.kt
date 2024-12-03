@@ -1,6 +1,7 @@
 package org.example.project.screens.tests
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,8 +37,10 @@ import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiPageContainer
 import org.jetbrains.compose.resources.stringResource
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -45,6 +49,7 @@ import maxipuls.composeapp.generated.resources.choose_type_activity
 import maxipuls.composeapp.generated.resources.reputation
 import maxipuls.composeapp.generated.resources.search
 import maxipuls.composeapp.generated.resources.start_test
+import maxipuls.composeapp.generated.resources.test_background
 import maxipuls.composeapp.generated.resources.test_desc
 import org.example.project.domain.model.test.TestUI
 import org.example.project.ext.clickableBlank
@@ -69,14 +74,18 @@ class TestsScreen : Screen {
         MaxiPageContainer(
             modifier = Modifier,
         ) {
+            if (state.selectTestUI == null) {
+                Image(
+                    painter = painterResource(Res.drawable.test_background),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier.fillMaxSize()
+
+                )
+            }
             Row(modifier = Modifier.fillMaxWidth()) {
                 if (state.selectTestUI == null) {
                     Box(modifier = Modifier.weight(1f).fillMaxHeight().padding(20.dp)) {
-//                        Image(
-//                            painter = painterResource(Res.drawable.test_background),
-//                            contentDescription = null,
-//                            contentScale = ContentScale.FillWidth
-//                        )
                         Text(
                             text = stringResource(Res.string.tests),
                             style = MaxiPulsTheme.typography.bold.copy(
@@ -160,7 +169,7 @@ class TestsScreen : Screen {
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
                         items(state.tests) {
-                            TestItem(modifier = Modifier.fillMaxWidth(), testUI = it) {
+                            TestItem(modifier = Modifier.fillMaxWidth(), testUI = it, isSelect = it == state.selectTestUI) {
                                 viewModel.changeTests(it)
                             }
                         }
@@ -177,10 +186,15 @@ class TestsScreen : Screen {
 internal fun TestItem(
     modifier: Modifier = Modifier,
     testUI: TestUI,
+    isSelect: Boolean,
     onClick: () -> Unit,
 ) {
     Row(
         modifier.then(
+            if(isSelect) Modifier.background(
+                color = MaxiPulsTheme.colors.uiKit.grey800,
+                shape = RoundedCornerShape(25.dp)
+            )  else {
             if (testUI.isPay) Modifier.background(
                 brush = Brush.linearGradient(
                     listOf(
@@ -196,7 +210,7 @@ internal fun TestItem(
             ) else Modifier.background(
                 color = MaxiPulsTheme.colors.uiKit.card,
                 shape = RoundedCornerShape(25.dp)
-            )
+            )}
         ).clip(RoundedCornerShape(25.dp)).clickableBlank() {
             onClick()
         }.animateContentSize(),
@@ -207,7 +221,7 @@ internal fun TestItem(
             modifier = Modifier.padding(vertical = 15.dp).size(24.dp),
             painter = painterResource(testUI.icon),
             contentDescription = null,
-            tint = if (testUI.isPay) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.textColor
+            tint = if (testUI.isPay || isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.textColor
         )
         Text(
             text = stringResource(testUI.title),
@@ -215,15 +229,17 @@ internal fun TestItem(
             style = MaxiPulsTheme.typography.semiBold.copy(
                 fontSize = 12.sp,
                 lineHeight = 12.sp,
-                color = if (testUI.isPay) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.textColor
+                color = if (testUI.isPay || isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.textColor
             )
         )
-//        Icon(
-//            modifier = Modifier.size(24.dp),
-//            painter = painterResource(Res.drawable.reputation),
-//            contentDescription = null,
-//            tint = if (testUI.isPay) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.textColor
-//        )
+        if(testUI.isPay) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                painter = painterResource(Res.drawable.reputation),
+                contentDescription = null,
+                tint = if (testUI.isPay || isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.textColor
+            )
+        }
         Spacer(Modifier.size(20.dp))
     }
 }

@@ -15,7 +15,7 @@ data class ShuttleRunSportsmanUI(
 )
 
 sealed class ShuttleRunStatus(val action: StringResource, val color: Color) {
-    object Chill : ShuttleRunStatus(action = Res.string.chill, color = Color(0xFF8BADD1))
+    class Chill(val timer: Long = 120) : ShuttleRunStatus(action = Res.string.chill, color = Color(0xFF8BADD1))
     object TestEnd : ShuttleRunStatus(action = Res.string.test_end, color = Color(0xFF808080))
     object Running :
         ShuttleRunStatus(action = Res.string.end, color = Color(0xFF83AF4D).copy(alpha = 0.8f))

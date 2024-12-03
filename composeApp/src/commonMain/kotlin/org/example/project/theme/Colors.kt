@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 class UIKitColors(
     val background: Color,
     val primary: Color,
+    val secondary: Color,
     val dropDown: Color,
     val buttonContainer: Color,
     val checkBoxContainer: Color,
@@ -37,6 +38,7 @@ fun uiKitColors() = UIKitColors(
     background = Color.White,
     buttonContainer = Color(0xFFE81F61),
     primary = Color(0xFFE81F61),
+    secondary = Color(0xFFDF0B40),
     dropDown = Color(0xFFf56495),
     linkedText = Color(0xFFE81F61),
     checkBoxContainer = Color(0xFFE81F61),
