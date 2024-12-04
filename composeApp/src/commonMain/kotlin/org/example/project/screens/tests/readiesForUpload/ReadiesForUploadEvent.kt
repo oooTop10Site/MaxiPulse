@@ -1,4 +1,5 @@
 package org.example.project.screens.tests.readiesForUpload
 
-class ReadiesForUploadEvent {
+sealed interface ReadiesForUploadEvent {
+    object Result: ReadiesForUploadEvent
 }

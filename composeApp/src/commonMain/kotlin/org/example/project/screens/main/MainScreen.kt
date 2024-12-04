@@ -75,6 +75,7 @@ import org.example.project.ext.clickableBlank
 import org.example.project.screens.main.components.SportsmanSensorCard
 import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.root.ScreenSize
+import org.example.project.screens.tests.readiesForUpload.ReadiesForUploadScreen
 import org.example.project.screens.tests.shuttleRun.ShuttleRunScreen
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiAlertDialog
@@ -116,7 +117,7 @@ class MainScreen(val testUI: TestUI? = null) : Screen {
                     viewModel.container.sideEffectFlow.collect {
                         when (it) {
                             MainEvent.ShuttleRun -> rootNavigator.push(ShuttleRunScreen())
-                            MainEvent.ReadiesForUpload -> rootNavigator.push(ShuttleRunScreen())
+                            MainEvent.ReadiesForUpload -> rootNavigator.push(ReadiesForUploadScreen())
                         }
                     }
                 }

@@ -40,16 +40,13 @@ import maxipuls.composeapp.generated.resources.cone_ic
 import maxipuls.composeapp.generated.resources.shuttle_run
 import maxipuls.composeapp.generated.resources.start
 import maxipuls.composeapp.generated.resources.stop
-import maxipuls.composeapp.generated.resources.tests
-import org.example.project.domain.model.test.ShuttleRunSportsmanUI
-import org.example.project.domain.model.test.ShuttleRunStatus
+import org.example.project.domain.model.test.TestSportsmanUI
+import org.example.project.domain.model.test.TestStatus
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.formatSeconds
-import org.example.project.ext.toUI
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiPageContainer
-import org.example.project.theme.uiKit.TopBarTitle
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -158,7 +155,7 @@ class ShuttleRunScreen : Screen {
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     items(state.users) {
-                        SportsmanShuttleTestItem(modifier = Modifier.height(200.dp), it) {
+                        SportsmanTestItem(modifier = Modifier.height(200.dp), it) {
                             //todo
                         }
                     }
@@ -184,9 +181,9 @@ class ShuttleRunScreen : Screen {
 }
 
 @Composable
-fun SportsmanShuttleTestItem(
+fun SportsmanTestItem(
     modifier: Modifier = Modifier,
-    sportsmanUI: ShuttleRunSportsmanUI,
+    sportsmanUI: TestSportsmanUI,
     onClick: () -> Unit
 ) {
     Column(
@@ -228,8 +225,8 @@ fun SportsmanShuttleTestItem(
                 modifier = Modifier
             )
 
-            when(val status = sportsmanUI.status) {
-                is ShuttleRunStatus.Chill -> {
+            when (val status = sportsmanUI.status) {
+                is TestStatus.Chill -> {
                     Spacer(Modifier.size(10.dp))
                     Text(
                         text = status.timer.formatSeconds(),
@@ -243,16 +240,18 @@ fun SportsmanShuttleTestItem(
                     )
                     Spacer(Modifier.size(5.dp))
                 }
+
                 else -> {}
             }
         }
         Spacer(Modifier.weight(1f))
 
         when (val status = sportsmanUI.status) {
-            is ShuttleRunStatus.Chill, ShuttleRunStatus.TestEnd -> {
+            is TestStatus.Chill, TestStatus.TestEnd, TestStatus.StandingPosition, TestStatus.LyingPosition -> {
                 Box(
                     modifier = Modifier.clip(RoundedCornerShape(25.dp)).fillMaxWidth()
-                        .padding(start = 7.dp, end = 7.dp, bottom = 8.dp).height(40.dp).clickableBlank() {
+                        .padding(start = 7.dp, end = 7.dp, bottom = 8.dp).height(40.dp)
+                        .clickableBlank() {
                             onClick()
                         },
                     contentAlignment = Alignment.Center
@@ -270,7 +269,7 @@ fun SportsmanShuttleTestItem(
                 }
             }
 
-            ShuttleRunStatus.Running -> {
+            TestStatus.Running -> {
                 Box(
                     modifier = Modifier.padding(start = 7.dp, end = 7.dp, bottom = 8.dp).background(
                         color = MaxiPulsTheme.colors.uiKit.white,
