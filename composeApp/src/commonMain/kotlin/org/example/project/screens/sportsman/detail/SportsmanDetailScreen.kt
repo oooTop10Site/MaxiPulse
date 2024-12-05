@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -48,6 +50,7 @@ import maxipuls.composeapp.generated.resources.chss_resting
 import maxipuls.composeapp.generated.resources.female_ic
 import maxipuls.composeapp.generated.resources.height
 import maxipuls.composeapp.generated.resources.imt
+import maxipuls.composeapp.generated.resources.marker_question
 import maxipuls.composeapp.generated.resources.mpk
 import maxipuls.composeapp.generated.resources.number_player
 import maxipuls.composeapp.generated.resources.pencil
@@ -61,6 +64,7 @@ import org.example.project.ext.clickableBlank
 import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.sportsman.edit.SportsmanEditScreen
 import org.example.project.theme.MaxiPulsTheme
+import org.example.project.theme.uiKit.HeartBPMGraph
 import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
@@ -129,10 +133,12 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-
                         Box(
                             modifier = Modifier.size(40.dp)
-                                .background(MaxiPulsTheme.colors.uiKit.primary, shape = CircleShape)
+                                .background(
+                                    MaxiPulsTheme.colors.uiKit.primary,
+                                    shape = CircleShape
+                                )
                                 .clip(CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
@@ -425,6 +431,32 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                             )
                         }
                     }
+                }
+
+                VerticalDivider(
+                    modifier = Modifier.fillMaxHeight(),
+                    color = MaxiPulsTheme.colors.uiKit.divider
+                )
+
+                Column(modifier = Modifier) {
+                    Spacer(Modifier.size(20.dp))
+                    Icon(
+                        painterResource(Res.drawable.marker_question),
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 20.dp).size(24.dp).clickableBlank {
+                            //todo
+                        }.align(Alignment.End),
+                        tint = MaxiPulsTheme.colors.uiKit.grey800
+                    )
+                    Spacer(Modifier.size(11.dp))
+
+                    Row(modifier = Modifier.weight(1f)) {
+                        Spacer(Modifier.size(20.dp))
+                        HeartBPMGraph(modifier = Modifier.width(150.dp))
+                        Spacer(Modifier.size(20.dp))
+                    }
+                    Spacer(Modifier.size(20.dp))
+
                 }
             }
         }

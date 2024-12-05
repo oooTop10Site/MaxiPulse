@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,6 +31,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -106,6 +108,7 @@ import org.example.project.platform.permission.model.Permission
 import org.example.project.screens.root.RootNavigator
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.ButtonTextStyle
+import org.example.project.theme.uiKit.HeartBPMGraph
 import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
@@ -739,6 +742,38 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                             }
                         }
                     }
+                }
+                VerticalDivider(
+                    modifier = Modifier.fillMaxHeight(),
+                    color = MaxiPulsTheme.colors.uiKit.divider
+                )
+
+                Column(modifier = Modifier) {
+                    Spacer(Modifier.size(20.dp))
+                    Box(
+                        modifier = Modifier.padding(end = 20.dp).size(40.dp)
+                            .background(MaxiPulsTheme.colors.uiKit.primary, shape = CircleShape)
+                            .clip(CircleShape).align(Alignment.End),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painterResource(Res.drawable.pencil),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp).clickableBlank {
+                                //todo
+                            },
+                            tint = MaxiPulsTheme.colors.uiKit.lightTextColor
+                        )
+                    }
+                    Spacer(Modifier.size(11.dp))
+
+                    Row(modifier = Modifier.weight(1f)) {
+                        Spacer(Modifier.size(20.dp))
+                        HeartBPMGraph(modifier = Modifier.width(150.dp))
+                        Spacer(Modifier.size(20.dp))
+                    }
+                    Spacer(Modifier.size(20.dp))
+
                 }
             }
         }
