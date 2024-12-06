@@ -45,77 +45,77 @@ fun MaxiAlertDialog(
     paddingValuesButton: PaddingValues = PaddingValues(0.dp),
     alertDialogButtons: MaxiAlertDialogButtons = MaxiAlertDialogButtons.CancelAccept
 ) {
-        Dialog(
-            properties = DialogProperties(
-                usePlatformDefaultWidth = false
-            ),
-            onDismissRequest = { onDismiss() },
+    Dialog(
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        ),
+        onDismissRequest = { onDismiss() },
+    ) {
+
+        Box(
+            modifier = modifier.background(
+                MaxiPulsTheme.colors.uiKit.background,
+                shape = RoundedCornerShape(50.dp)
+            ).clip(RoundedCornerShape(50.dp))
         ) {
-
-            Box(
-                modifier = modifier.background(
-                    MaxiPulsTheme.colors.uiKit.background,
-                    shape = RoundedCornerShape(50.dp)
-                ).clip(RoundedCornerShape(50.dp))
+            Column(
+                Modifier.fillMaxWidth().padding(paddingValues),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    Modifier.fillMaxWidth().padding(paddingValues),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    title?.let { text ->
-                        Text(
-                            text = text, style = MaxiPulsTheme.typography.bold.copy(
-                                color = MaxiPulsTheme.colors.uiKit.textColor,
-                                fontSize = 20.sp,
-                                lineHeight = 20.sp
-                            ),
-                            modifier = Modifier.padding(bottom = if (paddingAfterTitle) 40.dp else 0.dp),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                    Box(modifier = Modifier.weight(1f, false)) {
-                        descriptionContent?.invoke() ?: Text(
-                            text = description.orEmpty(),
-                            style = MaxiPulsTheme.typography.regular.copy(
-                                color = MaxiPulsTheme.colors.uiKit.textColor,
-                                fontSize = 20.sp,
-                                lineHeight = 20.sp
-                            ),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(bottom = 40.dp)
-                        )
-                    }
-                    when (alertDialogButtons) {
-                        Accept -> {
-                            MaxiButton(
-                                shape = RoundedCornerShape(15.dp),
-                                modifier = Modifier.padding(paddingValuesButton)
-                                    .height(54.dp).width(150.dp),
-                                onClick = {
-                                    accept()
-                                },
-                                text = acceptText,
-                            )
-                        }
-
-                        CancelAccept -> {
-                            AlertButtons(
-                                modifier = Modifier.fillMaxWidth()
-                                    .padding(paddingValuesButton),
-                                accept = {
-                                    accept()
-                                },
-                                acceptText = acceptText,
-                                cancel = {
-                                    cancel()
-                                },
-                                cancelText = cancelText.orEmpty()
-                            )
-                        }
-                    }
-
+                title?.let { text ->
+                    Text(
+                        text = text, style = MaxiPulsTheme.typography.bold.copy(
+                            color = MaxiPulsTheme.colors.uiKit.textColor,
+                            fontSize = 20.sp,
+                            lineHeight = 20.sp
+                        ),
+                        modifier = Modifier.padding(bottom = if (paddingAfterTitle) 40.dp else 0.dp),
+                        textAlign = TextAlign.Center
+                    )
                 }
+                Box(modifier = Modifier.weight(1f, false)) {
+                    descriptionContent?.invoke() ?: Text(
+                        text = description.orEmpty(),
+                        style = MaxiPulsTheme.typography.regular.copy(
+                            color = MaxiPulsTheme.colors.uiKit.textColor,
+                            fontSize = 20.sp,
+                            lineHeight = 20.sp
+                        ),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(bottom = 40.dp)
+                    )
+                }
+                when (alertDialogButtons) {
+                    Accept -> {
+                        MaxiButton(
+                            shape = RoundedCornerShape(15.dp),
+                            modifier = Modifier.padding(paddingValuesButton)
+                                .height(54.dp).width(150.dp),
+                            onClick = {
+                                accept()
+                            },
+                            text = acceptText,
+                        )
+                    }
+
+                    CancelAccept -> {
+                        AlertButtons(
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(paddingValuesButton),
+                            accept = {
+                                accept()
+                            },
+                            acceptText = acceptText,
+                            cancel = {
+                                cancel()
+                            },
+                            cancelText = cancelText.orEmpty()
+                        )
+                    }
+                }
+
             }
+        }
     }
 }
 

@@ -53,6 +53,14 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
         }
     }
 
+    fun changeSettingChssDialog() = intent {
+        reduce {
+            state.copy(
+                settingChssDialog = !state.settingChssDialog
+            )
+        }
+    }
+
     fun loadGameTypes() = intent {
         launchOperation(
             operation = {

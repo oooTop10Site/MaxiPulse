@@ -21,6 +21,7 @@ data class SportsmanEditState(
     val groups: List<GroupUI>,
     val ranks: List<RankUI>,
     val trainingStages: List<TrainingStageUI>,
+    val settingChssDialog: Boolean,
 ) {
     companion object {
         val InitState = SportsmanEditState(
@@ -36,7 +37,8 @@ data class SportsmanEditState(
             false,
             emptyList(),
             emptyList(),
-            emptyList()
+            emptyList(),
+            false
         )
     }
 }

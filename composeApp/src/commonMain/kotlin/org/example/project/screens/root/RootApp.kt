@@ -2,6 +2,8 @@ package org.example.project.screens.root
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.SnackbarHostState
@@ -61,8 +63,7 @@ fun RootApp() {
                     SlideTransition(
                         it,
                     ) {
-                        Box(Modifier.fillMaxSize().padding(50.dp))
-                        ThresholdEditor()
+                        it.Content()
                     }
 //                    val modifierSnackbarHost = when (windowSizeClass.widthSizeClass) {
 //                        WindowWidthSizeClass.Compact -> Modifier.fillMaxWidth()

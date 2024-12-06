@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
@@ -66,7 +67,10 @@ import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.add_large_ic
 import maxipuls.composeapp.generated.resources.back_ic
 import maxipuls.composeapp.generated.resources.biometrics_indicators
+import maxipuls.composeapp.generated.resources.by_age
+import maxipuls.composeapp.generated.resources.by_zone_chss
 import maxipuls.composeapp.generated.resources.calendar
+import maxipuls.composeapp.generated.resources.cancel
 import maxipuls.composeapp.generated.resources.canceled
 import maxipuls.composeapp.generated.resources.chss_max
 import maxipuls.composeapp.generated.resources.chss_pano
@@ -87,6 +91,7 @@ import maxipuls.composeapp.generated.resources.pencil
 import maxipuls.composeapp.generated.resources.profile
 import maxipuls.composeapp.generated.resources.right_ic
 import maxipuls.composeapp.generated.resources.save
+import maxipuls.composeapp.generated.resources.settings_chss_zone
 import maxipuls.composeapp.generated.resources.sex
 import maxipuls.composeapp.generated.resources.sport
 import maxipuls.composeapp.generated.resources.sport_category
@@ -109,12 +114,16 @@ import org.example.project.screens.root.RootNavigator
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.ButtonTextStyle
 import org.example.project.theme.uiKit.HeartBPMGraph
+import org.example.project.theme.uiKit.MaxiAlertDialog
+import org.example.project.theme.uiKit.MaxiAlertDialogButtons
 import org.example.project.theme.uiKit.MaxiButton
+import org.example.project.theme.uiKit.MaxiCheckbox
 import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.theme.uiKit.MaxiTextField
 import org.example.project.theme.uiKit.MaxiTextFieldMenu
 import org.example.project.theme.uiKit.MaxiTextFieldResMenu
+import org.example.project.theme.uiKit.ThresholdEditor
 import org.example.project.theme.uiKit.simpleVerticalScrollbar
 import org.example.project.utils.Constants
 import org.example.project.utils.previousOrPresentSelectableDates
@@ -136,6 +145,7 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
         val instant by remember { mutableStateOf(Clock.System.now()) }
         val datePickerState =
             rememberDatePickerState(selectableDates = previousOrPresentSelectableDates(instant))
+
         MaxiPageContainer() {
             val rootNavigator = RootNavigator.currentOrThrow
             val state by viewModel.stateFlow.collectAsState()
@@ -352,9 +362,11 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         placeholder = stringResource(Res.string.date_birthday),
                                     )
                                     Spacer(Modifier.size(20.dp))
-                                    val currentTrainingStage = state.trainingStages.find { it.id == state.sportsmanUI.trainigStageId }
+                                    val currentTrainingStage =
+                                        state.trainingStages.find { it.id == state.sportsmanUI.trainigStageId }
                                     MaxiTextFieldMenu<TrainingStageUI>(
-                                        currentValue = currentTrainingStage?: TrainingStageUI.Default,
+                                        currentValue = currentTrainingStage
+                                            ?: TrainingStageUI.Default,
                                         text = currentTrainingStage?.name.orEmpty(),
                                         onChangeWorkScope = {
                                             viewModel.changeTrainingStage(it)
@@ -397,9 +409,10 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         },
                                     )
                                     Spacer(Modifier.size(20.dp))
-                                    val currentRankUI = state.ranks.find { it.id == state.sportsmanUI.rankId }
+                                    val currentRankUI =
+                                        state.ranks.find { it.id == state.sportsmanUI.rankId }
                                     MaxiTextFieldMenu<RankUI>(
-                                        currentValue = currentRankUI?: RankUI.Default,
+                                        currentValue = currentRankUI ?: RankUI.Default,
                                         text = currentRankUI?.name.orEmpty(),
                                         onChangeWorkScope = {
                                             viewModel.changeRank(it)
@@ -443,10 +456,11 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(80.dp)
                             ) {
-                                val currentGameType = state.gameTypes.find { it.id == state.sportsmanUI.gameTypeId }
+                                val currentGameType =
+                                    state.gameTypes.find { it.id == state.sportsmanUI.gameTypeId }
                                 MaxiTextFieldMenu<GameTypeUI>(
                                     text = currentGameType?.name.orEmpty(),
-                                    currentValue = currentGameType?: GameTypeUI.Default,
+                                    currentValue = currentGameType ?: GameTypeUI.Default,
                                     onChangeWorkScope = {
                                         viewModel.changeSport(it)
                                     },
@@ -458,10 +472,11 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         it.name
                                     },
                                 )
-                                val currentGroup = state.groups.find { it.id == state.sportsmanUI.groupId }
+                                val currentGroup =
+                                    state.groups.find { it.id == state.sportsmanUI.groupId }
                                 MaxiTextFieldMenu<GroupUI>(
                                     text = currentGroup?.title.orEmpty(),
-                                    currentValue = currentGroup?: GroupUI.Default,
+                                    currentValue = currentGroup ?: GroupUI.Default,
                                     onChangeWorkScope = {
                                         viewModel.changeGroup(it)
                                     },
@@ -760,7 +775,7 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                             painterResource(Res.drawable.pencil),
                             contentDescription = null,
                             modifier = Modifier.size(24.dp).clickableBlank {
-                                //todo
+                                viewModel.changeSettingChssDialog()
                             },
                             tint = MaxiPulsTheme.colors.uiKit.lightTextColor
                         )
@@ -775,6 +790,82 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                     Spacer(Modifier.size(20.dp))
 
                 }
+            }
+
+            if (state.settingChssDialog) {
+                var filterByAge by remember {
+                    mutableStateOf(false)
+                }
+                var filterByThreshold by remember {
+                    mutableStateOf(false)
+                }
+                MaxiAlertDialog(
+                    modifier = Modifier.fillMaxWidth().fillMaxHeight(0.9f).padding(50.dp),
+                    onDismiss = { viewModel.changeSettingChssDialog() },
+                    accept = { viewModel.changeSettingChssDialog() },
+                    cancel = {
+                        viewModel.changeSettingChssDialog()
+                    },
+                    title = stringResource(Res.string.settings_chss_zone),
+                    acceptText = stringResource(Res.string.save),
+                    cancelText = stringResource(Res.string.cancel),
+                    alertDialogButtons = MaxiAlertDialogButtons.CancelAccept,
+                    descriptionContent = {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            HorizontalDivider(
+                                modifier = Modifier.fillMaxWidth(),
+                                color = MaxiPulsTheme.colors.uiKit.divider
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 30.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Row(
+                                    modifier = Modifier.weight(1f, false),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(40.dp)
+                                ) {
+                                    MaxiCheckbox(checked = filterByAge, onCheckedChange = {
+                                        filterByAge = !filterByAge
+                                    }, modifier = Modifier.size(24.dp))
+                                    Text(
+                                        text = stringResource(Res.string.by_age),
+                                        style = MaxiPulsTheme.typography.regular.copy(
+                                            fontSize = 16.sp,
+                                            lineHeight = 16.sp,
+                                            color = MaxiPulsTheme.colors.uiKit.textColor,
+                                        )
+                                    )
+                                }
+
+                                Row(
+                                    modifier = Modifier.weight(1f, false),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(40.dp)
+                                ) {
+                                    MaxiCheckbox(checked = filterByThreshold, onCheckedChange = {
+                                        filterByThreshold = !filterByThreshold
+                                    }, modifier = Modifier.size(24.dp))
+                                    Text(
+                                        text = stringResource(Res.string.by_zone_chss),
+                                        style = MaxiPulsTheme.typography.regular.copy(
+                                            fontSize = 16.sp,
+                                            lineHeight = 16.sp,
+                                            color = MaxiPulsTheme.colors.uiKit.textColor,
+                                        )
+                                    )
+                                }
+                            }
+
+                            ThresholdEditor(modifier = Modifier.weight(1f).fillMaxWidth())
+                            Spacer(Modifier.size(60.dp))
+                        }
+                    },
+                )
             }
         }
 
