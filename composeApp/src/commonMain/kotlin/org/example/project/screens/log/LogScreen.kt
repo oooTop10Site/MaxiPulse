@@ -35,7 +35,9 @@ import maxipuls.composeapp.generated.resources.search
 import maxipuls.composeapp.generated.resources.trainings_count
 import org.example.project.domain.model.log.EventType
 import org.example.project.screens.log.components.LogCard
+import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.root.ScreenSize
+import org.example.project.screens.training.trainingResult.TrainingResultScreen
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.theme.uiKit.MaxiPageContainer
@@ -51,6 +53,7 @@ class LogScreen : Screen {
         val viewModel = rememberScreenModel {
             LogViewModel()
         }
+        val rootNavigator = RootNavigator.currentOrThrow
         val state by viewModel.stateFlow.collectAsState()
         val screenSize = ScreenSize.currentOrThrow
         val chunkSize = when (screenSize.widthSizeClass) {
@@ -176,7 +179,7 @@ class LogScreen : Screen {
                                 modifier = Modifier.weight(1f),
                                 logUI = it
                             ) {
-                                //onClick()
+                                rootNavigator.push(TrainingResultScreen())
                             }
                         }
                         if (chunk.size != chunkSize) {

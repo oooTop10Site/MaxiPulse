@@ -120,8 +120,13 @@
     <string name="chss_min">ЧСС покоя</string>
     <string name="settings_chss_zone">Настройка пульсовых зон</string>
     <string name="by_age">По возрасту</string>
+    <string name="chss">ЧСС</string>
+    <string name="sheet">Таблица</string>
+    <string name="trimp">ТРИМП</string>
+    <string name="heart_rate_avg_max">ЧСС пик/средний</string>
     <string name="by_zone_chss">По пороговым значениям ЧСС</string>
     <string name="standing_position">Положение стоя</string>
+    <string name="heart_rate_peak_player">ЧСС пик игрока</string>
     <string name="test_desc">Система МАКСИПУЛЬС предназначена для получения оперативной информации о быстро изменяющемся состоянии организма спортсмена во время выполнения тренировочной работы и сразу после неё.
 
 Мониторинг показателей тренировочной нагрузки позволяет корректировать интенсивность и продолжительность отдельных упражнений в ходе тренировочного занятия, и также планировать интервалы отдыха.

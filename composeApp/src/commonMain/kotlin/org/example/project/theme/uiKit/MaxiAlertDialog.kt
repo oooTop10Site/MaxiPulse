@@ -43,7 +43,7 @@ fun MaxiAlertDialog(
     paddingAfterTitle: Boolean = true,
     paddingValues: PaddingValues = PaddingValues(40.dp),
     paddingValuesButton: PaddingValues = PaddingValues(0.dp),
-    alertDialogButtons: MaxiAlertDialogButtons = MaxiAlertDialogButtons.CancelAccept
+    alertDialogButtons: MaxiAlertDialogButtons? = MaxiAlertDialogButtons.CancelAccept
 ) {
     Dialog(
         properties = DialogProperties(
@@ -112,6 +112,8 @@ fun MaxiAlertDialog(
                             cancelText = cancelText.orEmpty()
                         )
                     }
+
+                    null -> {}
                 }
 
             }

@@ -4,11 +4,9 @@ package org.example.project.screens.sportsman.detail
 
 import org.example.project.domain.repository.GamerRepository
 import org.example.project.platform.BaseScreenModel
-import org.example.project.utils.orEmpty
 import org.example.project.utils.toStringWithCondition
 import org.koin.core.component.inject
 import org.orbitmvi.orbit.annotation.OrbitExperimental
-import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 
@@ -16,6 +14,14 @@ internal class SportsmanDetailViewModel : BaseScreenModel<SportsmanDetailState, 
     SportsmanDetailState.InitState
 ) {
     private val gamerRepository: GamerRepository by inject()
+
+    fun changeDialog() = intent {
+        reduce {
+            state.copy(
+                isOpenDialog = !state.isOpenDialog
+            )
+        }
+    }
 
     fun loadSportsman(id: String?) = intent {
         if (!id.isNullOrBlank()) {

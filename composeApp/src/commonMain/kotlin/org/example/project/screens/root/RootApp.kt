@@ -28,6 +28,7 @@ import org.koin.core.component.inject
 import kotlin.getValue
 import androidx.compose.ui.unit.dp
 import org.example.project.theme.uiKit.HeartBPMGraph
+import org.example.project.theme.uiKit.HeartRateGraph
 import org.example.project.theme.uiKit.ThresholdEditor
 
 

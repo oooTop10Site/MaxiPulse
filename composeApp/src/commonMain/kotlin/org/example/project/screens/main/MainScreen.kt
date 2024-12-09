@@ -84,6 +84,7 @@ import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.theme.uiKit.MaxiPageContainer
 import org.example.project.theme.uiKit.MaxiSwitch
+import org.example.project.utils.Constants
 import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -217,7 +218,8 @@ class MainScreen(val testUI: TestUI? = null) : Screen {
                                         viewModel.changeSearch(it)
                                     },
                                     placeholder = stringResource(Res.string.search),
-                                    modifier = Modifier.height(40.dp).weight(1f),
+                                    modifier = Modifier.height(Constants.TextFieldHeight)
+                                        .weight(1f),
                                     trailingIcon = {
                                         Icon(
                                             painter = painterResource(Res.drawable.search),

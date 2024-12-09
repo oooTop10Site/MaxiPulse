@@ -43,6 +43,10 @@ import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.age_text
 import maxipuls.composeapp.generated.resources.back_ic
+import maxipuls.composeapp.generated.resources.by_age
+import maxipuls.composeapp.generated.resources.by_zone_chss
+import maxipuls.composeapp.generated.resources.cancel
+import maxipuls.composeapp.generated.resources.chss
 import maxipuls.composeapp.generated.resources.chss_max
 import maxipuls.composeapp.generated.resources.chss_pano
 import maxipuls.composeapp.generated.resources.chss_pao
@@ -55,8 +59,10 @@ import maxipuls.composeapp.generated.resources.mpk
 import maxipuls.composeapp.generated.resources.number_player
 import maxipuls.composeapp.generated.resources.pencil
 import maxipuls.composeapp.generated.resources.profile
+import maxipuls.composeapp.generated.resources.save
 import maxipuls.composeapp.generated.resources.sensor
 import maxipuls.composeapp.generated.resources.sensor_ic
+import maxipuls.composeapp.generated.resources.settings_chss_zone
 import maxipuls.composeapp.generated.resources.sportsman_ic
 import maxipuls.composeapp.generated.resources.weight
 import org.example.project.domain.model.ButtonActions
@@ -65,9 +71,14 @@ import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.sportsman.edit.SportsmanEditScreen
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.HeartBPMGraph
+import org.example.project.theme.uiKit.HeartRateGraph
+import org.example.project.theme.uiKit.MaxiAlertDialog
+import org.example.project.theme.uiKit.MaxiAlertDialogButtons
 import org.example.project.theme.uiKit.MaxiButton
+import org.example.project.theme.uiKit.MaxiCheckbox
 import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
+import org.example.project.theme.uiKit.ThresholdEditor
 import org.example.project.utils.Constants
 import org.example.project.utils.toStringWithCondition
 import org.jetbrains.compose.resources.painterResource
@@ -444,7 +455,7 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                         painterResource(Res.drawable.marker_question),
                         contentDescription = null,
                         modifier = Modifier.padding(end = 20.dp).size(24.dp).clickableBlank {
-                            //todo
+                            viewModel.changeDialog()
                         }.align(Alignment.End),
                         tint = MaxiPulsTheme.colors.uiKit.grey800
                     )
@@ -458,6 +469,24 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                     Spacer(Modifier.size(20.dp))
 
                 }
+            }
+            if(state.isOpenDialog) {
+                MaxiAlertDialog(
+                    modifier = Modifier.fillMaxWidth().padding(50.dp),
+                    onDismiss = { viewModel.changeDialog() },
+                    accept = { viewModel.changeDialog() },
+                    cancel = {
+                        viewModel.changeDialog()
+                    },
+                    title = stringResource(Res.string.chss),
+                    acceptText = stringResource(Res.string.save),
+                    cancelText = stringResource(Res.string.cancel),
+                    alertDialogButtons = null,
+                    descriptionContent = {
+                        val heartRateData = listOf(60, 70, 80, 150, 170, 180, 200, 215, 217)
+                        HeartRateGraph(modifier = Modifier.height(250.dp).fillMaxWidth(), heartRateData)
+                    },
+                )
             }
         }
     }
