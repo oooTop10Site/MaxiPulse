@@ -23,6 +23,10 @@ class UIKitColors(
     val textDropDown: Color,
     val disable: Color,
 
+    val red500: Color,
+
+    val blue500: Color,
+
     val grey500: Color,
     val grey800: Color,
     val grey400: Color,
@@ -54,6 +58,10 @@ fun uiKitColors() = UIKitColors(
     sportsmanAvatarBackground = Color(0xFFD9D9D9),
     textDropDown = Color(0xFFC5C5C5),
     disable = Color(0xFF3093F9),
+
+    red500 = Color(0xFFF48FB0),
+
+    blue500 = Color(0xFF98C9FC),
 
     grey800 = Color(0xFF696969),
     grey500 = Color(0xFFDFDFDF),

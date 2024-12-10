@@ -6,8 +6,9 @@ import kotlin.random.Random
 
 data class TrainingResultState(
     val sportsmans: List<SportsmanTrainingResultUI>,
+    val selectSportsman: SportsmanTrainingResultUI?,
     val tabs: List<TrainingResultTab>,
-    val currentTab: TrainingResultTab,
+    val currentTab: TrainingResultTab?,
     val search: String,
 ) {
     companion object {
@@ -30,13 +31,13 @@ data class TrainingResultState(
                     heartRateMin = Random.nextInt(60, 90),
                     heartRateAvg = Random.nextInt(100, 160),
                     time = randomTime,
-                    zone1 = ((index+11)*5).toLong(),
-                    zone2 = ((index+11)*5).toLong(),
-                    zone3 = ((index+11)*5).toLong(),
-                    zone4 = ((index+11)*5).toLong(),
-                    zone5 = ((index+11)*5).toLong(),
+                    zone1 = 200,
+                    zone2 = 300,
+                    zone3 = 562,
+                    zone4 = 562,
+                    zone5 = 562,
                 )
-            }, TrainingResultTab.entries, TrainingResultTab.Sheet, ""
+            }, null, TrainingResultTab.entries, TrainingResultTab.Sheet, ""
         )
     }
 }

@@ -19,4 +19,7 @@ data class SportsmanTrainingResultUI(
     val zone3: Long, // seconds
     val zone4: Long, // seconds
     val zone5: Long, // seconds
-)
+) {
+    val fio: String
+        get() = "$lastname $firstname $middleName"
+}
