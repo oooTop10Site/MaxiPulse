@@ -27,6 +27,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.getValue
 import androidx.compose.ui.unit.dp
+import org.example.project.screens.tests.shuttleRun.result.ShuttleRunResultScreen
 import org.example.project.theme.uiKit.HeartBPMGraph
 import org.example.project.theme.uiKit.HeartRateGraph
 import org.example.project.theme.uiKit.ThresholdEditor
@@ -64,7 +65,7 @@ fun RootApp() {
                     SlideTransition(
                         it,
                     ) {
-                        it.Content()
+                        ShuttleRunResultScreen().Content()
                     }
 //                    val modifierSnackbarHost = when (windowSizeClass.widthSizeClass) {
 //                        WindowWidthSizeClass.Compact -> Modifier.fillMaxWidth()

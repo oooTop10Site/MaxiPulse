@@ -1,4 +1,4 @@
-package org.example.project.screens.training.trainingResult.contents
+package org.example.project.screens.tests.shuttleRun.result.contents
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -29,27 +29,28 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import maxipuls.composeapp.generated.resources.Res
-import maxipuls.composeapp.generated.resources.equal
 import maxipuls.composeapp.generated.resources.fio
+import maxipuls.composeapp.generated.resources.mpk
 import maxipuls.composeapp.generated.resources.search
 import maxipuls.composeapp.generated.resources.training
-import maxipuls.composeapp.generated.resources.trimp
-import org.example.project.domain.model.sportsman.SportsmanTrainingResultUI
+import org.example.project.domain.model.sportsman.SportsmanShuttleRunResultUI
+import org.example.project.screens.tests.shuttleRun.result.ShuttleRunResultState
+import org.example.project.screens.tests.shuttleRun.result.ShuttleRunResultViewModel
 import org.example.project.screens.training.trainingResult.RegularResultBox
 import org.example.project.screens.training.trainingResult.TitleResultBox
-import org.example.project.screens.training.trainingResult.TrainingResultState
-import org.example.project.screens.training.trainingResult.TrainingResultViewModel
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
+import org.example.project.theme.uiKit.MaxiTextFieldMenu
 import org.example.project.theme.uiKit.TopBarTitle
 import org.example.project.utils.Constants
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
+
 @Composable
-internal fun ColumnScope.TrimpContent(
-    state: TrainingResultState,
-    viewModel: TrainingResultViewModel
+internal fun ColumnScope.MPKShuttleRunContent(
+    state: ShuttleRunResultState,
+    viewModel: ShuttleRunResultViewModel
 ) {
     Column() {
         Spacer(Modifier.size(20.dp))
@@ -71,24 +72,42 @@ internal fun ColumnScope.TrimpContent(
             modifier = Modifier.fillMaxWidth()
                 .padding(top = 3.dp, start = 16.dp, end = 16.dp)
         )
-        MaxiOutlinedTextField(
-            value = state.search,
-            onValueChange = {
-                viewModel.changeSearch(it)
-            },
-            placeholder = stringResource(Res.string.search),
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)
-                .height(Constants.TextFieldHeight)
-                .fillMaxWidth(),
-            trailingIcon = {
-                Icon(
-                    painter = painterResource(Res.drawable.search),
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = MaxiPulsTheme.colors.uiKit.textColor
-                )
-            }
-        )
+        ) {
+            MaxiOutlinedTextField(
+                value = state.search,
+                onValueChange = {
+                    viewModel.changeSearch(it)
+                },
+                placeholder = stringResource(Res.string.search),
+                modifier = Modifier
+                    .height(Constants.TextFieldHeight)
+                    .weight(1f),
+                trailingIcon = {
+                    Icon(
+                        painter = painterResource(Res.drawable.search),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = MaxiPulsTheme.colors.uiKit.textColor
+                    )
+                }
+            )
+            Spacer(Modifier.size(20.dp))
+            MaxiTextFieldMenu<String>(
+                items = state.filters,
+                itemToString = { it },
+                currentValue = state.filter,
+                onChangeWorkScope = {
+                    viewModel.changeSelect(it)
+                },
+                modifier = Modifier.width(240.dp).height(Constants.TextFieldHeight),
+                text = state.filter,
+                placeholderText = ""
+            )
+        }
         Spacer(Modifier.size(20.dp))
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
@@ -107,16 +126,7 @@ internal fun ColumnScope.TrimpContent(
             TitleResultBox(
                 modifier = Modifier.weight(1f).fillMaxHeight(),
                 color = MaxiPulsTheme.colors.uiKit.primary.copy(alpha = 0.1f),
-                text = stringResource(Res.string.trimp)
-            )
-            VerticalDivider(
-                modifier = Modifier.fillMaxHeight(),
-                color = MaxiPulsTheme.colors.uiKit.divider
-            )
-            TitleResultBox(
-                modifier = Modifier.width(150.dp).fillMaxHeight(),
-                text = stringResource(Res.string.equal),
-                maxLines = 1
+                text = stringResource(Res.string.mpk)
             )
 
         }
@@ -127,8 +137,8 @@ internal fun ColumnScope.TrimpContent(
         LazyColumn(Modifier.weight(1f).fillMaxWidth()) {
             items(state.sportsmans) {
                 CellItem(
-                    sportsmanTrainingResultUI = it,
-                    maxTrimp = state.sportsmans.maxOf { it.trimp })
+                    sportsmanUI = it,
+                    maxMpk = state.sportsmans.maxOf { it.mpk })
                 HorizontalDivider(
                     modifier = Modifier.fillMaxWidth(),
                     color = MaxiPulsTheme.colors.uiKit.divider
@@ -139,12 +149,12 @@ internal fun ColumnScope.TrimpContent(
 }
 
 @Composable
-private fun CellItem(sportsmanTrainingResultUI: SportsmanTrainingResultUI, maxTrimp: Int) {
+private fun CellItem(sportsmanUI: SportsmanShuttleRunResultUI, maxMpk: Int) {
     Row(modifier = Modifier.fillMaxWidth().height(60.dp)) {
         RegularResultBox(
             modifier = Modifier.width(150.dp).fillMaxHeight(),
             color = Color.Transparent,
-            text = sportsmanTrainingResultUI.fio,
+            text = sportsmanUI.fio,
             maxLines = 2
         )
         VerticalDivider(
@@ -157,7 +167,8 @@ private fun CellItem(sportsmanTrainingResultUI: SportsmanTrainingResultUI, maxTr
             alignment = Alignment.CenterStart
         ) {
             Box(
-                modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth(sportsmanTrainingResultUI.trimp.toFloat() / maxTrimp.toFloat())
+                modifier = Modifier.padding(horizontal = 20.dp)
+                    .fillMaxWidth(sportsmanUI.mpk.toFloat() / maxMpk.toFloat())
                     .background(
                         color = MaxiPulsTheme.colors.uiKit.red500.copy(alpha = 0.8f),
                         shape = RoundedCornerShape(15.dp)
@@ -165,15 +176,5 @@ private fun CellItem(sportsmanTrainingResultUI: SportsmanTrainingResultUI, maxTr
                     .height(20.dp).clip(RoundedCornerShape(15.dp)),
             )
         }
-        VerticalDivider(
-            modifier = Modifier.fillMaxHeight(),
-            color = MaxiPulsTheme.colors.uiKit.divider
-        )
-        RegularResultBox(
-            modifier = Modifier.width(150.dp).fillMaxHeight(),
-            color = Color.Transparent,
-            text = sportsmanTrainingResultUI.trimp.toString(),
-            maxLines = 1
-        )
     }
 }

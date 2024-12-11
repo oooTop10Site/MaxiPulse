@@ -1,4 +1,4 @@
-package org.example.project.screens.training.trainingResult
+package org.example.project.screens.tests.shuttleRun.result
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
@@ -41,37 +41,40 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.age
 import maxipuls.composeapp.generated.resources.age_text
 import maxipuls.composeapp.generated.resources.heart_rate_peak_player
 import maxipuls.composeapp.generated.resources.profile
+import maxipuls.composeapp.generated.resources.search
 import maxipuls.composeapp.generated.resources.share
 import maxipuls.composeapp.generated.resources.zip
-import org.example.project.domain.model.TrainingResultTab.*
+import org.example.project.domain.model.ShuttleRunResultTab
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.root.ScreenSize
-import org.example.project.screens.training.trainingResult.contents.HeartRateContent
+import org.example.project.screens.tests.shuttleRun.result.contents.MPKShuttleRunContent
+import org.example.project.screens.tests.shuttleRun.result.contents.OverallShuttleRunContent
 import org.example.project.screens.training.trainingResult.contents.SheetContent
 import org.example.project.screens.training.trainingResult.contents.SportsmanTraininResultContent
 import org.example.project.screens.training.trainingResult.contents.TrimpContent
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.BackIcon
 import org.example.project.theme.uiKit.MaxiImage
+import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.utils.Constants
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-class TrainingResultScreen : Screen {
+class ShuttleRunResultScreen : Screen {
+
     @Composable
     override fun Content() {
-        val navigator = RootNavigator.currentOrThrow
-        val viewModel = rememberScreenModel {
-            TrainingResultViewModel()
-        }
+        val viewModel = rememberScreenModel { ShuttleRunResultViewModel() }
         val state by viewModel.stateFlow.collectAsState()
+        val navigator = LocalNavigator.currentOrThrow
         MaxiPageContainer() {
             Row(modifier = Modifier.fillMaxWidth()) {
                 Column(
@@ -129,8 +132,26 @@ class TrainingResultScreen : Screen {
                         }
                         Column(
                             modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                            verticalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
+                            MaxiOutlinedTextField(
+                                value = state.search,
+                                onValueChange = {
+                                    viewModel.changeSearch(it)
+                                },
+                                placeholder = stringResource(Res.string.search),
+                                modifier = Modifier
+                                    .height(Constants.TextFieldHeight)
+                                    .fillMaxWidth(),
+                                trailingIcon = {
+                                    Icon(
+                                        painter = painterResource(Res.drawable.search),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp),
+                                        tint = MaxiPulsTheme.colors.uiKit.textColor
+                                    )
+                                }
+                            )
                             state.tabs.forEach {
                                 SelectableTab(
                                     modifier = Modifier.height(37.dp).fillMaxWidth(),
@@ -217,21 +238,17 @@ class TrainingResultScreen : Screen {
                 )
                 Column(modifier = Modifier.weight(1f)) {
                     when (state.currentTab) {
-                        Sheet -> {
-                            SheetContent(state, viewModel)
+                        ShuttleRunResultTab.MPK -> {
+                            MPKShuttleRunContent(state, viewModel)
                         }
 
-                        Trimp -> {
-                            TrimpContent(state, viewModel)
-                        }
-
-                        HeartRate -> {
-                            HeartRateContent(state, viewModel)
+                        ShuttleRunResultTab.OverallResult -> {
+                            OverallShuttleRunContent(state, viewModel)
                         }
 
                         else -> {
                             state.selectSportsman?.let {
-                                SportsmanTraininResultContent(state, viewModel, it)
+//                                SportsmanTraininResultContent(state, viewModel, it)
                             }
                         }
                     }

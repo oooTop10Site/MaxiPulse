@@ -1,4 +1,6 @@
 package org.example.project.screens.tests.shuttleRun
 
-class ShuttleRunEvent {
+sealed interface ShuttleRunEvent {
+
+    object StopShuttleRun: ShuttleRunEvent
 }

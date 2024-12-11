@@ -32,15 +32,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.chss_avg
-import maxipuls.composeapp.generated.resources.chss_max
 import maxipuls.composeapp.generated.resources.chss_peak
 import maxipuls.composeapp.generated.resources.fio
 import maxipuls.composeapp.generated.resources.search
 import maxipuls.composeapp.generated.resources.training
 import org.example.project.domain.model.sportsman.SportsmanTrainingResultUI
-import org.example.project.ext.secondsToUI
-import org.example.project.screens.training.trainingResult.RegularBox
-import org.example.project.screens.training.trainingResult.TitleBox
+import org.example.project.screens.training.trainingResult.RegularResultBox
+import org.example.project.screens.training.trainingResult.TitleResultBox
 import org.example.project.screens.training.trainingResult.TrainingResultState
 import org.example.project.screens.training.trainingResult.TrainingResultViewModel
 import org.example.project.theme.MaxiPulsTheme
@@ -99,7 +97,7 @@ internal fun ColumnScope.HeartRateContent(
             color = MaxiPulsTheme.colors.uiKit.divider
         )
         Row(modifier = Modifier.fillMaxWidth().height(60.dp)) {
-            TitleBox(
+            TitleResultBox(
                 modifier = Modifier.width(150.dp).fillMaxHeight(),
                 text = stringResource(Res.string.fio),
                 maxLines = 2
@@ -108,7 +106,7 @@ internal fun ColumnScope.HeartRateContent(
                 modifier = Modifier.fillMaxHeight(),
                 color = MaxiPulsTheme.colors.uiKit.divider
             )
-            RegularBox(
+            RegularResultBox(
                 modifier = Modifier.weight(1f).fillMaxHeight(),
                 color = MaxiPulsTheme.colors.uiKit.primary.copy(alpha = 0.1f),
             ) {
@@ -175,7 +173,7 @@ internal fun ColumnScope.HeartRateContent(
 @Composable
 private fun CellItem(sportsmanTrainingResultUI: SportsmanTrainingResultUI, maxHeartRatePeak: Int) {
     Row(modifier = Modifier.fillMaxWidth().height(60.dp)) {
-        RegularBox(
+        RegularResultBox(
             modifier = Modifier.width(150.dp).fillMaxHeight(),
             color = Color.Transparent,
             text = sportsmanTrainingResultUI.fio,
@@ -185,7 +183,7 @@ private fun CellItem(sportsmanTrainingResultUI: SportsmanTrainingResultUI, maxHe
             modifier = Modifier.fillMaxHeight(),
             color = MaxiPulsTheme.colors.uiKit.divider
         )
-        RegularBox(
+        RegularResultBox(
             modifier = Modifier.weight(1f).fillMaxHeight(),
             color = Color.Transparent,
             alignment = Alignment.CenterStart

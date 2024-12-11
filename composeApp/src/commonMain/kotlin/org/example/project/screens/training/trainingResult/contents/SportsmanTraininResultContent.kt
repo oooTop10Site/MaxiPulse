@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,7 +28,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.ktor.http.headers
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.age
 import maxipuls.composeapp.generated.resources.age_text
@@ -37,22 +35,16 @@ import maxipuls.composeapp.generated.resources.chss
 import maxipuls.composeapp.generated.resources.chss_avg
 import maxipuls.composeapp.generated.resources.chss_min
 import maxipuls.composeapp.generated.resources.chss_peak
-import maxipuls.composeapp.generated.resources.female_ic
 import maxipuls.composeapp.generated.resources.kcal
 import maxipuls.composeapp.generated.resources.profile
-import maxipuls.composeapp.generated.resources.sensor
-import maxipuls.composeapp.generated.resources.sensor_ic
-import maxipuls.composeapp.generated.resources.sportsman_ic
 import maxipuls.composeapp.generated.resources.training
 import maxipuls.composeapp.generated.resources.trimp
-import org.example.project.domain.model.ButtonActions
 import org.example.project.domain.model.sportsman.SportsmanTrainingResultUI
 import org.example.project.ext.secondsToUI
 import org.example.project.screens.training.trainingResult.TrainingResultState
 import org.example.project.screens.training.trainingResult.TrainingResultViewModel
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.HeartRateGraph
-import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.TopBarTitle
 import org.jetbrains.compose.resources.painterResource
@@ -60,7 +52,7 @@ import org.jetbrains.compose.resources.stringResource
 import kotlin.math.roundToInt
 
 @Composable
-internal fun SportsmanContent(
+internal fun SportsmanTraininResultContent(
     state: TrainingResultState,
     viewModel: TrainingResultViewModel,
     sportsmanTrainingResultUI: SportsmanTrainingResultUI

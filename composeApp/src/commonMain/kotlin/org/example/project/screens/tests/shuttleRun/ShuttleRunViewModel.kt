@@ -4,6 +4,7 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalTime
 import org.example.project.platform.BaseScreenModel
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 
 internal class ShuttleRunViewModel: BaseScreenModel<ShuttleRunState, ShuttleRunEvent>(ShuttleRunState.InitState) {
@@ -31,6 +32,7 @@ internal class ShuttleRunViewModel: BaseScreenModel<ShuttleRunState, ShuttleRunE
                 isStart = false
             )
         }
+        postSideEffect(ShuttleRunEvent.StopShuttleRun)
     }
 
 }

@@ -143,6 +143,12 @@
     <string name="chss_peak">ЧСС срееднее</string>
     <string name="chss_avg">ЧСС пик</string>
     <string name="equal">Значение</string>
+    <string name="average">Средняя</string>
+    <string name="minimal">Низкая</string>
+    <string name="high">Высокая</string>
+    <string name="overall_result">Общий результат</string>
+    <string name="performance">Работоспособность</string>
+    <string name="distance">Расстояние</string>
     <string name="test_desc">Система МАКСИПУЛЬС предназначена для получения оперативной информации о быстро изменяющемся состоянии организма спортсмена во время выполнения тренировочной работы и сразу после неё.
 
 Мониторинг показателей тренировочной нагрузки позволяет корректировать интенсивность и продолжительность отдельных упражнений в ходе тренировочного занятия, и также планировать интервалы отдыха.

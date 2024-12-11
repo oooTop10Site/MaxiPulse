@@ -36,11 +36,10 @@ import maxipuls.composeapp.generated.resources.time_in_zone
 import maxipuls.composeapp.generated.resources.training
 import maxipuls.composeapp.generated.resources.trimp
 import maxipuls.composeapp.generated.resources.zone_number
-import org.example.project.domain.model.TrainingResultTab
 import org.example.project.domain.model.sportsman.SportsmanTrainingResultUI
 import org.example.project.ext.secondsToUI
-import org.example.project.screens.training.trainingResult.RegularBox
-import org.example.project.screens.training.trainingResult.TitleBox
+import org.example.project.screens.training.trainingResult.RegularResultBox
+import org.example.project.screens.training.trainingResult.TitleResultBox
 import org.example.project.screens.training.trainingResult.TrainingResultState
 import org.example.project.screens.training.trainingResult.TrainingResultViewModel
 import org.example.project.theme.MaxiPulsTheme
@@ -100,7 +99,7 @@ internal fun ColumnScope.SheetContent(
         )
 
         Row(modifier = Modifier.fillMaxWidth().height(110.dp)) {
-            TitleBox(
+            TitleResultBox(
                 modifier = Modifier.weight(0.13f).fillMaxHeight(),
                 text = stringResource(Res.string.fio)
             )
@@ -108,7 +107,7 @@ internal fun ColumnScope.SheetContent(
                 modifier = Modifier.fillMaxHeight(),
                 color = MaxiPulsTheme.colors.uiKit.divider
             )
-            TitleBox(
+            TitleResultBox(
                 modifier = Modifier.weight(0.1f).fillMaxHeight(),
                 text = stringResource(Res.string.time)
             )
@@ -117,7 +116,7 @@ internal fun ColumnScope.SheetContent(
                 color = MaxiPulsTheme.colors.uiKit.divider
             )
             Column(Modifier.weight(0.34f)) {
-                TitleBox(
+                TitleResultBox(
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                     text = stringResource(Res.string.time_in_zone),
                     maxLines = 2
@@ -138,7 +137,7 @@ internal fun ColumnScope.SheetContent(
                         Color(0xFFE74870)  // Красная
                     )
                     colors.forEachIndexed { index, item ->
-                        TitleBox(
+                        TitleResultBox(
                             modifier = Modifier.weight(1f).fillMaxHeight(),
                             text = stringResource(
                                 Res.string.zone_number,
@@ -160,7 +159,7 @@ internal fun ColumnScope.SheetContent(
                 color = MaxiPulsTheme.colors.uiKit.divider
             )
             Column(Modifier.weight(0.2f)) {
-                TitleBox(
+                TitleResultBox(
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                     text = stringResource(Res.string.chss)
                 )
@@ -172,7 +171,7 @@ internal fun ColumnScope.SheetContent(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    TitleBox(
+                    TitleResultBox(
                         modifier = Modifier.weight(1f).fillMaxHeight(),
                         text = stringResource(Res.string.avg)
                     )
@@ -181,7 +180,7 @@ internal fun ColumnScope.SheetContent(
                         color = MaxiPulsTheme.colors.uiKit.divider
                     )
 
-                    TitleBox(
+                    TitleResultBox(
                         modifier = Modifier.weight(1f).fillMaxHeight(),
                         text = stringResource(Res.string.min)
                     )
@@ -190,7 +189,7 @@ internal fun ColumnScope.SheetContent(
                         color = MaxiPulsTheme.colors.uiKit.divider
                     )
 
-                    TitleBox(
+                    TitleResultBox(
                         modifier = Modifier.weight(1f).fillMaxHeight(),
                         text = stringResource(Res.string.max)
                     )
@@ -200,7 +199,7 @@ internal fun ColumnScope.SheetContent(
                 modifier = Modifier.fillMaxHeight(),
                 color = MaxiPulsTheme.colors.uiKit.divider
             )
-            TitleBox(
+            TitleResultBox(
                 modifier = Modifier.weight(0.1f).fillMaxHeight(),
                 text = stringResource(Res.string.trimp)
             )
@@ -209,7 +208,7 @@ internal fun ColumnScope.SheetContent(
                 color = MaxiPulsTheme.colors.uiKit.divider
             )
 
-            TitleBox(
+            TitleResultBox(
                 modifier = Modifier.weight(0.1f).fillMaxHeight(),
                 text = stringResource(Res.string.kcal)
             )
@@ -233,7 +232,7 @@ internal fun ColumnScope.SheetContent(
 @Composable
 private fun CellItem(sportsmanTrainingResultUI: SportsmanTrainingResultUI) {
     Row(modifier = Modifier.fillMaxWidth().height(60.dp)) {
-        RegularBox(
+        RegularResultBox(
             modifier = Modifier.weight(0.13f).fillMaxHeight(),
             color = Color.Transparent,
             text = sportsmanTrainingResultUI.fio,
@@ -243,7 +242,7 @@ private fun CellItem(sportsmanTrainingResultUI: SportsmanTrainingResultUI) {
             modifier = Modifier.fillMaxHeight(),
             color = MaxiPulsTheme.colors.uiKit.divider
         )
-        RegularBox(
+        RegularResultBox(
             modifier = Modifier.weight(0.1f).fillMaxHeight(),
             text = sportsmanTrainingResultUI.time.secondsToUI(),
             color = Color.Transparent,
@@ -265,7 +264,7 @@ private fun CellItem(sportsmanTrainingResultUI: SportsmanTrainingResultUI) {
             )
             colors.forEachIndexed { index, item ->
                 println("item - $item")
-                RegularBox(
+                RegularResultBox(
                     modifier = Modifier.weight(1f).fillMaxHeight(),
                     text = item.secondsToUI(),
                     color = Color.Transparent
@@ -286,7 +285,7 @@ private fun CellItem(sportsmanTrainingResultUI: SportsmanTrainingResultUI) {
             modifier = Modifier.fillMaxWidth().weight(0.2f),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            RegularBox(
+            RegularResultBox(
                 modifier = Modifier.weight(1f).fillMaxHeight(),
                 text = sportsmanTrainingResultUI.heartRateAvg.toString(),
                 color = Color.Transparent,
@@ -296,7 +295,7 @@ private fun CellItem(sportsmanTrainingResultUI: SportsmanTrainingResultUI) {
                 color = MaxiPulsTheme.colors.uiKit.divider
             )
 
-            RegularBox(
+            RegularResultBox(
                 modifier = Modifier.weight(1f).fillMaxHeight(),
                 text = sportsmanTrainingResultUI.heartRateMin.toString(),
                 color = Color.Transparent,
@@ -306,7 +305,7 @@ private fun CellItem(sportsmanTrainingResultUI: SportsmanTrainingResultUI) {
                 color = MaxiPulsTheme.colors.uiKit.divider
             )
 
-            RegularBox(
+            RegularResultBox(
                 modifier = Modifier.weight(1f).fillMaxHeight(),
                 text = sportsmanTrainingResultUI.heartRateMax.toString(),
                 color = Color.Transparent,
@@ -316,7 +315,7 @@ private fun CellItem(sportsmanTrainingResultUI: SportsmanTrainingResultUI) {
             modifier = Modifier.fillMaxHeight(),
             color = MaxiPulsTheme.colors.uiKit.divider
         )
-        RegularBox(
+        RegularResultBox(
             modifier = Modifier.weight(0.1f).fillMaxHeight(),
             text = sportsmanTrainingResultUI.trimp.toString(),
             color = Color.Transparent,
@@ -327,7 +326,7 @@ private fun CellItem(sportsmanTrainingResultUI: SportsmanTrainingResultUI) {
             color = MaxiPulsTheme.colors.uiKit.divider
         )
 
-        RegularBox(
+        RegularResultBox(
             modifier = Modifier.weight(0.1f).fillMaxHeight(),
             text = sportsmanTrainingResultUI.kcal.toString(),
             color = Color.Transparent,

@@ -32,6 +32,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.Res
@@ -44,6 +46,8 @@ import org.example.project.domain.model.test.TestSportsmanUI
 import org.example.project.domain.model.test.TestStatus
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.formatSeconds
+import org.example.project.screens.root.RootNavigator
+import org.example.project.screens.tests.shuttleRun.result.ShuttleRunResultScreen
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiPageContainer
@@ -58,12 +62,24 @@ class ShuttleRunScreen : Screen {
             ShuttleRunViewModel()
         }
         val state by viewModel.stateFlow.collectAsState()
-
+        val navigator = LocalNavigator.currentOrThrow
         LaunchedEffect(state.isStart) {
             launch() {
                 while (state.isStart) {
                     delay(999L)
                     viewModel.incrementTime()
+                }
+            }
+        }
+
+        LaunchedEffect(viewModel) {
+            launch {
+                viewModel.container.sideEffectFlow.collect {
+                    when(it) {
+                        ShuttleRunEvent.StopShuttleRun -> {
+                            navigator.push(ShuttleRunResultScreen())
+                        }
+                    }
                 }
             }
         }
