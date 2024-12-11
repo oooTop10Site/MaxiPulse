@@ -1,6 +1,7 @@
 package org.example.project.screens.training.trainingResult
 
 import org.example.project.domain.model.TrainingResultTab
+import org.example.project.domain.model.sportsman.HeartBit
 import org.example.project.domain.model.sportsman.SportsmanTrainingResultUI
 import kotlin.random.Random
 
@@ -16,28 +17,42 @@ data class TrainingResultState(
             List(20) { index ->
                 val randomAge = Random.nextInt(18, 45)
                 val randomTime = Random.nextLong(3600, 7200) // Тренировка от 1 до 2 часов
+                val randomHeartRateMin = Random.nextInt(60, 90)
+                val randomHeartRateMax = Random.nextInt(170, 200)
+                val randomHeartRateAvg = Random.nextInt(randomHeartRateMin + 10, randomHeartRateMax - 10)
 
                 SportsmanTrainingResultUI(
                     id = "sportsman_$index",
                     number = index + 1,
-                    firstname = "Имя_$index",
-                    lastname = "Фамилия_$index",
-                    middleName = "Отчество_$index",
-                    avatar = "https://example.com/avatar_$index.jpg",
+                    firstname = "Имя $index",
+                    lastname = "Фамилия $index",
+                    middleName = "Отчество $index",
+                    avatar = "",
                     age = randomAge,
                     kcal = Random.nextInt(500, 2000),
                     trimp = Random.nextInt(50, 300),
-                    heartRateMax = Random.nextInt(170, 200),
-                    heartRateMin = Random.nextInt(60, 90),
-                    heartRateAvg = Random.nextInt(100, 160),
+                    heartRateMax = randomHeartRateMax,
+                    heartRateMin = randomHeartRateMin,
+                    heartRateAvg = randomHeartRateAvg,
                     time = randomTime,
-                    zone1 = 200,
-                    zone2 = 300,
-                    zone3 = 562,
-                    zone4 = 562,
-                    zone5 = 562,
+                    zone1 = Random.nextLong(200, 400),
+                    zone2 = Random.nextLong(300, 600),
+                    zone3 = Random.nextLong(400, 800),
+                    zone4 = Random.nextLong(300, 700),
+                    zone5 = Random.nextLong(200, 500),
+                    heartRate = List(20) { i ->
+                        val interval = randomTime / 20 // Время между точками
+                        HeartBit(
+                            mills = i * interval,
+                            value = Random.nextInt(randomHeartRateMin, randomHeartRateMax)
+                        )
+                    }
                 )
-            }, null, TrainingResultTab.entries, TrainingResultTab.Sheet, ""
+            },
+            selectSportsman = null,
+            tabs = TrainingResultTab.entries,
+            currentTab = TrainingResultTab.Sheet,
+            search = ""
         )
     }
 }

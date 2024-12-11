@@ -19,7 +19,14 @@ data class SportsmanTrainingResultUI(
     val zone3: Long, // seconds
     val zone4: Long, // seconds
     val zone5: Long, // seconds
+    val heartRate: List<HeartBit>
 ) {
     val fio: String
         get() = "$lastname $firstname $middleName"
 }
+
+
+data class HeartBit(
+    val mills: Long,
+    val value: Int,
+)

@@ -66,6 +66,7 @@ import maxipuls.composeapp.generated.resources.settings_chss_zone
 import maxipuls.composeapp.generated.resources.sportsman_ic
 import maxipuls.composeapp.generated.resources.weight
 import org.example.project.domain.model.ButtonActions
+import org.example.project.domain.model.sportsman.HeartBit
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.sportsman.edit.SportsmanEditScreen
@@ -483,7 +484,17 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                     cancelText = stringResource(Res.string.cancel),
                     alertDialogButtons = null,
                     descriptionContent = {
-                        val heartRateData = listOf(60, 70, 80, 150, 170, 180, 200, 215, 217)
+                        val heartRateData = listOf(
+                            HeartBit(mills = 0L, value = 60),
+                            HeartBit(mills = 1000L, value = 70),
+                            HeartBit(mills = 2000L, value = 80),
+                            HeartBit(mills = 3000L, value = 150),
+                            HeartBit(mills = 4000L, value = 170),
+                            HeartBit(mills = 5000L, value = 180),
+                            HeartBit(mills = 6000L, value = 200),
+                            HeartBit(mills = 7000L, value = 215),
+                            HeartBit(mills = 8000L, value = 217)
+                        ) //mock
                         HeartRateGraph(modifier = Modifier.height(250.dp).fillMaxWidth(), heartRateData)
                     },
                 )
