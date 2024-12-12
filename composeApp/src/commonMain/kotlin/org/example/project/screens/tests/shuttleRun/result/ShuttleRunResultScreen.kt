@@ -57,6 +57,7 @@ import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.root.ScreenSize
 import org.example.project.screens.tests.shuttleRun.result.contents.MPKShuttleRunContent
 import org.example.project.screens.tests.shuttleRun.result.contents.OverallShuttleRunContent
+import org.example.project.screens.tests.shuttleRun.result.contents.ShuttleRunSportsmanContent
 import org.example.project.screens.training.trainingResult.contents.SheetContent
 import org.example.project.screens.training.trainingResult.contents.SportsmanTraininResultContent
 import org.example.project.screens.training.trainingResult.contents.TrimpContent
@@ -248,7 +249,7 @@ class ShuttleRunResultScreen : Screen {
 
                         else -> {
                             state.selectSportsman?.let {
-//                                SportsmanTraininResultContent(state, viewModel, it)
+                                ShuttleRunSportsmanContent(Modifier, it, state, viewModel)
                             }
                         }
                     }

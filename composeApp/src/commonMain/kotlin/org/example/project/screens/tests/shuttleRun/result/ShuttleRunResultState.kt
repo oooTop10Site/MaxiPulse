@@ -41,7 +41,8 @@ data class ShuttleRunResultState(
                         1 -> Performance.Min
                         2 -> Performance.Avg
                         else -> Performance.Max
-                    }
+                    },
+                    time = Random.nextInt(40, 280).toLong()
                 )
             },
             selectSportsman = null,

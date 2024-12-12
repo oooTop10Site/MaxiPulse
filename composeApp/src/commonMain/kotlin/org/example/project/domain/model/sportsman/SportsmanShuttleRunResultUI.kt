@@ -20,6 +20,7 @@ data class SportsmanShuttleRunResultUI(
     val chssPao: Int,
     val mpk: Int,
     val performance: Performance,
+    val time: Long //seconds
 ) {
     val fio: String
         get() = "$lastname $firstname $middleName"
