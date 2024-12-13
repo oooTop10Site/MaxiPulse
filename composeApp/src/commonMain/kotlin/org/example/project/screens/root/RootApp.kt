@@ -65,7 +65,7 @@ fun RootApp() {
                     SlideTransition(
                         it,
                     ) {
-                        ShuttleRunResultScreen().Content()
+                        it.Content()
                     }
 //                    val modifierSnackbarHost = when (windowSizeClass.widthSizeClass) {
 //                        WindowWidthSizeClass.Compact -> Modifier.fillMaxWidth()

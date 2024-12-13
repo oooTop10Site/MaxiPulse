@@ -57,7 +57,7 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
                     postSideEffect(MainEvent.ShuttleRun)
                 }
                 null -> {
-                    //todo
+                    postSideEffect(MainEvent.Training)
                 }
             }
         }

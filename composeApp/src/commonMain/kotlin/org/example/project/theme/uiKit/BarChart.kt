@@ -84,22 +84,43 @@ fun BarChart(modifier: Modifier = Modifier, data: List<Pair<Month, Int>>) {
                 val barHeightFraction = value / maxValue.toFloat()
                 val barHeight = size.height * barHeightFraction
                 val barXOffset = yAxisWidth + spacing * (index + 1) + barWidthPx * index
-
-                // Создаем кастомный путь для столбца с верхними скругленными углами
-                val barPath = Path().apply {
-                    moveTo(barXOffset, xAxisHeight - barHeight) // Начало
-                    lineTo(
-                        barXOffset + barWidthPx,
-                        xAxisHeight - barHeight
-                    ) // Правый верхний угол
-                    lineTo(barXOffset + barWidthPx, xAxisHeight) // Правый нижний угол
-                    lineTo(barXOffset, xAxisHeight) // Левый нижний угол
-                    close() // Замкнуть путь
+                val left = barXOffset
+                val top = xAxisHeight - barHeight
+                val right = left + 41.dp.toPx()
+                // Создаем Path с верхними скругленными углами
+                val path = Path().apply {
+                    moveTo(left, xAxisHeight)
+                    lineTo(left, top + 30.dp.toPx())
+                    arcTo(
+                        rect = androidx.compose.ui.geometry.Rect(
+                            left,
+                            top,
+                            left + 30.dp.toPx(),
+                            top + 30.dp.toPx()
+                        ),
+                        startAngleDegrees = 180f,
+                        sweepAngleDegrees = 90f,
+                        forceMoveTo = false
+                    )
+                    lineTo(right - 30.dp.toPx(), top)
+                    arcTo(
+                        rect = androidx.compose.ui.geometry.Rect(
+                            right - 30.dp.toPx(),
+                            top,
+                            right,
+                            top + 30.dp.toPx()
+                        ),
+                        startAngleDegrees = 270f,
+                        sweepAngleDegrees = 90f,
+                        forceMoveTo = false
+                    )
+                    lineTo(right, xAxisHeight)
+                    close()
                 }
 
-                // Нарисовать столбец
+                // Рисуем столбец
                 drawPath(
-                    path = barPath,
+                    path = path,
                     color = if (value == maxValue) highlightedBarColor else barColor
                 )
 

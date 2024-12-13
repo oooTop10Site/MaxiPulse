@@ -77,6 +77,7 @@ import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.root.ScreenSize
 import org.example.project.screens.tests.readiesForUpload.ReadiesForUploadScreen
 import org.example.project.screens.tests.shuttleRun.ShuttleRunScreen
+import org.example.project.screens.training.TrainingScreen
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiAlertDialog
 import org.example.project.theme.uiKit.MaxiAlertDialogButtons
@@ -119,6 +120,7 @@ class MainScreen(val testUI: TestUI? = null) : Screen {
                         when (it) {
                             MainEvent.ShuttleRun -> rootNavigator.push(ShuttleRunScreen())
                             MainEvent.ReadiesForUpload -> rootNavigator.push(ReadiesForUploadScreen())
+                            MainEvent.Training -> rootNavigator.push(TrainingScreen())
                         }
                     }
                 }

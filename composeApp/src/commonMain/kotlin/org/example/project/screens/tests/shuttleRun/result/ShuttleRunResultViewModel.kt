@@ -7,9 +7,10 @@ import org.example.project.platform.BaseScreenModel
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 
-internal class ShuttleRunResultViewModel: BaseScreenModel<ShuttleRunResultState, ShuttleRunResultEvent>(
-    ShuttleRunResultState.InitState
-) {
+internal class ShuttleRunResultViewModel :
+    BaseScreenModel<ShuttleRunResultState, ShuttleRunResultEvent>(
+        ShuttleRunResultState.InitState
+    ) {
     fun changeSelectSportsman(sportsmanUI: SportsmanShuttleRunResultUI) = intent {
         reduce {
             state.copy(
@@ -22,6 +23,14 @@ internal class ShuttleRunResultViewModel: BaseScreenModel<ShuttleRunResultState,
         reduce {
             state.copy(
                 search = value
+            )
+        }
+    }
+
+    fun changeDialog() = intent {
+        reduce {
+            state.copy(
+                isDialog = !state.isDialog
             )
         }
     }

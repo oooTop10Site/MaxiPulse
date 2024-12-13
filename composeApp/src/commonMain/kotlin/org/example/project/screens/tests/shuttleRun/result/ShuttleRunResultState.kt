@@ -15,6 +15,7 @@ data class ShuttleRunResultState(
     val search: String,
     val filter: String,
     val filters: List<String>,
+    val isDialog: Boolean,
 ) {
 
     companion object {
@@ -47,7 +48,8 @@ data class ShuttleRunResultState(
             },
             selectSportsman = null,
             tabs = ShuttleRunResultTab.entries,
-            currentTab = ShuttleRunResultTab.OverallResult
+            currentTab = ShuttleRunResultTab.OverallResult,
+            isDialog = false
         )
     }
 }

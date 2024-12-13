@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -47,8 +48,11 @@ import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.age
 import maxipuls.composeapp.generated.resources.age_text
 import maxipuls.composeapp.generated.resources.heart_rate_peak_player
+import maxipuls.composeapp.generated.resources.ok
 import maxipuls.composeapp.generated.resources.profile
 import maxipuls.composeapp.generated.resources.search
+import maxipuls.composeapp.generated.resources.sensor_not_work_question
+import maxipuls.composeapp.generated.resources.sensor_not_work_question_desc
 import maxipuls.composeapp.generated.resources.share
 import maxipuls.composeapp.generated.resources.zip
 import org.example.project.domain.model.ShuttleRunResultTab
@@ -63,6 +67,8 @@ import org.example.project.screens.training.trainingResult.contents.SportsmanTra
 import org.example.project.screens.training.trainingResult.contents.TrimpContent
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.BackIcon
+import org.example.project.theme.uiKit.MaxiAlertDialog
+import org.example.project.theme.uiKit.MaxiAlertDialogButtons
 import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.utils.Constants
@@ -254,6 +260,21 @@ class ShuttleRunResultScreen : Screen {
                         }
                     }
                 }
+            }
+
+            if (state.isDialog) {
+                MaxiAlertDialog(
+                    modifier = Modifier.widthIn(max = 600.dp),
+                    accept = { viewModel.changeDialog() },
+                    onDismiss = { viewModel.changeDialog() },
+                    cancel = {
+                        viewModel.changeDialog()
+                    },
+                    title = stringResource(Res.string.sensor_not_work_question),
+                    description = stringResource(Res.string.sensor_not_work_question_desc),
+                    alertDialogButtons = MaxiAlertDialogButtons.Accept,
+                    acceptText = stringResource(Res.string.ok)
+                )
             }
         }
     }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -34,11 +35,13 @@ import maxipuls.composeapp.generated.resources.chss_pao
 import maxipuls.composeapp.generated.resources.chss_peak
 import maxipuls.composeapp.generated.resources.distance
 import maxipuls.composeapp.generated.resources.fio
+import maxipuls.composeapp.generated.resources.marker_question
 import maxipuls.composeapp.generated.resources.mpk
 import maxipuls.composeapp.generated.resources.performance
 import maxipuls.composeapp.generated.resources.search
 import maxipuls.composeapp.generated.resources.training
 import org.example.project.domain.model.sportsman.SportsmanShuttleRunResultUI
+import org.example.project.ext.clickableBlank
 import org.example.project.screens.tests.shuttleRun.result.ShuttleRunResultState
 import org.example.project.screens.tests.shuttleRun.result.ShuttleRunResultViewModel
 import org.example.project.screens.training.trainingResult.RegularResultBox
@@ -113,6 +116,20 @@ internal fun ColumnScope.OverallShuttleRunContent(
                 text = state.filter,
                 placeholderText = ""
             )
+            Spacer(Modifier.size(20.dp))
+            Box(
+                modifier = Modifier.size(40.dp).clip(CircleShape)
+                    .background(MaxiPulsTheme.colors.uiKit.primary, CircleShape)
+            ) {
+                Icon(
+                    painterResource(Res.drawable.marker_question),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp).clickableBlank {
+                        viewModel.changeDialog()
+                    }.align(Alignment.Center),
+                    tint = MaxiPulsTheme.colors.uiKit.lightTextColor
+                )
+            }
         }
         Spacer(Modifier.size(20.dp))
         HorizontalDivider(
