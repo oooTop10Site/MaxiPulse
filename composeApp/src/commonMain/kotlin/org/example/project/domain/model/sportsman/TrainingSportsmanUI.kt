@@ -18,6 +18,11 @@ data class TrainingSportsmanUI(
     val heartRateCurrent: Int,
     val isTraining: Boolean,
     val color: Color,
+    val zone1: Long, //seconds
+    val zone2: Long, //seconds
+    val zone3: Long, //seconds
+    val zone4: Long, //seconds
+    val zone5: Long, //seconds
 ) {
     val fio: String
         get() = "$lastname $firstname $middleName"

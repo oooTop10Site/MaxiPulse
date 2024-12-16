@@ -150,6 +150,16 @@
     <string name="performance">Работоспособность</string>
     <string name="distance">Расстояние</string>
     <string name="recovery">Восстановление</string>
+    <string name="ending_training">Завершить тренеровку</string>
+    <string name="high_performance_ble">Высокая производительность BLE</string>
+    <string name="use_route">Использовать антенну</string>
+
+    <string name="settings_sportsman">Настройка профиля спортсмена</string>
+    <string name="settings_minimum_heart_rate">Задать минимальное значение ЧСС на графике</string>
+    <string name="settings_select_Formula_max_heart_rate">Выбор формулы расчета максимальной ЧСС</string>
+    <string name="settings_method_count_trimp">Выбор способа расчета ТРИМП</string>
+    <string name="settings_algorithm_anaerobic_threshold">Выбор алгоритма определения Анаэробного порога (ЧСС ПАНО)</string>
+
     <string name="training_info">Персональная карточка спортсмена содержит следующую\nинформацию:</string>
     <string name="training_info_desc1">1. Мгновенная ЧСС</string>
     <string name="training_info_desc2">2. % ЧСС мах. Рассчитывается от максимального значения ЧСС, сохраненного в профиле спортсмена</string>

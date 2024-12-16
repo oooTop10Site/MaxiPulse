@@ -40,6 +40,7 @@ import org.jetbrains.compose.resources.stringResource
 fun MaxiPageContainer(
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
+    topDivider: Boolean = true,
     floatingActionButton: (@Composable () -> Unit)? = null,
     topBar: (@Composable () -> Unit)? = null,
     bottomBar: (@Composable () -> Unit)? = null,
@@ -84,7 +85,12 @@ fun MaxiPageContainer(
 }
 
 @Composable
-fun TopBarTitle(modifier: Modifier = Modifier, text: String, showCurrentTime: Boolean) {
+fun TopBarTitle(
+    modifier: Modifier = Modifier,
+    text: String,
+    showCurrentTime: Boolean,
+    traingleIcon: (@Composable () -> Unit)? = null,
+) {
     var datetime: String by remember { mutableStateOf("...") }
     LaunchedEffect(Unit) {
         if (showCurrentTime) {
@@ -115,6 +121,9 @@ fun TopBarTitle(modifier: Modifier = Modifier, text: String, showCurrentTime: Bo
             ),
             modifier = Modifier.align(Alignment.Center)
         )
+        Box(modifier = Modifier.align(Alignment.CenterEnd)) {
+            traingleIcon?.invoke()
+        }
     }
 }
 
@@ -132,6 +141,6 @@ fun TopBarTitle(
         }
     }
     Box(modifier) {
-        content.invoke(this,datetime)
+        content.invoke(this, datetime)
     }
 }

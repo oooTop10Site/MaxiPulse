@@ -37,7 +37,12 @@ data class TrainingState(
                     },
                     heartRateCurrent = (60..200).random(),
                     isTraining = listOf(true, false).random(),
-                    color = listOf(Color.Red, Color.Green, Color.Blue, Color.Yellow).random()
+                    color = listOf(Color.Red, Color.Green, Color.Blue, Color.Yellow).random(),
+                    zone1 = (10..150).random().toLong(),
+                    zone2 = (10..150).random().toLong(),
+                    zone3 = (10..150).random().toLong(),
+                    zone4 = (10..150).random().toLong(),
+                    zone5 = (10..150).random().toLong(),
                 )
             },
             null

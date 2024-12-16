@@ -1,5 +1,6 @@
 package org.example.project.screens.training
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,14 +46,21 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.io.discardingSink
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.add_ic
+import maxipuls.composeapp.generated.resources.age
+import maxipuls.composeapp.generated.resources.age_text
 import maxipuls.composeapp.generated.resources.chss
 import maxipuls.composeapp.generated.resources.chss_max
+import maxipuls.composeapp.generated.resources.ending_training
+import maxipuls.composeapp.generated.resources.heart_rate_peak_player
 import maxipuls.composeapp.generated.resources.info_ic
 import maxipuls.composeapp.generated.resources.ok
+import maxipuls.composeapp.generated.resources.profile
 import maxipuls.composeapp.generated.resources.start
 import maxipuls.composeapp.generated.resources.stop
+import maxipuls.composeapp.generated.resources.test_end
 import maxipuls.composeapp.generated.resources.training
 import maxipuls.composeapp.generated.resources.training_info
 import maxipuls.composeapp.generated.resources.training_info_desc1
@@ -58,6 +68,12 @@ import maxipuls.composeapp.generated.resources.training_info_desc2
 import maxipuls.composeapp.generated.resources.training_info_desc3
 import maxipuls.composeapp.generated.resources.training_info_desc4
 import maxipuls.composeapp.generated.resources.trimp
+import maxipuls.composeapp.generated.resources.zone1
+import maxipuls.composeapp.generated.resources.zone2
+import maxipuls.composeapp.generated.resources.zone3
+import maxipuls.composeapp.generated.resources.zone4
+import maxipuls.composeapp.generated.resources.zone5
+import org.example.project.domain.model.ButtonActions
 import org.example.project.domain.model.sportsman.TrainingSportsmanUI
 import org.example.project.domain.model.test.TestStatus
 import org.example.project.ext.clickableBlank
@@ -66,9 +82,12 @@ import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.training.trainingResult.TrainingResultScreen
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.BackIcon
+import org.example.project.theme.uiKit.ButtonTextStyle
+import org.example.project.theme.uiKit.HeartRateGraph
 import org.example.project.theme.uiKit.MaxiAlertDialog
 import org.example.project.theme.uiKit.MaxiAlertDialogButtons
 import org.example.project.theme.uiKit.MaxiButton
+import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.MaxiSwitch
 import org.example.project.utils.orEmpty
 import org.jetbrains.compose.resources.painterResource
@@ -86,7 +105,7 @@ class TrainingScreen : Screen {
         val navigator = RootNavigator.currentOrThrow
         LaunchedEffect(viewModel) {
             viewModel.container.sideEffectFlow.collect {
-                when(it) {
+                when (it) {
                     TrainingEvent.StopTraining -> navigator.push(TrainingResultScreen())
                 }
             }
@@ -248,7 +267,10 @@ class TrainingScreen : Screen {
                 alertDialogButtons = MaxiAlertDialogButtons.Accept,
                 title = stringResource(Res.string.training_info),
                 descriptionContent = {
-                    Column(modifier = Modifier.fillMaxSize().padding(bottom = 65.dp), verticalArrangement = Arrangement.SpaceBetween) {
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(bottom = 65.dp),
+                        verticalArrangement = Arrangement.SpaceBetween
+                    ) {
                         Text(
                             text = stringResource(Res.string.training_info_desc1),
                             style = MaxiPulsTheme.typography.regular.copy(
@@ -292,7 +314,235 @@ class TrainingScreen : Screen {
                 acceptText = stringResource(Res.string.ok)
             )
         }
+        state.selectSportsman?.let {
+            MaxiAlertDialog(
+                modifier = Modifier.fillMaxWidth(0.85f).fillMaxHeight(0.85f),
+                alertDialogButtons = null,
+                title = "",
+                paddingAfterTitle = false,
+                descriptionContent = {
+                    SportsmanContent(
+                        modifier = Modifier.fillMaxSize(),
+                        dismiss = {
+                            viewModel.changeSelectSportsman(null)
+                        },
+                        sportsmanUI = it,
+                        endTraining = { viewModel.stopTrainingSportsman(state.selectSportsman?.id.orEmpty()) })
+                },
+                accept = {
+                    viewModel.changeSelectSportsman(null)
+                },
+                onDismiss = {
+                    viewModel.changeSelectSportsman(null)
+                },
+                acceptText = stringResource(Res.string.ok)
+            )
+        }
     }
+}
+
+@Composable
+private fun SportsmanContent(
+    modifier: Modifier = Modifier,
+    sportsmanUI: TrainingSportsmanUI,
+    dismiss: () -> Unit,
+    endTraining: () -> Unit
+) {
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Row() {
+                BackIcon(modifier = Modifier.size(40.dp), onClick = { dismiss() })
+                Spacer(Modifier.size(20.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Box(
+                        modifier = Modifier.size(225.dp),
+                    ) {
+                        if (sportsmanUI.avatar.isBlank()) {
+                            Box(
+                                modifier = Modifier.fillMaxSize().background(
+                                    MaxiPulsTheme.colors.uiKit.sportsmanAvatarBackground,
+                                    shape = CircleShape
+                                ).clip(CircleShape).align(Alignment.Center)
+                            ) {
+                                Image(
+                                    painter = painterResource(Res.drawable.profile),
+                                    modifier = Modifier.size(
+                                        width = 108.dp,
+                                        134.dp
+                                    ).align(Alignment.Center),
+                                    colorFilter = ColorFilter.tint(color = MaxiPulsTheme.colors.uiKit.divider),
+                                    contentDescription = null
+                                )
+                            }
+                        } else {
+                            MaxiImage(
+                                modifier = Modifier.fillMaxSize().align(Alignment.Center)
+                                    .clip(CircleShape),
+                                url = sportsmanUI.avatar,
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                        Box(
+                            modifier = Modifier.background(
+                                MaxiPulsTheme.colors.uiKit.grey800,
+                                shape = CircleShape
+                            ).clip(CircleShape).size(73.dp).align(Alignment.BottomEnd),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = sportsmanUI.number.toString(),
+                                style = MaxiPulsTheme.typography.semiBold.copy(
+                                    color = MaxiPulsTheme.colors.uiKit.lightTextColor,
+                                    fontSize = 24.sp,
+                                    lineHeight = 24.sp
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.size((50).dp))
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "${sportsmanUI.lastname}\n${
+                                sportsmanUI.firstname
+                            } ${sportsmanUI.middleName}",
+                            style = MaxiPulsTheme.typography.medium.copy(
+                                color = MaxiPulsTheme.colors.uiKit.textColor,
+                                fontSize = 20.sp,
+                                lineHeight = 26.sp
+                            ),
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Spacer(modifier = Modifier.size((20).dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "${stringResource(Res.string.age)}: ${
+                                    stringResource(
+                                        Res.string.age_text,
+                                        sportsmanUI.age
+                                    )
+                                }",
+                                style = MaxiPulsTheme.typography.regular.copy(
+                                    color = MaxiPulsTheme.colors.uiKit.textColor,
+                                    fontSize = 16.sp,
+                                    lineHeight = 16.sp
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                        Spacer(modifier = Modifier.size((20).dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "${stringResource(Res.string.chss_max)}: ${sportsmanUI.heartRateMax}",
+                                style = MaxiPulsTheme.typography.regular.copy(
+                                    color = MaxiPulsTheme.colors.uiKit.textColor,
+                                    fontSize = 16.sp,
+                                    lineHeight = 16.sp
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                    if(sportsmanUI.isTraining) {
+                        MaxiButton(
+                            buttonActions = ButtonActions.Unlimit,
+                            modifier = Modifier.weight(1f).height(89.dp),
+                            text = stringResource(Res.string.ending_training),
+                            buttonTextStyle = ButtonTextStyle.Bold,
+                            onClick = {
+                                endTraining()
+                                dismiss()
+                            }
+                        )
+                    }
+//
+                }
+            }
+
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+                color = MaxiPulsTheme.colors.uiKit.divider
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                val zoneColors = listOf(
+                    Color(0xFFAEC6F3), // Голубая
+                    Color(0xFF3B6ECF), // Синяя
+                    Color(0xFF96D34B), // Зеленая
+                    Color(0xFFFFA93A), // Оранжевая
+                    Color(0xFFDF0B40)  // Красная
+                )
+                zoneColors.forEachIndexed { index, item ->
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Box(
+                            modifier = Modifier.width(150.dp).height(44.dp).background(
+                                shape = RoundedCornerShape(50.dp),
+                                color = item
+                            ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = when (index) {
+                                    0 -> stringResource(Res.string.zone1)
+                                    1 -> stringResource(Res.string.zone2)
+                                    2 -> stringResource(Res.string.zone3)
+                                    3 -> stringResource(Res.string.zone4)
+                                    4 -> stringResource(Res.string.zone5)
+                                    else -> stringResource(Res.string.zone1)
+                                },
+                                style = MaxiPulsTheme.typography.bold.copy(
+                                    color = MaxiPulsTheme.colors.uiKit.lightTextColor,
+                                    fontSize = 20.sp,
+                                    lineHeight = 20.sp
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                        Spacer(Modifier.size(10.dp))
+                        Text(
+                            text = when (index) {
+                                0 -> sportsmanUI.zone1
+                                1 -> sportsmanUI.zone2
+                                2 -> sportsmanUI.zone3
+                                3 -> sportsmanUI.zone4
+                                4 -> sportsmanUI.zone5
+                                else -> sportsmanUI.zone1
+                            }.formatSeconds(),
+                            style = MaxiPulsTheme.typography.semiBold.copy(
+                                color = MaxiPulsTheme.colors.uiKit.textColor,
+                                fontSize = 20.sp,
+                                lineHeight = 20.sp
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            }
+
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+                color = MaxiPulsTheme.colors.uiKit.divider
+            )
+
+            HeartRateGraph(modifier = Modifier.weight(1f), heartRateData = sportsmanUI.heartBits)
+
+        }
+    }
+
 }
 
 @Composable
