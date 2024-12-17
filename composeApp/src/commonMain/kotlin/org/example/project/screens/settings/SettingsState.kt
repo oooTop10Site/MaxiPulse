@@ -14,7 +14,7 @@ data class SettingsState(
         val InitState = SettingsState(
             sportsmanUI = SportsmanUI.Default,
             selectTab = null,
-            tabs = SettingTab.entries,
+            tabs = SettingTab.list,
             false,
             false,
         )

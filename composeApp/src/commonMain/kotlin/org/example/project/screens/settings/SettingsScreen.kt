@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +19,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -57,11 +60,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.rotate
 import maxipuls.composeapp.generated.resources.arrow_right
 import maxipuls.composeapp.generated.resources.back_ic
+import maxipuls.composeapp.generated.resources.date_birthday
 import maxipuls.composeapp.generated.resources.drop_ic
+import maxipuls.composeapp.generated.resources.enter_data
+import maxipuls.composeapp.generated.resources.general_info
 import maxipuls.composeapp.generated.resources.high_performance_ble
+import maxipuls.composeapp.generated.resources.lastname
+import maxipuls.composeapp.generated.resources.middlename
+import maxipuls.composeapp.generated.resources.name
+import maxipuls.composeapp.generated.resources.sex
+import maxipuls.composeapp.generated.resources.sport_category
+import maxipuls.composeapp.generated.resources.sport_specialization
+import maxipuls.composeapp.generated.resources.stage_sport_ready
 import maxipuls.composeapp.generated.resources.use_route
 import org.example.project.domain.model.setting.SettingTab
+import org.example.project.theme.uiKit.HeartRateGraph
+import org.example.project.theme.uiKit.MaxiCheckbox
+import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.theme.uiKit.MaxiSwitch
+import org.example.project.utils.Constants
+import org.example.project.utils.orEmpty
 
 class SettingsScreen : Screen {
 
@@ -180,14 +198,15 @@ class SettingsScreen : Screen {
                     modifier = Modifier.fillMaxWidth(),
                     color = MaxiPulsTheme.colors.uiKit.divider
                 )
-                state.tabs.forEach {
+                state.tabs.forEach { item ->
                     Spacer(Modifier.size(20.dp))
                     SettingItem(
                         modifier = Modifier.fillMaxWidth(),
-                        isSelect = state.selectTab == it,
-                        item = it
+                        isSelect = state.selectTab?.let { it::class == item::class } == true,
+                        item = item,
+                        viewModel = viewModel
                     ) {
-                        viewModel.changeSelectTab(it)
+                        viewModel.changeSelectTab(item)
                     }
                     Spacer(Modifier.size(20.dp))
                     HorizontalDivider(
@@ -197,14 +216,22 @@ class SettingsScreen : Screen {
                 }
                 Spacer(Modifier.size(30.dp))
 
-                SelectableItem(modifier = Modifier.fillMaxWidth(), checked = state.useRoute, text = stringResource(Res.string.use_route), onChange = {
-                    viewModel.changeUseRoute()
-                })
+                SelectableItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    checked = state.useRoute,
+                    text = stringResource(Res.string.use_route),
+                    onChange = {
+                        viewModel.changeUseRoute()
+                    })
                 Spacer(Modifier.size(20.dp))
 
-                SelectableItem(modifier = Modifier.fillMaxWidth(), checked = state.useHighPerformance,text = stringResource(Res.string.high_performance_ble), onChange = {
-                    viewModel.changeHighPerformance()
-                })
+                SelectableItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    checked = state.useHighPerformance,
+                    text = stringResource(Res.string.high_performance_ble),
+                    onChange = {
+                        viewModel.changeHighPerformance()
+                    })
                 Spacer(Modifier.size(30.dp))
 
             }
@@ -239,20 +266,247 @@ private fun SelectableItem(
 }
 
 @Composable
+private fun MinimumHeartRateContent(
+    modifier: Modifier = Modifier,
+    tab: SettingTab.MinimumHeartRate,
+    viewModel: SettingsViewModel
+) {
+    Spacer(Modifier.size(10.dp))
+    Row(modifier) {
+        Row(
+            modifier = Modifier.align(Alignment.Bottom),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(Res.string.enter_data),
+                style = MaxiPulsTheme.typography.regular.copy(
+                    fontSize = 16.sp,
+                    lineHeight = 16.sp,
+                    color = MaxiPulsTheme.colors.uiKit.textColor,
+                ),
+                modifier = Modifier,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Spacer(Modifier.size(20.dp))
+            MaxiOutlinedTextField(
+                value = tab.minimumHeartRateUI.minimun.toString(),
+                modifier = Modifier.width(110.dp).height(
+                    Constants.TextFieldHeight
+                ),
+                onValueChange = {
+                    viewModel.selectMinHeartRate(it)
+                }
+            )
+        }
+        Spacer(Modifier.size(10.dp))
+        HeartRateGraph(
+            showY = false,
+            modifier = Modifier.weight(1f).height(180.dp),
+            heartRateData = tab.minimumHeartRateUI.heartRate
+        )
+    }
+}
+
+@Composable
+private fun SelectFormulaMaxHeartRateContent(
+    modifier: Modifier = Modifier,
+    tab: SettingTab.SelectFormulaMaxHeartRate,
+    viewModel: SettingsViewModel
+) {
+    Column(modifier = modifier) {
+        Spacer(Modifier.size(10.dp))
+        Column(modifier = Modifier.fillMaxWidth()) {
+            tab.maxHeartRateUI.items.forEach {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                        .clickableBlank { viewModel.selectFormulaFormulaChssMax(it) }) {
+                    Text(
+                        text = it.title,
+                        style = MaxiPulsTheme.typography.regular.copy(
+                            fontSize = 13.sp,
+                            lineHeight = 13.sp,
+                            color = MaxiPulsTheme.colors.uiKit.textColor,
+                        ),
+                        modifier = Modifier,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Text(
+                        text = it.desc,
+                        style = MaxiPulsTheme.typography.regular.copy(
+                            fontSize = 13.sp,
+                            lineHeight = 13.sp,
+                            color = MaxiPulsTheme.colors.uiKit.textColor,
+                        ),
+                        modifier = Modifier,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.size(24.dp).clip(RoundedCornerShape(5.dp))
+                            .border(
+                                width = 1.dp,
+                                shape = RoundedCornerShape(5.dp),
+                                color = MaxiPulsTheme.colors.uiKit.textFieldStroke
+                            )
+                    ) {
+                        if (tab.maxHeartRateUI.selectItem == it) {
+                            Box(
+                                modifier = Modifier.size(16.dp)
+                                    .clip(RoundedCornerShape(5.dp)).background(
+                                        color = MaxiPulsTheme.colors.uiKit.primary,
+                                        shape = RoundedCornerShape(2.dp)
+                                    )
+                            )
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun SportsmanProfileContent(
+    modifier: Modifier = Modifier,
+    tab: SettingTab.SettingsSportsman,
+    viewModel: SettingsViewModel
+) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(20.dp)) {
+        Spacer(Modifier.size(22.dp))
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            SelectableCheckBoxItem(
+                modifier = Modifier.width(300.dp),
+                checked = tab.generalInfo.lastname,
+                text = stringResource(Res.string.lastname)
+            ) {
+                viewModel.selectLastName()
+            }
+            Spacer(Modifier.weight(1f))
+            SelectableCheckBoxItem(
+                modifier = Modifier.width(300.dp),
+                checked = tab.generalInfo.stageSportReadiness,
+                text = stringResource(Res.string.stage_sport_ready)
+            ) {
+                viewModel.selectStageReadiness()
+            }
+            Spacer(Modifier.weight(1f))
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            SelectableCheckBoxItem(
+                modifier = Modifier.width(300.dp),
+                checked = tab.generalInfo.birthday,
+                text = stringResource(Res.string.date_birthday)
+            ) {
+                viewModel.selectBirthday()
+            }
+            Spacer(Modifier.weight(1f))
+            SelectableCheckBoxItem(
+                modifier = Modifier.width(300.dp),
+                checked = tab.generalInfo.sportCategory,
+                text = stringResource(Res.string.sport_category)
+            ) {
+                viewModel.selectSportCategory()
+            }
+            Spacer(Modifier.weight(1f))
+        }
+        SelectableCheckBoxItem(
+            modifier = Modifier.width(300.dp),
+            checked = tab.generalInfo.sex,
+            text = stringResource(Res.string.sex)
+        ) {
+            viewModel.selectSex()
+        }
+        Text(
+            style = MaxiPulsTheme.typography.semiBold.copy(
+                color = MaxiPulsTheme.colors.uiKit.textColor,
+                fontSize = 16.sp,
+                lineHeight = 16.sp
+            ),
+            text = stringResource(Res.string.general_info),
+            modifier = Modifier.fillMaxWidth()
+        )
+        SelectableCheckBoxItem(
+            modifier = Modifier.width(300.dp),
+            checked = tab.generalInfo.name,
+            text = stringResource(Res.string.name)
+        ) {
+            viewModel.selectName()
+        }
+        SelectableCheckBoxItem(
+            modifier = Modifier.width(300.dp),
+            checked = tab.generalInfo.middleName,
+            text = stringResource(Res.string.middlename)
+        ) {
+            viewModel.selectMiddleName()
+        }
+        SelectableCheckBoxItem(
+            modifier = Modifier.width(300.dp),
+            checked = tab.generalInfo.sportSpecialization,
+            text = stringResource(Res.string.sport_specialization)
+        ) {
+            viewModel.selectSportSpecialization()
+        }
+
+    }
+}
+
+@Composable
+private fun SelectableCheckBoxItem(
+    modifier: Modifier = Modifier,
+    checked: Boolean,
+    text: String,
+    onChange: () -> Unit,
+) {
+
+    Row(modifier = modifier.clickableBlank {
+        onChange()
+    }, verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = text,
+            style = MaxiPulsTheme.typography.regular.copy(
+                fontSize = 16.sp,
+                lineHeight = 16.sp,
+                color = MaxiPulsTheme.colors.uiKit.textColor,
+            ),
+            modifier = Modifier.weight(1f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+
+        MaxiCheckbox(
+            modifier = Modifier.size(24.dp),
+            checked = checked,
+            onCheckedChange = { onChange() })
+
+
+    }
+
+}
+
+@Composable
 private fun SettingItem(
     modifier: Modifier = Modifier,
+    viewModel: SettingsViewModel,
     item: SettingTab,
     isSelect: Boolean,
     onClick: () -> Unit
 ) {
     Column(
-        modifier = modifier.animateContentSize().clickableBlank {
-            onClick()
-        },
+        modifier = modifier.animateContentSize().padding(horizontal = 15.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp),
+            modifier = Modifier.fillMaxWidth().clickableBlank {
+                onClick()
+            },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -281,8 +535,35 @@ private fun SettingItem(
         }
 
         if (isSelect) {
-            Spacer(Modifier.size(20.dp))
-            Text(text = "CONTENT")
+            when (item) {
+                SettingTab.AlgorithmAnaerobicThreshold -> {
+
+                }
+
+                SettingTab.MethodCountTrimp -> {
+
+                }
+
+                is SettingTab.MinimumHeartRate -> {
+                    MinimumHeartRateContent(modifier = Modifier.fillMaxWidth(), item, viewModel)
+                }
+
+                is SettingTab.SelectFormulaMaxHeartRate -> {
+                    SelectFormulaMaxHeartRateContent(
+                        modifier = Modifier.fillMaxWidth(),
+                        item,
+                        viewModel = viewModel
+                    )
+                }
+
+                is SettingTab.SettingsSportsman -> {
+                    SportsmanProfileContent(
+                        modifier = Modifier.fillMaxWidth(),
+                        item,
+                        viewModel = viewModel
+                    )
+                }
+            }
         }
     }
 }

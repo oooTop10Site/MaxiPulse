@@ -35,7 +35,12 @@ import org.example.project.ext.toTimeUI
 import org.example.project.theme.MaxiPulsTheme
 
 @Composable
-fun HeartRateGraph(modifier: Modifier = Modifier, heartRateData: List<HeartBit>, showTime: Boolean = false) {
+fun HeartRateGraph(
+    modifier: Modifier = Modifier,
+    heartRateData: List<HeartBit>,
+    showY: Boolean = true,
+    showTime: Boolean = false
+) {
     val maxValue = 230f
     val zones = listOf(
         0f to 144f,        // Голубая зона
@@ -64,23 +69,25 @@ fun HeartRateGraph(modifier: Modifier = Modifier, heartRateData: List<HeartBit>,
                 color = MaxiPulsTheme.colors.uiKit.textColor,
                 lineHeight = 14.sp
             )
-            Canvas(modifier = Modifier.fillMaxHeight().width(40.dp)) {
-                val graphWidth = size.width
-                val graphHeight = size.height
-                val zoneHeight = graphHeight / zones.size
-                zones.forEachIndexed { index, (_, endHR) ->
-                    val topY = graphHeight - (index + 1) * zoneHeight
-                    val textLayoutResult = textMeasurer.measure(
-                        text = endHR.toInt().toString(),
-                        style = textStyle
-                    )
-                    drawText(
-                        textLayoutResult,
-                        topLeft = Offset(
-                            x = 0f,
-                            y = topY
+            if (showY) {
+                Canvas(modifier = Modifier.fillMaxHeight().width(40.dp)) {
+                    val graphWidth = size.width
+                    val graphHeight = size.height
+                    val zoneHeight = graphHeight / zones.size
+                    zones.forEachIndexed { index, (_, endHR) ->
+                        val topY = graphHeight - (index + 1) * zoneHeight
+                        val textLayoutResult = textMeasurer.measure(
+                            text = endHR.toInt().toString(),
+                            style = textStyle
                         )
-                    )
+                        drawText(
+                            textLayoutResult,
+                            topLeft = Offset(
+                                x = 0f,
+                                y = topY
+                            )
+                        )
+                    }
                 }
             }
             Canvas(modifier = Modifier.weight(1f).fillMaxHeight().clip(RoundedCornerShape(25.dp))) {
@@ -128,7 +135,7 @@ fun HeartRateGraph(modifier: Modifier = Modifier, heartRateData: List<HeartBit>,
                 )
             }
         }
-        if(showTime) {
+        if (showTime) {
             val textStyle = MaxiPulsTheme.typography.regular.copy(
                 fontSize = 14.sp,
                 lineHeight = 14.sp,
@@ -136,7 +143,11 @@ fun HeartRateGraph(modifier: Modifier = Modifier, heartRateData: List<HeartBit>,
             )
             // Отрисовка временной шкалы
             Row(
-                modifier = Modifier.fillMaxWidth().padding(start = 40.dp).height(20.dp),
+                modifier = Modifier.fillMaxWidth().padding(
+                    start = if (showY) {
+                        40.dp
+                    } else 0.dp
+                ).height(20.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {

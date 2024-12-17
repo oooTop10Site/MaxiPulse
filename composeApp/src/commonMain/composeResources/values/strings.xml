@@ -153,6 +153,10 @@
     <string name="ending_training">Завершить тренеровку</string>
     <string name="high_performance_ble">Высокая производительность BLE</string>
     <string name="use_route">Использовать антенну</string>
+    <string name="general_info">Общие сведения</string>
+    <string name="sport_specialization">Спортивная специализация</string>
+    <string name="name">Имя</string>
+    <string name="enter_data">Введите значениея</string>
 
     <string name="settings_sportsman">Настройка профиля спортсмена</string>
     <string name="settings_minimum_heart_rate">Задать минимальное значение ЧСС на графике</string>

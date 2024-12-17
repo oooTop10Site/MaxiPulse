@@ -121,7 +121,7 @@ fun TopBarTitle(
             ),
             modifier = Modifier.align(Alignment.Center)
         )
-        Box(modifier = Modifier.align(Alignment.CenterEnd)) {
+        Box(modifier = Modifier.align(Alignment.CenterEnd).padding(end = 20.dp)) {
             traingleIcon?.invoke()
         }
     }
