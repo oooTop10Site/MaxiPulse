@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,10 +22,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -38,19 +39,11 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import maxipuls.composeapp.generated.resources.Res
-import maxipuls.composeapp.generated.resources.age
-import maxipuls.composeapp.generated.resources.age_text
-import maxipuls.composeapp.generated.resources.chss_max
-import maxipuls.composeapp.generated.resources.ending_training
 import maxipuls.composeapp.generated.resources.pencil
 import maxipuls.composeapp.generated.resources.profile
 import maxipuls.composeapp.generated.resources.settings
-import org.example.project.domain.model.ButtonActions
 import org.example.project.ext.clickableBlank
-import org.example.project.screens.group.groupEdit.GroupEditScreen
 import org.example.project.theme.MaxiPulsTheme
-import org.example.project.theme.uiKit.ButtonTextStyle
-import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.MaxiPageContainer
 import org.example.project.theme.uiKit.TopBarTitle
@@ -58,8 +51,9 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.rotate
-import maxipuls.composeapp.generated.resources.arrow_right
-import maxipuls.composeapp.generated.resources.back_ic
+import androidx.compose.ui.text.style.TextAlign
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import maxipuls.composeapp.generated.resources.date_birthday
 import maxipuls.composeapp.generated.resources.drop_ic
 import maxipuls.composeapp.generated.resources.enter_data
@@ -74,17 +68,19 @@ import maxipuls.composeapp.generated.resources.sport_specialization
 import maxipuls.composeapp.generated.resources.stage_sport_ready
 import maxipuls.composeapp.generated.resources.use_route
 import org.example.project.domain.model.setting.SettingTab
+import org.example.project.screens.root.RootNavigator
+import org.example.project.screens.settings.edit.SettingEditScreen
 import org.example.project.theme.uiKit.HeartRateGraph
 import org.example.project.theme.uiKit.MaxiCheckbox
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.theme.uiKit.MaxiSwitch
 import org.example.project.utils.Constants
-import org.example.project.utils.orEmpty
 
 class SettingsScreen : Screen {
 
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
         val viewModel = rememberScreenModel {
             SettingsViewModel()
         }
@@ -108,6 +104,7 @@ class SettingsScreen : Screen {
                             painterResource(Res.drawable.pencil),
                             contentDescription = null,
                             modifier = Modifier.size(24.dp).clickableBlank {
+                                navigator.push(SettingEditScreen())
                             },
                             tint = MaxiPulsTheme.colors.uiKit.lightTextColor
                         )
@@ -200,7 +197,7 @@ class SettingsScreen : Screen {
                 )
                 state.tabs.forEach { item ->
                     Spacer(Modifier.size(20.dp))
-                    SettingItem(
+                    SettingSelectItem(
                         modifier = Modifier.fillMaxWidth(),
                         isSelect = state.selectTab?.let { it::class == item::class } == true,
                         item = item,
@@ -216,7 +213,7 @@ class SettingsScreen : Screen {
                 }
                 Spacer(Modifier.size(30.dp))
 
-                SelectableItem(
+                SettingsSelectableItem(
                     modifier = Modifier.fillMaxWidth(),
                     checked = state.useRoute,
                     text = stringResource(Res.string.use_route),
@@ -225,7 +222,7 @@ class SettingsScreen : Screen {
                     })
                 Spacer(Modifier.size(20.dp))
 
-                SelectableItem(
+                SettingsSelectableItem(
                     modifier = Modifier.fillMaxWidth(),
                     checked = state.useHighPerformance,
                     text = stringResource(Res.string.high_performance_ble),
@@ -240,7 +237,7 @@ class SettingsScreen : Screen {
 }
 
 @Composable
-private fun SelectableItem(
+internal fun SettingsSelectableItem(
     modifier: Modifier = Modifier,
     checked: Boolean,
     text: String,
@@ -316,11 +313,23 @@ private fun SelectFormulaMaxHeartRateContent(
 ) {
     Column(modifier = modifier) {
         Spacer(Modifier.size(10.dp))
-        Column(modifier = Modifier.fillMaxWidth()) {
-            tab.maxHeartRateUI.items.forEach {
+        Column(
+            modifier = Modifier.fillMaxWidth().clip(shape = RoundedCornerShape(15.dp)).border(
+                width = 1.dp,
+                color = MaxiPulsTheme.colors.uiKit.divider,
+                shape = RoundedCornerShape(15.dp)
+            )
+        ) {
+            tab.maxHeartRateUI.items.forEachIndexed { index, it ->
+                if (index != 0) {
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaxiPulsTheme.colors.uiKit.divider
+                    )
+                }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth().height(56.dp)
                         .clickableBlank { viewModel.selectFormulaFormulaChssMax(it) }) {
                     Text(
                         text = it.title,
@@ -329,42 +338,52 @@ private fun SelectFormulaMaxHeartRateContent(
                             lineHeight = 13.sp,
                             color = MaxiPulsTheme.colors.uiKit.textColor,
                         ),
-                        modifier = Modifier,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.width(270.dp),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    Text(
-                        text = it.desc,
-                        style = MaxiPulsTheme.typography.regular.copy(
-                            fontSize = 13.sp,
-                            lineHeight = 13.sp,
-                            color = MaxiPulsTheme.colors.uiKit.textColor,
-                        ),
-                        modifier = Modifier,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
+                    VerticalDivider(
+                        Modifier.fillMaxHeight(),
+                        color = MaxiPulsTheme.colors.uiKit.divider
                     )
-
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.size(24.dp).clip(RoundedCornerShape(5.dp))
-                            .border(
-                                width = 1.dp,
-                                shape = RoundedCornerShape(5.dp),
-                                color = MaxiPulsTheme.colors.uiKit.textFieldStroke
-                            )
-                    ) {
-                        if (tab.maxHeartRateUI.selectItem == it) {
-                            Box(
-                                modifier = Modifier.size(16.dp)
-                                    .clip(RoundedCornerShape(5.dp)).background(
-                                        color = MaxiPulsTheme.colors.uiKit.primary,
-                                        shape = RoundedCornerShape(2.dp)
-                                    )
-                            )
+                    Box(modifier = Modifier.weight(1f).padding(horizontal = 90.dp),) {
+                        Text(
+                            text = it.desc,
+                            style = MaxiPulsTheme.typography.regular.copy(
+                                fontSize = 13.sp,
+                                lineHeight = 16.sp,
+                                color = MaxiPulsTheme.colors.uiKit.textColor,
+                            ),
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                    VerticalDivider(
+                        Modifier.fillMaxHeight(),
+                        color = MaxiPulsTheme.colors.uiKit.divider
+                    )
+                    Box(modifier = Modifier.fillMaxHeight().width(130.dp), contentAlignment = Alignment.Center) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.size(24.dp).clip(RoundedCornerShape(5.dp))
+                                .border(
+                                    width = 1.dp,
+                                    shape = RoundedCornerShape(5.dp),
+                                    color = MaxiPulsTheme.colors.uiKit.textFieldStroke
+                                )
+                        ) {
+                            if (tab.maxHeartRateUI.selectItem == it) {
+                                Box(
+                                    modifier = Modifier.size(16.dp)
+                                        .clip(RoundedCornerShape(5.dp)).background(
+                                            color = MaxiPulsTheme.colors.uiKit.primary,
+                                            shape = RoundedCornerShape(2.dp)
+                                        )
+                                )
+                            }
                         }
                     }
-
                 }
             }
         }
@@ -492,9 +511,9 @@ private fun SelectableCheckBoxItem(
 }
 
 @Composable
-private fun SettingItem(
+internal fun SettingSelectItem(
     modifier: Modifier = Modifier,
-    viewModel: SettingsViewModel,
+    viewModel: SettingsViewModel?,
     item: SettingTab,
     isSelect: Boolean,
     onClick: () -> Unit
@@ -534,7 +553,7 @@ private fun SettingItem(
 
         }
 
-        if (isSelect) {
+        if (isSelect && viewModel!= null) {
             when (item) {
                 SettingTab.AlgorithmAnaerobicThreshold -> {
 

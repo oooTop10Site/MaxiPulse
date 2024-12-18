@@ -135,6 +135,9 @@
     <string name="avg">СРЕД</string>
     <string name="min">МИН</string>
     <string name="max">ПИК</string>
+    <string name="description">Описание</string>
+    <string name="city">Город</string>
+    <string name="title">Название</string>
     <string name="kcal">ККАЛ</string>
     <string name="heart_rate_avg_max">ЧСС пик/средний</string>
     <string name="by_zone_chss">По пороговым значениям ЧСС</string>

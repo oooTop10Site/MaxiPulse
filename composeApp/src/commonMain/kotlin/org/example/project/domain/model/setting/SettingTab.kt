@@ -53,7 +53,28 @@ data class SettingsMaxHeartRateUI(
 ) {
     companion object {
         val InitState = SettingsMaxHeartRateUI(
-            emptyList(), SettingFormulaMaxHeart("", "")
+            listOf(
+                SettingFormulaMaxHeart(
+                    title = "Формула Хаскеля-Фокса",
+                    desc = "Максимальный пульс = 220 - возраст\nПример: ЧСС для 20 лет равен 200"
+                ),
+                SettingFormulaMaxHeart(
+                    title = "Формула Танака",
+                    desc = "Максимальный пульс = 208 - (0.7 * возраст)\nПример: ЧСС для 30 лет равен 187"
+                ),
+                SettingFormulaMaxHeart(
+                    title = "Формула Гельмана",
+                    desc = "Максимальный пульс = 205 - (0.5 * возраст)\nПример: ЧСС для 40 лет равен 185"
+                ),
+                SettingFormulaMaxHeart(
+                    title = "Формула Мартинсона",
+                    desc = "Максимальный пульс = 210 - (0.65 * возраст)\nПример: ЧСС для 25 лет равен 194"
+                ),
+                SettingFormulaMaxHeart(
+                    title = "Формула Миллера",
+                    desc = "Максимальный пульс = 217 - (0.85 * возраст)\nПример: ЧСС для 35 лет равен 187"
+                )
+            ), SettingFormulaMaxHeart("", "")
         )
     }
 }
