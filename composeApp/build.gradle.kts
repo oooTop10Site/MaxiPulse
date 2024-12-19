@@ -132,6 +132,8 @@ kotlin {
 //            implementation(libs.konnectivity)
 
             implementation("dev.chrisbanes.material3:material3-window-size-class-multiplatform:0.5.0")
+
+            implementation("com.mohamedrejeb.dnd:compose-dnd:0.3.0")
         }
 //        wasmJsMain.dependencies {
 //            implementation("io.ktor:ktor-client-core:2.3.1-wasm0")

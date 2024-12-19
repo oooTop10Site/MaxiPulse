@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.Res
@@ -64,6 +65,7 @@ import maxipuls.composeapp.generated.resources.on_active_sensors
 import maxipuls.composeapp.generated.resources.search
 import maxipuls.composeapp.generated.resources.sensor_already_assigned
 import maxipuls.composeapp.generated.resources.sensor_already_assigned_desc
+import maxipuls.composeapp.generated.resources.settings_ic
 import maxipuls.composeapp.generated.resources.start_tarining
 import maxipuls.composeapp.generated.resources.start_test
 import maxipuls.composeapp.generated.resources.what_do_if_sensor_not_active
@@ -78,6 +80,7 @@ import org.example.project.screens.root.ScreenSize
 import org.example.project.screens.tests.readiesForUpload.ReadiesForUploadScreen
 import org.example.project.screens.tests.shuttleRun.ShuttleRunScreen
 import org.example.project.screens.training.TrainingScreen
+import org.example.project.screens.widget.WidgetScreen
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiAlertDialog
 import org.example.project.theme.uiKit.MaxiAlertDialogButtons
@@ -99,6 +102,7 @@ class MainScreen(val testUI: TestUI? = null) : Screen {
                 MainViewModel()
             }
             val rootNavigator = RootNavigator.currentOrThrow
+            val navigator = LocalNavigator.currentOrThrow
             val state by viewModel.stateFlow.collectAsState()
             val screenSize = ScreenSize.currentOrThrow
             val chunkSize = when (screenSize.widthSizeClass) {
@@ -163,6 +167,33 @@ class MainScreen(val testUI: TestUI? = null) : Screen {
                     )
                 },
                 topBar = {
+                    AnimatedVisibility(
+                        !state.isStartTraining,
+                        enter = fadeIn() + expandHorizontally(),
+                        exit = fadeOut() + slideOutHorizontally()
+                    ) {
+                        Box(Modifier.fillMaxWidth().padding(vertical = 20.dp, horizontal = 20.dp)) {
+                            Box(
+                                modifier = Modifier.size(40.dp)
+                                    .background(
+                                        MaxiPulsTheme.colors.uiKit.primary,
+                                        shape = CircleShape
+                                    )
+                                    .clip(CircleShape).align(Alignment.CenterEnd),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painterResource(Res.drawable.settings_ic),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(30.dp).clickableBlank {
+                                        println("Я тут")
+                                        navigator.push(WidgetScreen())
+                                    },
+                                    tint = MaxiPulsTheme.colors.uiKit.lightTextColor
+                                )
+                            }
+                        }
+                    }
                     AnimatedVisibility(
                         state.isStartTraining,
                         enter = fadeIn() + expandHorizontally(),

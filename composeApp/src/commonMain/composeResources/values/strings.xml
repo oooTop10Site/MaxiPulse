@@ -160,6 +160,8 @@
     <string name="sport_specialization">Спортивная специализация</string>
     <string name="name">Имя</string>
     <string name="enter_data">Введите значениея</string>
+    <string name="minipulse_app">Приложение Minipulse</string>
+    <string name="control_and_analize">Контроль и анализ\nтренировочной нагрузки</string>
 
     <string name="settings_sportsman">Настройка профиля спортсмена</string>
     <string name="settings_minimum_heart_rate">Задать минимальное значение ЧСС на графике</string>
