@@ -3,7 +3,6 @@ package org.example.project.screens.widget
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.draganddrop.dragAndDropSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,23 +35,21 @@ import org.example.project.theme.uiKit.MaxiPageContainer
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mohamedrejeb.compose.dnd.DragAndDropContainer
 import com.mohamedrejeb.compose.dnd.drag.DraggableItem
-import com.mohamedrejeb.compose.dnd.drag.DropStrategy
 import com.mohamedrejeb.compose.dnd.drop.dropTarget
 import com.mohamedrejeb.compose.dnd.rememberDragAndDropState
 import maxipuls.composeapp.generated.resources.Res
-import maxipuls.composeapp.generated.resources.minipulse_app
-import maxipuls.composeapp.generated.resources.mobile_widget
+import maxipuls.composeapp.generated.resources.back_ic
 import maxipuls.composeapp.generated.resources.purple_brush
+import maxipuls.composeapp.generated.resources.select_all
 import maxipuls.composeapp.generated.resources.settings_ic
 import maxipuls.composeapp.generated.resources.start_tarining
 import org.example.project.domain.model.widget.WidgetSize
@@ -59,6 +58,7 @@ import org.example.project.ext.clickableBlank
 import org.example.project.screens.root.RootNavigator
 import org.example.project.theme.uiKit.ButtonTextStyle
 import org.example.project.theme.uiKit.MaxiButton
+import org.example.project.theme.uiKit.MaxiRoundCheckBox
 import org.jetbrains.compose.resources.stringResource
 
 class WidgetScreen : Screen {
@@ -73,141 +73,146 @@ class WidgetScreen : Screen {
         val navigator = RootNavigator.currentOrThrow
         val state by viewModel.stateFlow.collectAsState()
         MaxiPageContainer() {
+            if (state.isEditing) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                        .background(color = MaxiPulsTheme.colors.uiKit.textColor.copy(alpha = 0.2f))
+                )
+            }
             DragAndDropContainer(
                 state = dragAndDropState,
             ) {
+                if (state.isEditing) {
+                    Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+                        MaxiButton(
+                            onClick = {},
+                            modifier = Modifier.width(416.dp).height(69.dp).blur(10.dp),
+                            text = stringResource(Res.string.start_tarining),
+                            buttonTextStyle = ButtonTextStyle.Bold
+                        )
+                        Spacer(Modifier.size(40.dp))
+                    }
+                }
                 Column(
                     modifier = Modifier.fillMaxSize().padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Box(
-                        modifier = Modifier.size(40.dp)
-                            .background(
-                                MaxiPulsTheme.colors.uiKit.primary,
-                                shape = CircleShape
+                    if (state.isEditing) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier.size(40.dp)
+                                    .background(
+                                        MaxiPulsTheme.colors.uiKit.primary,
+                                        shape = CircleShape
+                                    )
+                                    .clip(CircleShape).clickableBlank {
+                                        viewModel.changeIsEditing()
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painterResource(Res.drawable.back_ic),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp),
+                                    tint = MaxiPulsTheme.colors.uiKit.lightTextColor
+                                )
+                            }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(20.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(Res.string.select_all),
+                                    style = MaxiPulsTheme.typography.medium.copy(
+                                        fontSize = 16.sp,
+                                        lineHeight = 16.sp,
+                                        color = MaxiPulsTheme.colors.uiKit.lightTextColor,
+                                    ),
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                MaxiRoundCheckBox(
+                                    isChecked = state.isSelectAll,
+                                    onValueChange = { viewModel.changeIsSelectAll() },
+                                    modifier = Modifier.size(40.dp)
+                                )
+                            }
+                        }
+                    } else {
+                        Box(
+                            modifier = Modifier.size(40.dp)
+                                .background(
+                                    MaxiPulsTheme.colors.uiKit.primary,
+                                    shape = CircleShape
+                                ).clickableBlank { viewModel.changeIsEditing() }
+                                .clip(CircleShape).align(Alignment.End),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painterResource(Res.drawable.settings_ic),
+                                contentDescription = null,
+                                modifier = Modifier.size(30.dp),
+                                tint = MaxiPulsTheme.colors.uiKit.lightTextColor
                             )
-                            .clip(CircleShape).align(Alignment.End),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painterResource(Res.drawable.settings_ic),
-                            contentDescription = null,
-                            modifier = Modifier.size(30.dp).clickableBlank {
-
-                            },
-                            tint = MaxiPulsTheme.colors.uiKit.lightTextColor
-                        )
+                        }
                     }
                     Spacer(modifier = Modifier.size(20.dp))
                     Row(
                         modifier = Modifier.weight(1f).fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
-                        var widgetUI1 by remember { mutableStateOf( WidgetUI((0..20000000).random())) }
-                        var widgetUI2 by remember { mutableStateOf( WidgetUI((0..20000000).random())) }
-                        var widgetUI3 by remember { mutableStateOf( WidgetUI((0..20000000).random())) }
-                        DraggableItem(
-                            modifier = Modifier.weight(1f).fillMaxHeight(),
-                            state = dragAndDropState,
-                            key = widgetUI1.id, // Unique key for each draggable item
-                            data = widgetUI1, // Data to be passed to the drop target,
-                            draggableContent = {
+                        val widgets = state.widgets.subList(0, 3)
+                        println("widgets 0-2 - ${widgets.size}")
+                        widgets.forEach {
+                            DraggableItem(
+                                modifier = Modifier.weight(1f).fillMaxHeight(),
+                                state = dragAndDropState,
+                                enabled = !state.isEditing,
+                                key = it.id, // Unique key for each draggable item
+                                data = it, // Data to be passed to the drop target,
+                                draggableContent = {
+                                    WidgetItem(
+                                        modifier = Modifier.fillMaxSize().alpha(0.6f),
+                                        backgroundIcon = it.background,
+                                        title = stringResource(it.title),
+                                        icon = it.icon,
+                                        size = WidgetSize.Small,
+                                        isEditing = state.isEditing,
+                                        isSelect = it in state.selected,
+                                        changeEdit = { viewModel.changeSelect(it) }
+                                    ) {
+
+                                    }
+                                }
+                            ) {
                                 WidgetItem(
-                                    modifier = Modifier.fillMaxSize().alpha(0.6f),
+                                    modifier = Modifier.fillMaxSize().dropTarget(
+                                        state = dragAndDropState,
+                                        key = it.id, // Unique key for each drop target
+                                        onDrop = { state -> // Data passed from the draggable item
+                                            viewModel.changePosition(
+                                                moving = state.data,
+                                                stating = it
+                                            )
+                                        }
+                                    ),
+                                    isEditing = state.isEditing,
+                                    changeEdit = { viewModel.changeSelect(it) },
                                     backgroundIcon = Res.drawable.purple_brush,
-                                    title = widgetUI1.id.toString(),
-                                    icon = Res.drawable.mobile_widget,
-                                    size = WidgetSize.Small
+                                    title = stringResource(it.title),
+                                    icon = it.icon,
+                                    size = WidgetSize.Small,
+                                    isSelect = it in state.selected,
                                 ) {
 
                                 }
                             }
-                        ) {
-                            WidgetItem(
-                                modifier = Modifier.fillMaxSize().dropTarget(
-                                    state = dragAndDropState,
-                                    key = widgetUI1.id, // Unique key for each drop target
-                                    onDrop = { state -> // Data passed from the draggable item
-                                        widgetUI1 = state.data
-                                    }
-                                ),
-                                backgroundIcon = Res.drawable.purple_brush,
-                                title = widgetUI1.id.toString(),
-                                icon = Res.drawable.mobile_widget,
-                                size = WidgetSize.Small
-                            ) {
-
-                            }
                         }
-                        Spacer(Modifier.size(20.dp))
-                        DraggableItem(
-                            modifier = Modifier.weight(1f).fillMaxHeight(),
-                            state = dragAndDropState,
-                            key = widgetUI2.id, // Unique key for each draggable item
-                            data = widgetUI2, // Data to be passed to the drop target
-                            draggableContent = {
-                                WidgetItem(
-                                    modifier = Modifier.fillMaxSize().alpha(0.6f),
-                                    backgroundIcon = Res.drawable.purple_brush,
-                                    title = widgetUI2.id.toString(),
-                                    icon = Res.drawable.mobile_widget,
-                                    size = WidgetSize.Small
-                                ) {
-
-                                }
-                            }
-                        ) {
-                            WidgetItem(
-                                modifier = Modifier.fillMaxSize().dropTarget(
-                                    state = dragAndDropState,
-                                    key = widgetUI2.id, // Unique key for each drop target
-                                    onDrop = { state -> // Data passed from the draggable item
-                                        widgetUI2 = state.data
-                                    }
-                                ),
-                                backgroundIcon = Res.drawable.purple_brush,
-                                title = widgetUI2.id.toString(),
-                                icon = Res.drawable.mobile_widget,
-                                size = WidgetSize.Small
-                            ) {
-
-                            }
-                        }
-                        Spacer(Modifier.size(20.dp))
-                        DraggableItem(
-                            modifier = Modifier.weight(1f).fillMaxHeight(),
-                            state = dragAndDropState,
-                            key = widgetUI3.id, // Unique key for each draggable item
-                            data = widgetUI3, // Data to be passed to the drop target
-                            draggableContent = {
-                                WidgetItem(
-                                    modifier = Modifier.fillMaxSize().alpha(0.6f),
-                                    backgroundIcon = Res.drawable.purple_brush,
-                                    title = widgetUI3.id.toString(),
-                                    icon = Res.drawable.mobile_widget,
-                                    size = WidgetSize.Small
-                                ) {
-
-                                }
-                            }
-                        ) {
-                            WidgetItem(
-                                modifier = Modifier.fillMaxSize().dropTarget(
-                                    state = dragAndDropState,
-                                    key = widgetUI3.id, // Unique key for each drop target
-                                    onDrop = { state -> // Data passed from the draggable item
-                                        widgetUI3 = state.data
-                                    }
-                                ),
-                                backgroundIcon = Res.drawable.purple_brush,
-                                title = widgetUI3.id.toString(),
-                                icon = Res.drawable.mobile_widget,
-                                size = WidgetSize.Small
-                            ) {
-
-                            }
-                        }
-
                     }
                     Spacer(Modifier.size(20.dp))
 
@@ -218,45 +223,111 @@ class WidgetScreen : Screen {
                         Column(
                             modifier = Modifier.weight(1f).fillMaxHeight(),
                             horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
-                            WidgetItem(
-                                modifier = Modifier.weight(1f).fillMaxWidth(),
-                                backgroundIcon = Res.drawable.purple_brush,
-                                title = stringResource(Res.string.minipulse_app),
-                                icon = Res.drawable.mobile_widget,
-                                size = WidgetSize.Small
-                            ) {
+                            val widgets = state.widgets.subList(3, 5)
+                            widgets.forEach {
+                                DraggableItem(
+                                    modifier = Modifier.weight(1f).fillMaxHeight(),
+                                    state = dragAndDropState,
+                                    enabled = !state.isEditing,
+                                    key = it.id, // Unique key for each draggable item
+                                    data = it, // Data to be passed to the drop target,
+                                    draggableContent = {
+                                        WidgetItem(
+                                            modifier = Modifier.fillMaxSize().alpha(0.6f),
+                                            backgroundIcon = it.background,
+                                            title = stringResource(it.title),
+                                            icon = it.icon,
+                                            size = WidgetSize.Small,
+                                            isEditing = state.isEditing,
+                                            isSelect = it in state.selected,
+                                            changeEdit = { viewModel.changeSelect(it) }
+                                        ) {
 
-                            }
-                            Spacer(Modifier.size(20.dp))
-                            WidgetItem(
-                                modifier = Modifier.weight(1f).fillMaxWidth(),
-                                backgroundIcon = Res.drawable.purple_brush,
-                                title = stringResource(Res.string.minipulse_app),
-                                icon = Res.drawable.mobile_widget,
-                                size = WidgetSize.Small
-                            ) {
+                                        }
+                                    }
+                                ) {
+                                    WidgetItem(
+                                        modifier = Modifier.fillMaxSize().dropTarget(
+                                            state = dragAndDropState,
+                                            key = it.id, // Unique key for each drop target
+                                            onDrop = { state -> // Data passed from the draggable item
+                                                viewModel.changePosition(
+                                                    moving = state.data,
+                                                    stating = it
+                                                )
+                                            },
+                                        ),
+                                        backgroundIcon = Res.drawable.purple_brush,
+                                        title = stringResource(it.title),
+                                        icon = it.icon,
+                                        size = WidgetSize.Small,
+                                        isEditing = state.isEditing,
+                                        isSelect = it in state.selected,
+                                        changeEdit = { viewModel.changeSelect(it) }
+                                    ) {
 
+                                    }
+                                }
                             }
                         }
                         Spacer(Modifier.size(20.dp))
-                        WidgetItem(
-                            modifier = Modifier.weight(2f).fillMaxHeight(),
-                            backgroundIcon = Res.drawable.purple_brush,
-                            title = stringResource(Res.string.minipulse_app),
-                            icon = Res.drawable.mobile_widget,
-                            size = WidgetSize.Large
-                        ) {
+                        state.widgets.lastOrNull()?.let {
+                            DraggableItem(
+                                modifier = Modifier.weight(2f).fillMaxHeight(),
+                                state = dragAndDropState,
+                                enabled = !state.isEditing,
+                                key = it.id, // Unique key for each draggable item
+                                data = it, // Data to be passed to the drop target,
+                                draggableContent = {
+                                    WidgetItem(
+                                        modifier = Modifier.fillMaxSize().alpha(0.6f),
+                                        backgroundIcon = it.background,
+                                        title = stringResource(it.title),
+                                        icon = it.icon,
+                                        size = WidgetSize.Large,
+                                        isEditing = state.isEditing,
+                                        isSelect = it in state.selected,
+                                        changeEdit = { viewModel.changeSelect(it) }
+                                    ) {
 
+                                    }
+                                }
+                            ) {
+                                WidgetItem(
+                                    modifier = Modifier.fillMaxSize().dropTarget(
+                                        state = dragAndDropState,
+                                        key = it.id, // Unique key for each drop target
+                                        onDrop = { state -> // Data passed from the draggable item
+                                            viewModel.changePosition(
+                                                moving = state.data,
+                                                stating = it
+                                            )
+                                        }
+                                    ),
+                                    backgroundIcon = Res.drawable.purple_brush,
+                                    title = stringResource(it.title),
+                                    icon = it.icon,
+                                    size = WidgetSize.Large,
+                                    isEditing = state.isEditing,
+                                    isSelect = it in state.selected,
+                                    changeEdit = { viewModel.changeSelect(it) }
+                                ) {
+
+                                }
+                            }
                         }
                     }
                     Spacer(Modifier.size(20.dp))
-                    MaxiButton(
-                        onClick = {},
-                        modifier = Modifier.width(416.dp).height(69.dp),
-                        text = stringResource(Res.string.start_tarining),
-                        buttonTextStyle = ButtonTextStyle.Bold
-                    )
+                    if (!state.isEditing) {
+                        MaxiButton(
+                            onClick = {},
+                            modifier = Modifier.width(416.dp).height(69.dp),
+                            text = stringResource(Res.string.start_tarining),
+                            buttonTextStyle = ButtonTextStyle.Bold
+                        )
+                    }
                 }
             }
         }
@@ -270,42 +341,57 @@ fun WidgetItem(
     title: String,
     icon: DrawableResource,
     size: WidgetSize,
+    changeEdit: () -> Unit,
+    isEditing: Boolean,
+    isSelect: Boolean,
     onClick: () -> Unit,
 ) {
-    Box(
-        modifier.clickableBlank { onClick() }.clip(RoundedCornerShape(25.dp)),
-        contentAlignment = Alignment.Center
+    Card(
+        modifier = modifier.clickableBlank { if (isEditing) changeEdit() else onClick() }
+            .clip(RoundedCornerShape(25.dp)),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
-        Image(
-            painter = painterResource(backgroundIcon),
-            modifier = Modifier.fillMaxSize(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop
-        )
-        Column(
-            modifier = Modifier.fillMaxHeight().padding(vertical = 20.dp),
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            val sizeText = (16 + (8 * size.inch)).sp
-            Text(
-                text = title, style = MaxiPulsTheme.typography.bold.copy(
-                    fontSize = sizeText,
-                    lineHeight = sizeText,
-                    color = MaxiPulsTheme.colors.uiKit.lightTextColor,
-                    textAlign = TextAlign.Center,
-                ),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Image(
-                painter = painterResource(icon),
-                modifier = Modifier.height(100.dp + 125.dp * size.inch),
-                contentScale = ContentScale.FillHeight,
-                contentDescription = null
+                painter = painterResource(backgroundIcon),
+                modifier = Modifier.fillMaxSize(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop
             )
+            Column(
+                modifier = Modifier.fillMaxHeight().padding(vertical = 20.dp),
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val sizeText = (16 + (8 * size.inch)).sp
+                Text(
+                    text = title, style = MaxiPulsTheme.typography.bold.copy(
+                        fontSize = sizeText,
+                        lineHeight = sizeText,
+                        color = MaxiPulsTheme.colors.uiKit.lightTextColor,
+                        textAlign = TextAlign.Center,
+                    ),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(Modifier.size(10.dp))
+                Image(
+                    painter = painterResource(icon),
+                    modifier = Modifier.height(100.dp + 125.dp * size.inch),
+                    contentScale = ContentScale.FillHeight,
+                    contentDescription = null
+                )
 
+            }
+            if (isEditing) {
+                MaxiRoundCheckBox(
+                    isChecked = isSelect,
+                    onValueChange = { changeEdit() },
+                    modifier = Modifier.padding(10.dp).size(30.dp).align(
+                        Alignment.TopEnd
+                    )
+                )
+            }
         }
     }
 }

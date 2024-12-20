@@ -162,6 +162,10 @@
     <string name="enter_data">Введите значениея</string>
     <string name="minipulse_app">Приложение Minipulse</string>
     <string name="control_and_analize">Контроль и анализ\nтренировочной нагрузки</string>
+    <string name="test_4x54">Тест 5×54</string>
+    <string name="mark_function_state_by_cardio_beat">Оценка функционального\nсостояния по кардиоритму</string>
+    <string name="yyir1">Тест интервального\nвосстановления (YYIR1)</string>
+    <string name="select_all">Выбрать все</string>
 
     <string name="settings_sportsman">Настройка профиля спортсмена</string>
     <string name="settings_minimum_heart_rate">Задать минимальное значение ЧСС на графике</string>
