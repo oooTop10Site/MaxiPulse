@@ -1,6 +1,7 @@
 package org.example.project.screens.log
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -29,9 +33,12 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.currentOrThrow
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.calendar
+import maxipuls.composeapp.generated.resources.composition
 import maxipuls.composeapp.generated.resources.drop_ic
+import maxipuls.composeapp.generated.resources.event
 import maxipuls.composeapp.generated.resources.log
 import maxipuls.composeapp.generated.resources.search
+import maxipuls.composeapp.generated.resources.sportsman
 import maxipuls.composeapp.generated.resources.trainings_count
 import org.example.project.domain.model.log.EventType
 import org.example.project.screens.log.components.LogCard
@@ -41,11 +48,14 @@ import org.example.project.screens.training.trainingResult.TrainingResultScreen
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.theme.uiKit.MaxiPageContainer
+import org.example.project.theme.uiKit.MaxiTextFieldMenu
 import org.example.project.theme.uiKit.TopBarTitle
+import org.example.project.utils.Constants
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.collections.chunked
 
+@OptIn(ExperimentalFoundationApi::class)
 class LogScreen : Screen {
 
     @Composable
@@ -69,7 +79,9 @@ class LogScreen : Screen {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Spacer(Modifier.size(20.dp))
-                    TopBarTitle(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { datetime ->
+                    TopBarTitle(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
+                    ) { datetime ->
                         Text(
                             text = datetime, style = MaxiPulsTheme.typography.regular.copy(
                                 color = MaxiPulsTheme.colors.uiKit.textColor,
@@ -104,50 +116,41 @@ class LogScreen : Screen {
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
-                        MaxiOutlinedTextField(
-                            value = "Кальчик",
-                            onValueChange = {
-//                                viewModel.changeSearch(it)
+                        MaxiTextFieldMenu<String>(
+                            currentValue = state.filterEvent,
+                            text = state.filterEvent,
+                            onChangeWorkScope = {
+                                viewModel.changeEvent(it)
                             },
-                            modifier = Modifier.animateContentSize().height(40.dp).weight(1f),
-                            trailingIcon = {
-                                Icon(
-                                    painter = painterResource(Res.drawable.drop_ic),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp),
-                                    tint = MaxiPulsTheme.colors.uiKit.textColor
-                                )
-                            }
+                            items = state.filterEvents,
+                            itemToString = { it },
+                            modifier = Modifier.height(Constants.TextFieldHeight)
+                                .weight(1f),
+                            placeholderText = stringResource(Res.string.event)
                         )
-                        MaxiOutlinedTextField(
-                            value = "Кальчик",
-                            onValueChange = {
-//                                viewModel.changeSearch(it)
+                        MaxiTextFieldMenu<String>(
+                            currentValue = state.filterSportsman,
+                            text = state.filterSportsman,
+                            onChangeWorkScope = {
+                                viewModel.changeSportsman(it)
                             },
-                            modifier = Modifier.animateContentSize().height(40.dp).weight(1f),
-                            trailingIcon = {
-                                Icon(
-                                    painter = painterResource(Res.drawable.drop_ic),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp),
-                                    tint = MaxiPulsTheme.colors.uiKit.textColor
-                                )
-                            }
+                            items = state.filterSportsmans,
+                            itemToString = { it },
+                            modifier = Modifier.height(Constants.TextFieldHeight)
+                                .weight(1f),
+                            placeholderText = stringResource(Res.string.sportsman)
                         )
-                        MaxiOutlinedTextField(
-                            value = "Кальчик",
-                            onValueChange = {
-//                                viewModel.changeSearch(it)
+                        MaxiTextFieldMenu<String>(
+                            currentValue = state.filterComposition,
+                            text = state.filterComposition,
+                            onChangeWorkScope = {
+                                viewModel.changeComposition(it)
                             },
-                            modifier = Modifier.animateContentSize().height(40.dp).weight(1f),
-                            trailingIcon = {
-                                Icon(
-                                    painter = painterResource(Res.drawable.drop_ic),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp),
-                                    tint = MaxiPulsTheme.colors.uiKit.textColor
-                                )
-                            }
+                            items = state.filterCompositions,
+                            itemToString = { it },
+                            modifier = Modifier.height(Constants.TextFieldHeight)
+                                .weight(1f),
+                            placeholderText = stringResource(Res.string.composition)
                         )
 
                         Icon(
@@ -163,33 +166,56 @@ class LogScreen : Screen {
                 }
             }
         ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(chunkSize),
+                horizontalArrangement = Arrangement.spacedBy(25.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp),
                 contentPadding = PaddingValues(20.dp)
             ) {
-                items(state.logs.chunked(chunkSize)) { chunk ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(25.dp)
-                    ) {
-                        chunk.forEach {
-                            LogCard(
-                                modifier = Modifier.weight(1f),
-                                logUI = it
-                            ) {
-                                rootNavigator.push(TrainingResultScreen())
+                items(state.logs) {
+                    Box(modifier = Modifier.animateItem()) {
+                        LogCard(
+                            modifier = Modifier,
+                            logUI = it,
+                            onDelete = {
+                                viewModel.deleteLog(it)
                             }
-                        }
-                        if (chunk.size != chunkSize) {
-                            for (i in 1..chunkSize - chunk.size) {
-                                Box(modifier = Modifier.weight(1f).height(100.dp))
-                            }
+                        ) {
+                            rootNavigator.push(TrainingResultScreen())
                         }
                     }
                 }
             }
+//            LazyColumn(
+//                modifier = Modifier.fillMaxWidth(),
+//                verticalArrangement = Arrangement.spacedBy(20.dp),
+//                contentPadding = PaddingValues(20.dp)
+//            ) {
+//                items(state.logs.chunked(chunkSize)) { chunk ->
+//                    Row(
+//                        modifier = Modifier.fillMaxWidth(),
+//                        verticalAlignment = Alignment.CenterVertically,
+//                        horizontalArrangement = Arrangement.spacedBy(25.dp)
+//                    ) {
+//                        chunk.forEach {
+//                            LogCard(
+//                                modifier = Modifier.weight(1f),
+//                                logUI = it,
+//                                onDelete = {
+//                                    viewModel.deleteLog(it)
+//                                }
+//                            ) {
+//                                rootNavigator.push(TrainingResultScreen())
+//                            }
+//                        }
+//                        if (chunk.size != chunkSize) {
+//                            for (i in 1..chunkSize - chunk.size) {
+//                                Box(modifier = Modifier.weight(1f).height(100.dp))
+//                            }
+//                        }
+//                    }
+//                }
+//            }
 
         }
     }

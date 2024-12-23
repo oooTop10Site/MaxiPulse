@@ -23,6 +23,14 @@ internal class SportsmanViewModel: BaseScreenModel<SportsmanState, SportsmanEven
         }
     }
 
+    fun changeSportsman(value: String) = intent {
+        reduce {
+            state.copy(
+                filterSportsman = value
+            )
+        }
+    }
+
     fun changeIsGrid() = intent {
         reduce {
             state.copy(

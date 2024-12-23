@@ -28,6 +28,14 @@ internal class GroupViewModel :
         }
     }
 
+    fun changeGroup(value: String) = intent {
+        reduce {
+            state.copy(
+                filterGroup = value
+            )
+        }
+    }
+
     fun loadGroups() = intent {
         launchOperation(
             operation = {

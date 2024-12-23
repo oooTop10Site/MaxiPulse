@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -22,15 +23,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.currentOrThrow
+import maxipuls.composeapp.generated.resources.Res
+import maxipuls.composeapp.generated.resources.trash
 import org.example.project.domain.model.log.LogUI
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.root.ScreenSize
 import org.example.project.theme.MaxiPulsTheme
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun LogCard(
     modifier: Modifier = Modifier,
     logUI: LogUI,
+    onDelete: () -> Unit,
     onClick: () -> Unit,
 ) {
 
@@ -114,7 +119,6 @@ fun LogCard(
                     fontSize = 14.sp
                 ),
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f, false),
                 maxLines = 1
 
             )
@@ -131,9 +135,17 @@ fun LogCard(
                     fontSize = 14.sp
                 ),
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f, false),
+                modifier = Modifier.weight(1f),
                 maxLines = 1
 
+            )
+            Icon(
+                painter = painterResource(Res.drawable.trash),
+                modifier = Modifier.size(24.dp).clickableBlank {
+                    onDelete()
+                },
+                tint = MaxiPulsTheme.colors.uiKit.primary,
+                contentDescription = null
             )
         }
 

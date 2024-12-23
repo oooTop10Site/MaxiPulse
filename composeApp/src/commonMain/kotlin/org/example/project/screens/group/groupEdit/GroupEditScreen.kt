@@ -45,13 +45,18 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.add_ic
+import maxipuls.composeapp.generated.resources.attention
 import maxipuls.composeapp.generated.resources.back_ic
 import maxipuls.composeapp.generated.resources.cancel
 import maxipuls.composeapp.generated.resources.close_ic
+import maxipuls.composeapp.generated.resources.delete_group_content
+import maxipuls.composeapp.generated.resources.no
 import maxipuls.composeapp.generated.resources.pencil
 import maxipuls.composeapp.generated.resources.save
 import maxipuls.composeapp.generated.resources.search
 import maxipuls.composeapp.generated.resources.title_group
+import maxipuls.composeapp.generated.resources.trash
+import maxipuls.composeapp.generated.resources.yes
 import org.example.project.domain.model.sportsman.SportsmanUI
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.group.groupDetail.GroupDetailViewModel
@@ -105,6 +110,10 @@ class GroupEditScreen(private val groupId: String) : Screen {
                                 isOpen = false
                                 viewModel.loadData(groupId)
                             }
+                        }
+
+                        GroupEditEvent.SuccessDelete -> {
+                            rootNavigator.pop()
                         }
                     }
                 }
@@ -187,21 +196,46 @@ class GroupEditScreen(private val groupId: String) : Screen {
                                 Constants.TextFieldHeight
                             )
                         )
-
-                        Box(
-                            modifier = Modifier.size(40.dp)
-                                .background(MaxiPulsTheme.colors.uiKit.primary, shape = CircleShape)
-                                .clip(CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                painterResource(Res.drawable.add_ic),
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp).clickableBlank {
-                                    isOpen = !isOpen
-                                },
-                                tint = MaxiPulsTheme.colors.uiKit.lightTextColor
-                            )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (groupId.isNotBlank()) {
+                                Box(
+                                    modifier = Modifier.size(40.dp)
+                                        .background(
+                                            MaxiPulsTheme.colors.uiKit.primary,
+                                            shape = CircleShape
+                                        )
+                                        .clip(CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        painterResource(Res.drawable.trash),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(24.dp).clickableBlank {
+                                            viewModel.changeDeleteGroupAlert()
+                                        },
+                                        tint = MaxiPulsTheme.colors.uiKit.lightTextColor
+                                    )
+                                }
+                            }
+                            Spacer(Modifier.size(40.dp))
+                            Box(
+                                modifier = Modifier.size(40.dp)
+                                    .background(
+                                        MaxiPulsTheme.colors.uiKit.primary,
+                                        shape = CircleShape
+                                    )
+                                    .clip(CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painterResource(Res.drawable.add_ic),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp).clickableBlank {
+                                        isOpen = !isOpen
+                                    },
+                                    tint = MaxiPulsTheme.colors.uiKit.lightTextColor
+                                )
+                            }
                         }
                     }
                     Spacer(
@@ -280,6 +314,22 @@ class GroupEditScreen(private val groupId: String) : Screen {
                 viewModel.changeSearch(it)
             }
         )
+        if (state.deleteGroupAlert) {
+            MaxiAlertDialog(
+                modifier = Modifier.width(600.dp),
+                title = stringResource(Res.string.attention),
+                description = stringResource(Res.string.delete_group_content),
+                alertDialogButtons = MaxiAlertDialogButtons.CancelAccept,
+                cancelText = stringResource(Res.string.no),
+                acceptText = stringResource(Res.string.yes),
+                accept = {
+                    viewModel.deleteGroup(groupId)
+                },
+                onDismiss = {
+                    viewModel.changeDeleteGroupAlert()
+                }
+            )
+        }
     }
 }
 

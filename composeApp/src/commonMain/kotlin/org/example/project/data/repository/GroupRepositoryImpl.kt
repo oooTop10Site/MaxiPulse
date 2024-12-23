@@ -2,6 +2,7 @@ package org.example.project.data.repository
 
 import org.example.project.data.api.MaxiPulseApi
 import org.example.project.data.mapper.toUI
+import org.example.project.di.apiModule
 import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.repository.GroupRepository
 import org.example.project.ext.toInt
@@ -101,5 +102,11 @@ class GroupRepositoryImpl(
                 )
             }
         )
+    }
+
+    override suspend fun groupDelete(groupId: String): Either<Failure, Unit> {
+        return apiCall {
+            maxiPulseApi.deleteGroup(id = groupId)
+        }
     }
 }

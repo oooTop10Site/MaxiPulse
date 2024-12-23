@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -76,7 +77,7 @@ class WidgetScreen : Screen {
             if (state.isEditing) {
                 Box(
                     modifier = Modifier.fillMaxSize()
-                        .background(color = MaxiPulsTheme.colors.uiKit.textColor.copy(alpha = 0.2f))
+                        .background(color = MaxiPulsTheme.colors.uiKit.textColor.copy(alpha = 0.2f)).blur(50.dp)
                 )
             }
             DragAndDropContainer(
@@ -86,7 +87,7 @@ class WidgetScreen : Screen {
                     Column(modifier = Modifier.align(Alignment.BottomCenter)) {
                         MaxiButton(
                             onClick = {},
-                            modifier = Modifier.width(416.dp).height(69.dp).blur(10.dp),
+                            modifier = Modifier.width(416.dp).height(69.dp).blur(50.dp),
                             text = stringResource(Res.string.start_tarining),
                             buttonTextStyle = ButtonTextStyle.Bold
                         )
@@ -167,7 +168,6 @@ class WidgetScreen : Screen {
                         horizontalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
                         val widgets = state.widgets.subList(0, 3)
-                        println("widgets 0-2 - ${widgets.size}")
                         widgets.forEach {
                             DraggableItem(
                                 modifier = Modifier.weight(1f).fillMaxHeight(),
@@ -201,6 +201,7 @@ class WidgetScreen : Screen {
                                             )
                                         }
                                     ),
+                                    showElevation = false,
                                     isEditing = state.isEditing,
                                     changeEdit = { viewModel.changeSelect(it) },
                                     backgroundIcon = Res.drawable.purple_brush,
@@ -239,6 +240,7 @@ class WidgetScreen : Screen {
                                             backgroundIcon = it.background,
                                             title = stringResource(it.title),
                                             icon = it.icon,
+                                            showElevation = false,
                                             size = WidgetSize.Small,
                                             isEditing = state.isEditing,
                                             isSelect = it in state.selected,
@@ -286,6 +288,7 @@ class WidgetScreen : Screen {
                                         backgroundIcon = it.background,
                                         title = stringResource(it.title),
                                         icon = it.icon,
+                                        showElevation = false,
                                         size = WidgetSize.Large,
                                         isEditing = state.isEditing,
                                         isSelect = it in state.selected,
@@ -344,12 +347,19 @@ fun WidgetItem(
     changeEdit: () -> Unit,
     isEditing: Boolean,
     isSelect: Boolean,
+    showElevation: Boolean = true,
     onClick: () -> Unit,
 ) {
     Card(
-        modifier = modifier.clickableBlank { if (isEditing) changeEdit() else onClick() }
-            .clip(RoundedCornerShape(25.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+        modifier = modifier,
+        shape = RoundedCornerShape(20.dp),
+        onClick = {
+            if (isEditing) changeEdit() else onClick()
+        },
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        elevation = if (showElevation) CardDefaults.cardElevation(20.dp) else CardDefaults.cardElevation(
+            0.dp
+        )
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Image(

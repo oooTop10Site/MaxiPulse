@@ -28,7 +28,6 @@ internal class GroupEditViewModel :
     fun save(addSportsmans: List<String> = emptyList<String>()) = intent {
         val message = getString(Res.string.success_save)
         launchOperation(operation = {
-            println("state.filteredSportsmans.map { it.id } + addSportsmans ${state.filteredSportsmans.map { it.id } + addSportsmans}")
             groupRepository.editGroup(
                 groupId = state.groupUI.id,
                 name = state.groupUI.title,
@@ -42,6 +41,25 @@ internal class GroupEditViewModel :
                 allSportsman()
                 postSideEffectLocal(GroupEditEvent.Success)
             })
+    }
+
+    fun changeDeleteGroupAlert() = intent {
+        reduce {
+            state.copy(
+                deleteGroupAlert = !state.deleteGroupAlert
+            )
+        }
+    }
+
+    fun deleteGroup(groupId: String) = intent {
+        launchOperation(
+            operation = {
+                groupRepository.groupDelete(groupId = groupId)
+            },
+            success = {
+                postSideEffectLocal(GroupEditEvent.SuccessDelete)
+            }
+        )
     }
 
     fun allSportsman() = intent {

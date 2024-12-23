@@ -1,6 +1,5 @@
 package org.example.project.screens.group
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,8 +34,8 @@ import androidx.compose.ui.draw.clip
 import cafe.adriel.voyager.navigator.currentOrThrow
 import maxipuls.composeapp.generated.resources.add_ic
 import maxipuls.composeapp.generated.resources.composition
-import maxipuls.composeapp.generated.resources.drop_ic
 import maxipuls.composeapp.generated.resources.grid_ic
+import maxipuls.composeapp.generated.resources.group
 import maxipuls.composeapp.generated.resources.rectangle_listv2
 import maxipuls.composeapp.generated.resources.search
 import org.example.project.ext.clickableBlank
@@ -45,7 +44,9 @@ import org.example.project.screens.group.groupDetail.GroupDetailScreen
 import org.example.project.screens.group.groupEdit.GroupEditScreen
 import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.root.ScreenSize
+import org.example.project.theme.uiKit.MaxiTextFieldMenu
 import org.example.project.theme.uiKit.TopBarTitle
+import org.example.project.utils.Constants
 import org.jetbrains.compose.resources.painterResource
 
 class GroupScreen : Screen {
@@ -105,20 +106,17 @@ class GroupScreen : Screen {
                             }
                         )
 
-                        MaxiOutlinedTextField(
-                            value = "Кальчик",
-                            onValueChange = {
-//                                viewModel.changeSearch(it)
+                        MaxiTextFieldMenu<String>(
+                            currentValue = state.filterGroup,
+                            text = state.filterGroup,
+                            onChangeWorkScope = { it ->
+                                viewModel.changeGroup(it)
                             },
-                            modifier = Modifier.animateContentSize().height(40.dp).weight(0.7f),
-                            trailingIcon = {
-                                Icon(
-                                    painter = painterResource(Res.drawable.drop_ic),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp),
-                                    tint = MaxiPulsTheme.colors.uiKit.textColor
-                                )
-                            }
+                            items = state.filterGroups,
+                            itemToString = { it },
+                            modifier = Modifier.height(Constants.TextFieldHeight)
+                                .weight(0.7f),
+                            placeholderText = stringResource(Res.string.group)
                         )
                         Icon(
                            if(state.isGrid) painterResource(Res.drawable.grid_ic) else  painterResource(Res.drawable.rectangle_listv2),

@@ -12,6 +12,12 @@ import org.example.project.domain.model.sportsman.SportsmanUI
 
 data class LogState(
     val logs: List<LogUI>,
+    val filterSportsman: String,
+    val filterSportsmans: List<String>,
+    val filterEvent: String,
+    val filterEvents: List<String>,
+    val filterComposition: String,
+    val filterCompositions: List<String>,
 ) {
     companion object {
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
@@ -50,7 +56,13 @@ data class LogState(
                     ),
                     duration = (index + 1) * 600L // Продолжительность в секундах (10 минут * index)
                 )
-            }
+            },
+            filterEvent = "",
+            filterSportsman = "",
+            filterComposition = "",
+            filterEvents = listOf("1", "2", "3"),
+            filterSportsmans = listOf("1", "2", "3"),
+            filterCompositions = listOf("1", "2", "3"),
         )
     }
 }

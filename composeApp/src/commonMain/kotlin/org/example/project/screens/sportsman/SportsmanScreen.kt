@@ -32,7 +32,9 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.add_ic
 import maxipuls.composeapp.generated.resources.drop_ic
+import maxipuls.composeapp.generated.resources.filter
 import maxipuls.composeapp.generated.resources.grid_ic
+import maxipuls.composeapp.generated.resources.group
 import maxipuls.composeapp.generated.resources.rectangle_listv2
 import maxipuls.composeapp.generated.resources.search
 import maxipuls.composeapp.generated.resources.sportsman
@@ -45,7 +47,9 @@ import org.example.project.screens.sportsman.edit.SportsmanEditScreen
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.theme.uiKit.MaxiPageContainer
+import org.example.project.theme.uiKit.MaxiTextFieldMenu
 import org.example.project.theme.uiKit.TopBarTitle
+import org.example.project.utils.Constants
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.collections.chunked
@@ -106,20 +110,17 @@ class SportsmanScreen: Screen {
                             }
                         )
 
-                        MaxiOutlinedTextField(
-                            value = "Кальчик",
-                            onValueChange = {
-//                                viewModel.changeSearch(it)
+                        MaxiTextFieldMenu<String>(
+                            currentValue = state.filterSportsman,
+                            text = state.filterSportsman,
+                            onChangeWorkScope = { it ->
+                                viewModel.changeSportsman(it)
                             },
-                            modifier = Modifier.animateContentSize().height(40.dp).weight(0.7f),
-                            trailingIcon = {
-                                Icon(
-                                    painter = painterResource(Res.drawable.drop_ic),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp),
-                                    tint = MaxiPulsTheme.colors.uiKit.textColor
-                                )
-                            }
+                            items = state.filterSportsmans,
+                            itemToString = { it },
+                            modifier = Modifier.height(Constants.TextFieldHeight)
+                                .weight(0.7f),
+                            placeholderText = stringResource(Res.string.filter)
                         )
 
                         Icon(

@@ -9,7 +9,8 @@ data class GroupEditState(
     val deleteSportsman: List<String>,
     val groupUI: GroupUI,
     val search: String,
-    val filteredSportsmans: List<SportsmanUI>
+    val filteredSportsmans: List<SportsmanUI>,
+    val deleteGroupAlert: Boolean,
 ) {
     companion object {
         val InitState = GroupEditState(
@@ -18,7 +19,8 @@ data class GroupEditState(
             search = "",
             groupUI = GroupUI.Default,
             filteredSportsmans = emptyList(),
-            allSportsmans = emptyList()
+            allSportsmans = emptyList(),
+            deleteGroupAlert = false
         )
     }
 }
