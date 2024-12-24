@@ -42,6 +42,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
@@ -92,7 +93,9 @@ class TestsScreen : Screen {
                                 fontSize = 20.sp,
                                 color = MaxiPulsTheme.colors.uiKit.textColor
                             ),
-                            modifier = Modifier.align(Alignment.TopCenter)
+                            modifier = Modifier.align(Alignment.TopCenter),
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
                         )
                         Text(
                             text = stringResource(Res.string.choose_type_activity),
@@ -101,6 +104,8 @@ class TestsScreen : Screen {
                                 lineHeight = 40.sp,
                                 color = MaxiPulsTheme.colors.uiKit.textDropDown
                             ),
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.align(Alignment.Center).widthIn(max = 500.dp)
                         )
@@ -230,7 +235,9 @@ internal fun TestItem(
                 fontSize = 12.sp,
                 lineHeight = 12.sp,
                 color = if (testUI.isPay || isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.textColor
-            )
+            ),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
         if(testUI.isPay) {
             Icon(

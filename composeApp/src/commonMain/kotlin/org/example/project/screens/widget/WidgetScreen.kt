@@ -1,5 +1,6 @@
 package org.example.project.screens.widget
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,6 +40,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -362,12 +365,7 @@ fun WidgetItem(
         )
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Image(
-                painter = painterResource(backgroundIcon),
-                modifier = Modifier.fillMaxSize(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
+            UglyGradientBackground(modifier = Modifier.fillMaxSize())
             Column(
                 modifier = Modifier.fillMaxHeight().padding(vertical = 20.dp),
                 verticalArrangement = Arrangement.SpaceEvenly,
@@ -405,3 +403,46 @@ fun WidgetItem(
         }
     }
 }
+
+@Composable
+fun UglyGradientBackground(modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier.fillMaxSize()) {
+        val width = size.width
+        val height = size.height
+
+        // Первый градиент
+        drawRect(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    Color(0xFFFFA93A), // первый цвет
+                    Color(0xFFE81F61), // второй цвет
+                    Color(0xFF003093F9)  // третий цвет
+                ),
+                center = Offset(width * -0.25f, height * -0.2f), // Соотношение для адаптации
+                radius = width * 1.5f // Радиус градиента также адаптируется
+            ),
+            size = size
+        )
+
+        // Второй градиент
+        drawRect(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    Color(0xFFFFA93A), // первый цвет
+                    Color(0xFFE81F61), // второй цвет
+                    Color(0xFF003093F9)  // третий цвет
+                ),
+                center = Offset(width * 0.8f, height * 0.5f), // Соотношение для адаптации
+                radius = width * 0.6f // Радиус также пропорционален
+            ),
+            size = size
+        )
+
+        // Белый цвет с альфа-каналом
+        drawRect(
+            color = Color.White.copy(alpha = 0.2f), // белый цвет с альфа-каналом
+            size = size
+        )
+    }
+}
+
