@@ -36,6 +36,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -69,175 +70,337 @@ import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiPageContainer
 import org.jetbrains.compose.resources.painterResource
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.pointer.PointerEventType
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.example.project.domain.manager.AuthManager
 import org.example.project.domain.manager.MessageObserverManager
 import org.example.project.platform.PointerEvent
 import org.example.project.platform.pointerEvent
+import org.example.project.screens.mainTab.tabs.DairyTab
+import org.example.project.screens.mainTab.tabs.DistanceTraining
+import org.example.project.screens.mainTab.tabs.FormTab
 import org.example.project.screens.root.ScreenSize
 import org.example.project.theme.uiKit.MaxiSnackbarHost
+import org.example.project.utils.safeAreaHorizontal
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class MainTabScreen(private val tab: Tab = MainTab()) : Screen, KoinComponent {
     @Composable
     override fun Content() {
-        val tabsFirst = listOf(MainTab(), TestTab, LogTab, UTPTab, LoadAnalizeTab)
-        val tabsSecond = listOf(CompositionsTab, SportsmanTab, SensorTab, SettingsTab)
+        val screenSize = ScreenSize.currentOrThrow
         val navigator = LocalNavigator.currentOrThrow
-        var isOpen by remember { mutableStateOf(false) }
+        var isOpen = remember { mutableStateOf(false) }
         MaxiPageContainer(
             modifier = Modifier.fillMaxSize().background(MaxiPulsTheme.colors.uiKit.background)
         ) {
             TabNavigator(tab) {
                 val tabNavigator = LocalTabNavigator.current
-                Row(
-                    modifier = Modifier
-                ) {
-                    Column(
-                        modifier = Modifier.background(MaxiPulsTheme.colors.uiKit.modalSheet)
-                            .animateContentSize(
-                                animationSpec = tween(
-                                    durationMillis = 300,
-                                    easing = LinearOutSlowInEasing
-                                )
-                            ).fillMaxHeight().width(if (isOpen) 270.dp else 110.dp).pointerEvent(
-                                PointerEvent.Enter, action = {
-                                    isOpen = true
-                                }).pointerEvent(PointerEvent.Exit, action = { isOpen = false }),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(Modifier.size(30.dp))
-                        Image(
-                            painter = painterResource(Res.drawable.logo_small),
-                            contentDescription = null,
-                            modifier = Modifier.size(50.dp)
-                        )
-                        Spacer(Modifier.size(30.dp))
-
-                        HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 10.dp)
-                        )
-
-                        Spacer(Modifier.size(20.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier.background(
-                                    MaxiPulsTheme.colors.uiKit.background,
-                                    shape = CircleShape
-                                ).clip(CircleShape).size(50.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Image(
-                                    painter = painterResource(Res.drawable.profile),
-                                    modifier = Modifier.size(width = 22.5.dp, 30.dp),
-                                    colorFilter = ColorFilter.tint(color = MaxiPulsTheme.colors.uiKit.divider),
-                                    contentDescription = null
-                                )
-                            }
-                            if (isOpen) {
-                                Column(modifier = Modifier.padding(start = 10.dp)) {
-                                    Text(
-                                        text = "СШОР Гуляев Николай",
-                                        style = MaxiPulsTheme.typography.semiBold.copy(
-                                            fontSize = 14.sp,
-                                            lineHeight = 12.sp,
-                                            color = MaxiPulsTheme.colors.uiKit.lightTextColor
-                                        )
-                                    )
-
-                                    Text(
-                                        text = "Вологда",
-                                        style = MaxiPulsTheme.typography.semiBold.copy(
-                                            fontSize = 14.sp,
-                                            color = MaxiPulsTheme.colors.uiKit.lightTextColor
-                                        ),
-                                        modifier = Modifier.padding(top = 8.dp)
-                                    )
-                                }
-                            }
-                        }
-                        Spacer(Modifier.size(20.dp))
-
-                        HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 10.dp)
-                        )
-                        LazyColumn(
-                            modifier = Modifier.padding(horizontal = 33.dp).weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(20.dp),
-                            contentPadding = PaddingValues(vertical = 20.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            items(tabsFirst + tabsSecond) { tabEach ->
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center,
-                                    modifier = Modifier.fillMaxWidth().clickableBlank() {
-                                        tabNavigator.current = tabEach
-                                    }
-                                ) {
-                                    tabEach.options.icon?.let {
-                                        Icon(
-                                            painter = it,
-                                            modifier = Modifier.size(30.dp)
-                                                .align(Alignment.CenterVertically),
-                                            contentDescription = null,
-                                            tint = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
-                                            else MaxiPulsTheme.colors.uiKit.lightTextColor
-                                        )
-                                    }
-                                    if (isOpen) {
-
-                                        Text(
-                                            text = tabEach.options.title,
-                                            style = MaxiPulsTheme.typography.medium.copy(
-                                                fontSize = 14.sp,
-                                                color = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
-                                                else MaxiPulsTheme.colors.uiKit.lightTextColor
-                                            ),
-                                            modifier = Modifier.padding(start = 18.dp).weight(1f)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                        HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 10.dp)
-                        )
-
-                        Spacer(Modifier.size(20.dp))
-
-                        Box(
-                            modifier = Modifier.padding(horizontal = 20.dp).height(44.dp)
-                                .width(if (isOpen) 190.dp else 65.dp).clip(
-                                    RoundedCornerShape(50.dp)
-                                ).background(MaxiPulsTheme.colors.uiKit.primary.copy(alpha = 0.5f))
-                                .clickable {
-                                    isOpen = !isOpen
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                painter = painterResource(Res.drawable.back_ic),
-                                modifier = Modifier.size(24.dp)
-                                    .rotate(if (isOpen) 0f else 180f),
-                                contentDescription = null,
-                                tint = MaxiPulsTheme.colors.uiKit.lightTextColor
-                            )
-                        }
-
-                        Spacer(Modifier.size(20.dp))
-
+                when (screenSize.widthSizeClass) {
+                    WindowWidthSizeClass.Compact -> {
+                        MobileLeftMenu(isOpen, tabNavigator, it)
                     }
-                    it.current.Content()
+
+                    WindowWidthSizeClass.Medium -> {
+                        LargeLeftMenu(isOpen, tabNavigator, it)
+                    }
+
+                    WindowWidthSizeClass.Expanded -> {
+                        LargeLeftMenu(isOpen, tabNavigator, it)
+                    }
+
+                    else -> {
+                        LargeLeftMenu(isOpen, tabNavigator, it)
+                    }
                 }
 
             }
         }
+    }
+}
+
+@Composable
+private fun MobileLeftMenu(
+    isOpen: MutableState<Boolean>,
+    tabNavigator: TabNavigator,
+    navigator1: TabNavigator
+) {
+    val tabs = listOf<Tab>(
+        MainTab(), UTPTab, DairyTab, FormTab, TestTab, DistanceTraining,
+    )
+    val drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    ModalNavigationDrawer(drawerContent = {
+        Box(
+            modifier = Modifier.background(MaxiPulsTheme.colors.uiKit.modalSheet).fillMaxHeight()
+                .width(275.dp),
+        ) {
+            Column(modifier = Modifier.padding(horizontal = safeAreaHorizontal())) {
+                Spacer(Modifier.size(30.dp))
+                Image(
+                    painter = painterResource(Res.drawable.logo_small),
+                    contentDescription = null,
+                    modifier = Modifier.size(50.dp).align(Alignment.CenterHorizontally)
+                )
+                Spacer(Modifier.size(30.dp))
+
+                HorizontalDivider(
+                    modifier = Modifier
+                )
+
+                Spacer(Modifier.size(20.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier.background(
+                            MaxiPulsTheme.colors.uiKit.background,
+                            shape = CircleShape
+                        ).clip(CircleShape).size(50.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(Res.drawable.profile),
+                            modifier = Modifier.size(width = 22.5.dp, 30.dp),
+                            colorFilter = ColorFilter.tint(color = MaxiPulsTheme.colors.uiKit.divider),
+                            contentDescription = null
+                        )
+                    }
+                    Column(modifier = Modifier.padding(start = 10.dp)) {
+                        Text(
+                            text = "СШОР Гуляев Николай",
+                            style = MaxiPulsTheme.typography.semiBold.copy(
+                                fontSize = 14.sp,
+                                lineHeight = 12.sp,
+                                color = MaxiPulsTheme.colors.uiKit.lightTextColor
+                            )
+                        )
+
+                        Text(
+                            text = "Вологда",
+                            style = MaxiPulsTheme.typography.semiBold.copy(
+                                fontSize = 14.sp,
+                                color = MaxiPulsTheme.colors.uiKit.lightTextColor
+                            ),
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
+                }
+                Spacer(Modifier.size(20.dp))
+
+                HorizontalDivider(
+                    modifier = Modifier
+                )
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                    contentPadding = PaddingValues(vertical = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    items(tabs) { tabEach ->
+                        Column() {
+                            MobileMenuItem(tabNavigator, tabEach, scope, drawerState)
+                        }
+                    }
+                }
+                MobileMenuItem(tabNavigator, SettingsTab, scope, drawerState)
+                Spacer(Modifier.size(20.dp))
+            }
+        }
+    }, drawerState = drawerState) {
+        navigator1.current.Content()
+    }
+}
+
+@Composable
+private fun MobileMenuItem(
+    tabNavigator: TabNavigator,
+    tabEach: Tab,
+    scope: CoroutineScope,
+    drawerState: DrawerState
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxWidth().clickableBlank() {
+            tabNavigator.current = tabEach
+            scope.launch {
+                drawerState.close()
+            }
+        }
+    ) {
+        tabEach.options.icon?.let {
+            Icon(
+                painter = it,
+                modifier = Modifier.size(30.dp)
+                    .align(Alignment.CenterVertically),
+                contentDescription = null,
+                tint = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
+                else MaxiPulsTheme.colors.uiKit.lightTextColor
+            )
+        }
+        Text(
+            text = tabEach.options.title,
+            style = MaxiPulsTheme.typography.medium.copy(
+                fontSize = 14.sp,
+                color = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
+                else MaxiPulsTheme.colors.uiKit.lightTextColor
+            ),
+            modifier = Modifier.padding(start = 18.dp).weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun LargeLeftMenu(
+    isOpen: MutableState<Boolean>,
+    tabNavigator: TabNavigator,
+    navigator1: TabNavigator
+) {
+    val tabsFirst = listOf(MainTab(), TestTab, LogTab, UTPTab, LoadAnalizeTab)
+    val tabsSecond = listOf(CompositionsTab, SportsmanTab, SensorTab, SettingsTab)
+    Row(
+        modifier = Modifier
+    ) {
+        Column(
+            modifier = Modifier.background(MaxiPulsTheme.colors.uiKit.modalSheet)
+                .animateContentSize(
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = LinearOutSlowInEasing
+                    )
+                ).fillMaxHeight().width(if (isOpen.value) 270.dp else 110.dp).pointerEvent(
+                    PointerEvent.Enter, action = {
+                        isOpen.value = true
+                    }).pointerEvent(PointerEvent.Exit, action = { isOpen.value = false }),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.size(30.dp))
+            Image(
+                painter = painterResource(Res.drawable.logo_small),
+                contentDescription = null,
+                modifier = Modifier.size(50.dp)
+            )
+            Spacer(Modifier.size(30.dp))
+
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 10.dp)
+            )
+
+            Spacer(Modifier.size(20.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier.background(
+                        MaxiPulsTheme.colors.uiKit.background,
+                        shape = CircleShape
+                    ).clip(CircleShape).size(50.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(Res.drawable.profile),
+                        modifier = Modifier.size(width = 22.5.dp, 30.dp),
+                        colorFilter = ColorFilter.tint(color = MaxiPulsTheme.colors.uiKit.divider),
+                        contentDescription = null
+                    )
+                }
+                if (isOpen.value) {
+                    Column(modifier = Modifier.padding(start = 10.dp)) {
+                        Text(
+                            text = "СШОР Гуляев Николай",
+                            style = MaxiPulsTheme.typography.semiBold.copy(
+                                fontSize = 14.sp,
+                                lineHeight = 12.sp,
+                                color = MaxiPulsTheme.colors.uiKit.lightTextColor
+                            )
+                        )
+
+                        Text(
+                            text = "Вологда",
+                            style = MaxiPulsTheme.typography.semiBold.copy(
+                                fontSize = 14.sp,
+                                color = MaxiPulsTheme.colors.uiKit.lightTextColor
+                            ),
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
+                }
+            }
+            Spacer(Modifier.size(20.dp))
+
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 10.dp)
+            )
+            LazyColumn(
+                modifier = Modifier.padding(horizontal = 33.dp).weight(1f),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                contentPadding = PaddingValues(vertical = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                items(tabsFirst + tabsSecond) { tabEach ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth().clickableBlank() {
+                            tabNavigator.current = tabEach
+                        }
+                    ) {
+                        tabEach.options.icon?.let {
+                            Icon(
+                                painter = it,
+                                modifier = Modifier.size(30.dp)
+                                    .align(Alignment.CenterVertically),
+                                contentDescription = null,
+                                tint = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
+                                else MaxiPulsTheme.colors.uiKit.lightTextColor
+                            )
+                        }
+                        if (isOpen.value) {
+
+                            Text(
+                                text = tabEach.options.title,
+                                style = MaxiPulsTheme.typography.medium.copy(
+                                    fontSize = 14.sp,
+                                    color = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
+                                    else MaxiPulsTheme.colors.uiKit.lightTextColor
+                                ),
+                                modifier = Modifier.padding(start = 18.dp).weight(1f)
+                            )
+                        }
+                    }
+                }
+            }
+
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 10.dp)
+            )
+
+            Spacer(Modifier.size(20.dp))
+
+            Box(
+                modifier = Modifier.padding(horizontal = 20.dp).height(44.dp)
+                    .width(if (isOpen.value) 190.dp else 65.dp).clip(
+                        RoundedCornerShape(50.dp)
+                    ).background(MaxiPulsTheme.colors.uiKit.primary.copy(alpha = 0.5f))
+                    .clickable {
+                        isOpen.value = !isOpen.value
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.back_ic),
+                    modifier = Modifier.size(24.dp)
+                        .rotate(if (isOpen.value) 0f else 180f),
+                    contentDescription = null,
+                    tint = MaxiPulsTheme.colors.uiKit.lightTextColor
+                )
+            }
+
+            Spacer(Modifier.size(20.dp))
+
+        }
+        navigator1.current.Content()
     }
 }

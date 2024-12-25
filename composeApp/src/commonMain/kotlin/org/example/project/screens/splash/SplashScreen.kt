@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -18,6 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.logo
+import maxipuls.composeapp.generated.resources.minipulse
 import org.example.project.domain.manager.AuthManager
 import org.example.project.screens.login.LoginScreen
 import org.example.project.screens.mainTab.MainTabScreen
@@ -53,11 +55,39 @@ class SplashScreen : Screen, KoinComponent {
             modifier = Modifier.fillMaxSize().padding(horizontal = 50.dp),
             contentAlignment = Alignment.Center
         ) {
-            Image(
-                bitmap = imageResource(resource = Res.drawable.logo),
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth
-            )
+            when(windowSizeClass.widthSizeClass) {
+                WindowWidthSizeClass.Compact -> {
+                    Image(
+                        bitmap = imageResource(resource = Res.drawable.minipulse),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillWidth
+                    )
+                }
+
+                WindowWidthSizeClass.Medium -> {
+                    Image(
+                        bitmap = imageResource(resource = Res.drawable.logo),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillWidth
+                    )
+                }
+
+                WindowWidthSizeClass.Expanded -> {
+                    Image(
+                        bitmap = imageResource(resource = Res.drawable.logo),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillWidth
+                    )
+                }
+
+                else -> {
+                    Image(
+                        bitmap = imageResource(resource = Res.drawable.logo),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillWidth
+                    )
+                }
+            }
         }
     }
 }

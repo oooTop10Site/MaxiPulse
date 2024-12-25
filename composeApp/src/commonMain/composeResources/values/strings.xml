@@ -179,6 +179,10 @@
     <string name="settings_method_count_trimp">Выбор способа расчета ТРИМП</string>
     <string name="settings_algorithm_anaerobic_threshold">Выбор алгоритма определения Анаэробного порога (ЧСС ПАНО)</string>
 
+    <string name="dairy">Дневник</string>
+    <string name="form">Анкета</string>
+    <string name="distance_training">Удаленная тренеровка</string>
+
     <string name="training_info">Персональная карточка спортсмена содержит следующую\nинформацию:</string>
     <string name="training_info_desc1">1. Мгновенная ЧСС</string>
     <string name="training_info_desc2">2. % ЧСС мах. Рассчитывается от максимального значения ЧСС, сохраненного в профиле спортсмена</string>

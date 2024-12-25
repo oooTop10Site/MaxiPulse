@@ -5,12 +5,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -42,6 +44,9 @@ import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.background_auth
 import maxipuls.composeapp.generated.resources.lock
 import maxipuls.composeapp.generated.resources.logo
+import maxipuls.composeapp.generated.resources.logo_small
+import maxipuls.composeapp.generated.resources.minipulse
+import maxipuls.composeapp.generated.resources.minipulse_text
 import maxipuls.composeapp.generated.resources.user
 import org.example.project.domain.model.ButtonActions
 import org.example.project.ext.clickableBlank
@@ -53,6 +58,7 @@ import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiCheckbox
 import org.example.project.theme.uiKit.MaxiPageContainer
 import org.example.project.theme.uiKit.MaxiTextField
+import org.example.project.utils.safeAreaHorizontal
 import org.jetbrains.compose.resources.imageResource
 
 class LoginScreen : Screen {
@@ -143,12 +149,12 @@ class LoginScreen : Screen {
                 modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth()
             )
             Column(
-                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxSize().padding(horizontal = safeAreaHorizontal()),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Image(
-                    bitmap = imageResource(resource = Res.drawable.logo),
+                    bitmap = imageResource(resource = Res.drawable.minipulse),
                     contentDescription = null,
                     contentScale = ContentScale.FillWidth
                 )
@@ -200,15 +206,21 @@ class LoginScreen : Screen {
                     onClick = {
                         viewModel.login()
                     },
+                    shape = RoundedCornerShape(50.dp),
                     text = "Войти",
-                    modifier = Modifier.height(54.dp),
+                    modifier = Modifier.fillMaxWidth().height(40.dp),
                     buttonActions = ButtonActions.Unlimit
                 )
 
                 Text(
                     text = textOfPersonalData,
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier,
                     textAlign = TextAlign.Center,
+                    style = MaxiPulsTheme.typography.bold.copy(
+                        color = MaxiPulsTheme.colors.uiKit.white,
+                        fontSize = 16.sp,
+                        lineHeight = 16.sp
+                    )
                 )
             }
         }
