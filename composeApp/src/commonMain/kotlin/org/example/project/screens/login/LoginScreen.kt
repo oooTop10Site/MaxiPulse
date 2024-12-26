@@ -44,6 +44,7 @@ import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.background_auth
 import maxipuls.composeapp.generated.resources.lock
 import maxipuls.composeapp.generated.resources.logo
+import maxipuls.composeapp.generated.resources.logo_minipulse
 import maxipuls.composeapp.generated.resources.logo_small
 import maxipuls.composeapp.generated.resources.minipulse
 import maxipuls.composeapp.generated.resources.minipulse_text
@@ -60,6 +61,7 @@ import org.example.project.theme.uiKit.MaxiPageContainer
 import org.example.project.theme.uiKit.MaxiTextField
 import org.example.project.utils.safeAreaHorizontal
 import org.jetbrains.compose.resources.imageResource
+import org.jetbrains.compose.resources.painterResource
 
 class LoginScreen : Screen {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -154,7 +156,7 @@ class LoginScreen : Screen {
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Image(
-                    bitmap = imageResource(resource = Res.drawable.minipulse),
+                    painter = painterResource(resource = Res.drawable.logo_minipulse),
                     contentDescription = null,
                     contentScale = ContentScale.FillWidth
                 )

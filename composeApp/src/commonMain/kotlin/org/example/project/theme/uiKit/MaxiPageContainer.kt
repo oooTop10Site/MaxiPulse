@@ -5,11 +5,17 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.log
 import org.example.project.ext.toUI
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(InternalVoyagerApi::class)
@@ -142,5 +149,95 @@ fun TopBarTitle(
     }
     Box(modifier) {
         content.invoke(this, datetime)
+    }
+}
+
+//mobile
+
+@OptIn(InternalVoyagerApi::class)
+@Composable
+fun MaxiPageContainerMobile(
+    modifier: Modifier = Modifier,
+    topBar: (@Composable () -> Unit)? = null,
+    content: @Composable () -> Unit
+) {
+    val localFocusManager = LocalFocusManager.current
+//    val navigator = LocalNavigator.currentOrThrow
+//    val bottomBarVisibleManager: BottomBarVisibleManager by inject()
+//    LaunchedEffect(Unit) {
+//        bottomBarVisibleManager.setBottomBarVisibility(navigator.key)
+//    }
+    Column {
+        Scaffold(
+            containerColor = MaxiPulsTheme.colors.uiKit.background,
+            contentColor = MaterialTheme.colorScheme.onBackground,
+            modifier = modifier.weight(1f).pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    localFocusManager.clearFocus()
+                })
+            },
+            topBar = {
+                Box(
+                    modifier = Modifier.fillMaxWidth().height(50.dp)
+                        .background(MaxiPulsTheme.colors.uiKit.background),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Card(
+                        modifier = Modifier.fillMaxHeight(),
+                        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 10.dp),
+                        shape = RoundedCornerShape(0.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaxiPulsTheme.colors.uiKit.background)
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxHeight().fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            topBar?.let { top ->
+                                top()
+                            }
+                        }
+                    }
+                }
+            },
+            content = {
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                        .background(MaxiPulsTheme.colors.uiKit.background)
+                        .padding(
+                            top = it.calculateTopPadding(),
+                            bottom = it.calculateBottomPadding()
+                        )
+                ) {
+                    content()
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun TopBarMobile(
+    modifier: Modifier = Modifier,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    title: String,
+) {
+    Box(modifier = modifier) {
+        Box(
+            modifier = Modifier.align(Alignment.CenterStart),
+            contentAlignment = Alignment.Center
+        ) {
+            leadingIcon?.invoke()
+        }
+
+        Text(
+            text = title, style = MaxiPulsTheme.typography.medium.copy(
+                fontSize = 16.sp,
+                lineHeight = 16.sp,
+                color = MaxiPulsTheme.colors.uiKit.textColor
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.align(Alignment.Center)
+        )
     }
 }

@@ -37,6 +37,7 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -75,15 +76,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.pointer.PointerEventType
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.example.project.domain.manager.AuthManager
 import org.example.project.domain.manager.MessageObserverManager
+import org.example.project.ext.getPointsOfTab
 import org.example.project.platform.PointerEvent
 import org.example.project.platform.pointerEvent
 import org.example.project.screens.mainTab.tabs.DairyTab
 import org.example.project.screens.mainTab.tabs.DistanceTraining
 import org.example.project.screens.mainTab.tabs.FormTab
+import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.root.ScreenSize
 import org.example.project.theme.uiKit.MaxiSnackbarHost
 import org.example.project.utils.safeAreaHorizontal
@@ -125,15 +129,25 @@ class MainTabScreen(private val tab: Tab = MainTab()) : Screen, KoinComponent {
 }
 
 @Composable
-private fun MobileLeftMenu(
+private fun KoinComponent.MobileLeftMenu(
     isOpen: MutableState<Boolean>,
     tabNavigator: TabNavigator,
     navigator1: TabNavigator
 ) {
+    val observerManager: MessageObserverManager by inject()
+    val drawerState: DrawerState =
+        rememberDrawerState(initialValue = DrawerValue.Closed)
+    LaunchedEffect(observerManager) {
+        launch {
+            observerManager.openMobileMenu.receiveAsFlow().collect {
+                drawerState.open()
+            }
+        }
+    }
     val tabs = listOf<Tab>(
-        MainTab(), UTPTab, DairyTab, FormTab, TestTab, DistanceTraining,
+        MainTab(), DairyTab, TestTab, DistanceTraining,
     )
-    val drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(drawerContent = {
         Box(
@@ -222,35 +236,73 @@ private fun MobileMenuItem(
     scope: CoroutineScope,
     drawerState: DrawerState
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth().clickableBlank() {
-            tabNavigator.current = tabEach
-            scope.launch {
-                drawerState.close()
+    val navigator = RootNavigator.currentOrThrow
+    var isOpen by remember { mutableStateOf(false) }
+    val points = tabEach.getPointsOfTab(navigator, tabNavigator)
+    Column(modifier = Modifier.fillMaxWidth().animateContentSize()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth().clickableBlank() {
+                if (points.isEmpty()) {
+                    tabNavigator.current = tabEach
+                    scope.launch {
+                        drawerState.close()
+                    }
+                } else {
+                    isOpen = !isOpen
+                }
             }
-        }
-    ) {
-        tabEach.options.icon?.let {
-            Icon(
-                painter = it,
-                modifier = Modifier.size(30.dp)
-                    .align(Alignment.CenterVertically),
-                contentDescription = null,
-                tint = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
-                else MaxiPulsTheme.colors.uiKit.lightTextColor
+        ) {
+            tabEach.options.icon?.let {
+                Icon(
+                    painter = it,
+                    modifier = Modifier.size(30.dp)
+                        .align(Alignment.CenterVertically),
+                    contentDescription = null,
+                    tint = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
+                    else MaxiPulsTheme.colors.uiKit.lightTextColor
+                )
+            }
+            Text(
+                text = tabEach.options.title,
+                style = MaxiPulsTheme.typography.medium.copy(
+                    fontSize = 14.sp,
+                    color = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
+                    else MaxiPulsTheme.colors.uiKit.lightTextColor
+                ),
+                modifier = Modifier.padding(start = 18.dp).weight(1f)
             )
         }
-        Text(
-            text = tabEach.options.title,
-            style = MaxiPulsTheme.typography.medium.copy(
-                fontSize = 14.sp,
-                color = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
-                else MaxiPulsTheme.colors.uiKit.lightTextColor
-            ),
-            modifier = Modifier.padding(start = 18.dp).weight(1f)
-        )
+        if (isOpen) {
+            Spacer(Modifier.size(5.dp))
+            points.forEach {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.height(30.dp).clickableBlank {
+                        tabNavigator.current = it.openTab
+                        scope.launch {
+                            drawerState.close()
+                        }
+                    }) {
+                    Spacer(Modifier.size(40.dp))
+                    Box(
+                        modifier = Modifier.size(5.dp).clip(CircleShape).background(
+                            shape = CircleShape,
+                            color = MaxiPulsTheme.colors.uiKit.white
+                        )
+                    )
+                    Spacer(Modifier.size(5.dp))
+                    Text(
+                        text = it.title, style = MaxiPulsTheme.typography.regular.copy(
+                            fontSize = 14.sp,
+                            lineHeight = 14.sp,
+                            color = MaxiPulsTheme.colors.uiKit.lightTextColor
+                        )
+                    )
+                }
+            }
+        }
     }
 }
 

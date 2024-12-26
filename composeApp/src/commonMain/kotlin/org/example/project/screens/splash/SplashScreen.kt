@@ -19,7 +19,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.logo
+import maxipuls.composeapp.generated.resources.logo_minipulse
 import maxipuls.composeapp.generated.resources.minipulse
+import maxipuls.composeapp.generated.resources.yellow_brush
 import org.example.project.domain.manager.AuthManager
 import org.example.project.screens.login.LoginScreen
 import org.example.project.screens.mainTab.MainTabScreen
@@ -27,6 +29,7 @@ import org.example.project.screens.mainTab.tabs.MainTab
 import org.example.project.screens.root.RootNavigator
 import org.example.project.screens.root.ScreenSize
 import org.jetbrains.compose.resources.imageResource
+import org.jetbrains.compose.resources.painterResource
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -58,7 +61,7 @@ class SplashScreen : Screen, KoinComponent {
             when(windowSizeClass.widthSizeClass) {
                 WindowWidthSizeClass.Compact -> {
                     Image(
-                        bitmap = imageResource(resource = Res.drawable.minipulse),
+                        painter = painterResource(resource = Res.drawable.logo_minipulse),
                         contentDescription = null,
                         contentScale = ContentScale.FillWidth
                     )
@@ -66,7 +69,7 @@ class SplashScreen : Screen, KoinComponent {
 
                 WindowWidthSizeClass.Medium -> {
                     Image(
-                        bitmap = imageResource(resource = Res.drawable.logo),
+                        painter = painterResource(resource = Res.drawable.logo),
                         contentDescription = null,
                         contentScale = ContentScale.FillWidth
                     )
@@ -74,7 +77,7 @@ class SplashScreen : Screen, KoinComponent {
 
                 WindowWidthSizeClass.Expanded -> {
                     Image(
-                        bitmap = imageResource(resource = Res.drawable.logo),
+                        painter = painterResource(resource = Res.drawable.logo),
                         contentDescription = null,
                         contentScale = ContentScale.FillWidth
                     )
@@ -82,7 +85,7 @@ class SplashScreen : Screen, KoinComponent {
 
                 else -> {
                     Image(
-                        bitmap = imageResource(resource = Res.drawable.logo),
+                        painter = painterResource(resource = Res.drawable.logo),
                         contentDescription = null,
                         contentScale = ContentScale.FillWidth
                     )

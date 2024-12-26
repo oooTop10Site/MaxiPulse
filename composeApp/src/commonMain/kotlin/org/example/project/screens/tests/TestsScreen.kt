@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,6 +73,7 @@ class TestsScreen : Screen {
         val rootNavigator = LocalNavigator.currentOrThrow
         val tabNavigator = LocalTabNavigator.current
         val state by viewModel.stateFlow.collectAsState()
+
         MaxiPageContainer(
             modifier = Modifier,
         ) {
@@ -174,7 +176,11 @@ class TestsScreen : Screen {
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
                         items(state.tests) {
-                            TestItem(modifier = Modifier.fillMaxWidth(), testUI = it, isSelect = it == state.selectTestUI) {
+                            TestItem(
+                                modifier = Modifier.fillMaxWidth(),
+                                testUI = it,
+                                isSelect = it == state.selectTestUI
+                            ) {
                                 viewModel.changeTests(it)
                             }
                         }
@@ -196,26 +202,27 @@ internal fun TestItem(
 ) {
     Row(
         modifier.then(
-            if(isSelect) Modifier.background(
+            if (isSelect) Modifier.background(
                 color = MaxiPulsTheme.colors.uiKit.grey800,
                 shape = RoundedCornerShape(25.dp)
-            )  else {
-            if (testUI.isPay) Modifier.background(
-                brush = Brush.linearGradient(
-                    listOf(
-                        androidx.compose.ui.graphics.Color(0xFFFFA93A),
-                        androidx.compose.ui.graphics.Color(0xFFE81F61),
-                        androidx.compose.ui.graphics.Color(0xFF3093F9)
+            ) else {
+                if (testUI.isPay) Modifier.background(
+                    brush = Brush.linearGradient(
+                        listOf(
+                            androidx.compose.ui.graphics.Color(0xFFFFA93A),
+                            androidx.compose.ui.graphics.Color(0xFFE81F61),
+                            androidx.compose.ui.graphics.Color(0xFF3093F9)
+                        ),
                     ),
-                ),
-                shape = RoundedCornerShape(25.dp)
-            ).background(
-                color = MaxiPulsTheme.colors.uiKit.white.copy(alpha = 0.3f),
-                shape = RoundedCornerShape(25.dp)
-            ) else Modifier.background(
-                color = MaxiPulsTheme.colors.uiKit.card,
-                shape = RoundedCornerShape(25.dp)
-            )}
+                    shape = RoundedCornerShape(25.dp)
+                ).background(
+                    color = MaxiPulsTheme.colors.uiKit.white.copy(alpha = 0.3f),
+                    shape = RoundedCornerShape(25.dp)
+                ) else Modifier.background(
+                    color = MaxiPulsTheme.colors.uiKit.card,
+                    shape = RoundedCornerShape(25.dp)
+                )
+            }
         ).clip(RoundedCornerShape(25.dp)).clickableBlank() {
             onClick()
         }.animateContentSize(),
@@ -239,7 +246,7 @@ internal fun TestItem(
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
-        if(testUI.isPay) {
+        if (testUI.isPay) {
             Icon(
                 modifier = Modifier.size(24.dp),
                 painter = painterResource(Res.drawable.reputation),

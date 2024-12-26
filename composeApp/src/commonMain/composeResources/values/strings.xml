@@ -151,6 +151,7 @@
     <string name="high">Высокая</string>
     <string name="overall_result">Общий результат</string>
     <string name="performance">Работоспособность</string>
+    <string name="ready_to_load">Готовность к нагрузке</string>
     <string name="distance">Расстояние</string>
     <string name="recovery">Восстановление</string>
     <string name="ending_training">Завершить тренеровку</string>
@@ -184,6 +185,8 @@
     <string name="distance_training">Удаленная тренеровка</string>
 
     <string name="training_info">Персональная карточка спортсмена содержит следующую\nинформацию:</string>
+    <string name="appeared_new_task">Появились новые задачи</string>
+    <string name="borg_scale">Шкала Борга</string>
     <string name="training_info_desc1">1. Мгновенная ЧСС</string>
     <string name="training_info_desc2">2. % ЧСС мах. Рассчитывается от максимального значения ЧСС, сохраненного в профиле спортсмена</string>
     <string name="training_info_desc3">3. Пульсовая тренировочная зона, в которой спортсмен находится в каждый момент тренировки. Настройка пульсовых зон осуществляется в профиле спортсмена, который находится во вкладке Спортсмены.</string>

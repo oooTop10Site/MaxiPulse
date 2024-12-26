@@ -4,6 +4,7 @@ import org.example.project.domain.model.MainAlertDialog
 import org.example.project.domain.model.sportsman.SensorStatus
 import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.domain.model.sportsman.SportsmanSensorUI
+import org.example.project.domain.model.task.MainTaskUI
 
 data class MainState(
     val sportsmans: List<SportsmanSensorUI>,
@@ -12,11 +13,18 @@ data class MainState(
     val isStartTraining: Boolean,
     val isActiveSensor: Boolean,
     val alertDialog: MainAlertDialog?,
-    val sensors: List<SensorUI>
+    val sensors: List<SensorUI>,
+    //mobile
+    val avatar: String,
+    val task: List<MainTaskUI>,
+    val currentTask: MainTaskUI,
+    val name: String,
+    val lastname: String,
+    val middleName: String,
 ) {
     companion object {
         val InitState = MainState(
-            sportsmans =  listOf(
+            sportsmans = listOf(
                 SportsmanSensorUI(
                     id = "1",
                     number = "001",
@@ -160,7 +168,19 @@ data class MainState(
             alertDialog = null,
             sensors = listOf(
 
-            )
+            ),
+            avatar = "",
+            name = "Иван",
+            lastname = "Иванов",
+            middleName = "Иванович",
+            task = listOf(
+                MainTaskUI.BorgScale,
+                MainTaskUI.GoodMorning,
+                MainTaskUI.GoodMorning,
+                MainTaskUI.GoodMorning,
+                MainTaskUI.GoodMorning,
+            ),
+            currentTask = MainTaskUI.GoodMorning
         )
     }
 }

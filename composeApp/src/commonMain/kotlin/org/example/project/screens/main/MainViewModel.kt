@@ -1,10 +1,12 @@
 package org.example.project.screens.main
 
+import org.example.project.domain.manager.MessageObserverManager
 import org.example.project.domain.model.MainAlertDialog
 import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.domain.model.sportsman.SportsmanSensorUI
 import org.example.project.domain.model.test.TestUI
 import org.example.project.platform.BaseScreenModel
+import org.koin.core.component.inject
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.simple.blockingIntent
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -12,6 +14,8 @@ import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 
 internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.InitState) {
+
+    val observerManager: MessageObserverManager by inject()
 
     @OptIn(OrbitExperimental::class)
     fun changeSearch(value: String) = blockingIntent {
@@ -122,4 +126,9 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
     }
 
 
+    //mobile
+
+    fun openMenu() = intent {
+        observerManager.openMobileMenu()
+    }
 }

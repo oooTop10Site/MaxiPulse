@@ -8,6 +8,7 @@ import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.compositions
 import maxipuls.composeapp.generated.resources.distance_training
 import maxipuls.composeapp.generated.resources.running_ic
+import maxipuls.composeapp.generated.resources.training
 import maxipuls.composeapp.generated.resources.users_medical
 import org.example.project.screens.group.GroupScreen
 import org.jetbrains.compose.resources.painterResource
@@ -18,7 +19,7 @@ object DistanceTraining : Tab {
         @Composable
         get() = TabOptions(
             index = 10.toUShort(),
-            title = stringResource(resource = Res.string.distance_training),
+            title = stringResource(resource = Res.string.training),
             icon = painterResource(Res.drawable.running_ic)
         )
 
