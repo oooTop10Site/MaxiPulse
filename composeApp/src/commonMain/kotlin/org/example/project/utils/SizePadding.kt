@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.currentOrThrow
-import org.example.project.screens.root.ScreenSize
+import org.example.project.screens.adaptive.root.ScreenSize
 
 
 @Composable

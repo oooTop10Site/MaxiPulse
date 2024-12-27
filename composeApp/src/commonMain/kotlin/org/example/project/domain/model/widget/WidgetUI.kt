@@ -1,6 +1,5 @@
 package org.example.project.domain.model.widget
 
-import org.example.project.screens.widget.WidgetEvent
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 

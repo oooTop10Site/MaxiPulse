@@ -184,7 +184,19 @@
     <string name="form">Анкета</string>
     <string name="distance_training">Удаленная тренеровка</string>
 
+    <string name="scale_1_text">Вообще без нагрузки</string>
+    <string name="scale_2_text">Очень легко</string>
+    <string name="scale_3_text">Легко</string>
+    <string name="scale_4_text">Умеренно</string>
+    <string name="scale_5_text">Довольно сложно</string>
+    <string name="scale_6_text">Сложно</string>
+    <string name="scale_7_text">Очень сложно</string>
+    <string name="scale_8_text">Очень-очень сложно</string>
+    <string name="scale_9_text">Максимально сложно</string>
+
     <string name="training_info">Персональная карточка спортсмена содержит следующую\nинформацию:</string>
+    <string name="send">Отправить</string>
+    <string name="rating">Рейтинг</string>
     <string name="appeared_new_task">Появились новые задачи</string>
     <string name="borg_scale">Шкала Борга</string>
     <string name="training_info_desc1">1. Мгновенная ЧСС</string>

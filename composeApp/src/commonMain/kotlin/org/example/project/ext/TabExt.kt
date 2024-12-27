@@ -2,20 +2,16 @@ package org.example.project.ext
 
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.performance
-import maxipuls.composeapp.generated.resources.readies_for_upload
 import maxipuls.composeapp.generated.resources.ready_to_load
 import org.example.project.domain.model.PointsTabUI
-import org.example.project.domain.model.sportsman.Performance
 import org.example.project.domain.model.test.TestUI
-import org.example.project.screens.mainTab.tabs.FormTab
-import org.example.project.screens.mainTab.tabs.MainTab
-import org.example.project.screens.mainTab.tabs.TestTab
-import org.example.project.screens.tests.TestsScreen
+import org.example.project.screens.adaptive.mainTab.tabs.FormTab
+import org.example.project.screens.adaptive.mainTab.tabs.MainTab
+import org.example.project.screens.adaptive.mainTab.tabs.TestTab
 import org.jetbrains.compose.resources.stringResource
 
 

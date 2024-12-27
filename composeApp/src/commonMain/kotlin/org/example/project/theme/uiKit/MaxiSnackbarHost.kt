@@ -11,9 +11,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.currentOrThrow
 import org.example.project.domain.manager.AuthManager
-import org.example.project.screens.login.LoginScreen
-import org.example.project.screens.root.RootNavigator
-import org.example.project.screens.splash.SplashScreen
+import org.example.project.screens.adaptive.login.LoginScreen
+import org.example.project.screens.adaptive.root.RootNavigator
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.getValue

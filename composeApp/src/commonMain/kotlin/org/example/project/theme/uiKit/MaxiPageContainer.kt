@@ -159,7 +159,7 @@ fun TopBarTitle(
 fun MaxiPageContainerMobile(
     modifier: Modifier = Modifier,
     topBar: (@Composable () -> Unit)? = null,
-    content: @Composable () -> Unit
+    content: @Composable BoxScope.() -> Unit
 ) {
     val localFocusManager = LocalFocusManager.current
 //    val navigator = LocalNavigator.currentOrThrow
@@ -201,7 +201,7 @@ fun MaxiPageContainerMobile(
             },
             content = {
                 Box(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxSize()
                         .background(MaxiPulsTheme.colors.uiKit.background)
                         .padding(
                             top = it.calculateTopPadding(),
