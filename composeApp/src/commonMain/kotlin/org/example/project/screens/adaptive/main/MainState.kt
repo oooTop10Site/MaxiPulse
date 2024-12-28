@@ -175,6 +175,7 @@ data class MainState(
             middleName = "Иванович",
             task = listOf(
                 MainTaskUI.BorgScale,
+                MainTaskUI.Training,
                 MainTaskUI.GoodMorning,
                 MainTaskUI.GoodMorning,
                 MainTaskUI.GoodMorning,

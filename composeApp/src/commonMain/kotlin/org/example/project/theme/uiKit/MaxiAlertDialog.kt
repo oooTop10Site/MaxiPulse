@@ -9,6 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -116,6 +117,36 @@ fun MaxiAlertDialog(
                     null -> {}
                 }
 
+            }
+        }
+    }
+}
+
+@Composable
+fun MaxiAlertDialog(
+    modifier: Modifier = Modifier,
+    paddingValues: PaddingValues = PaddingValues(50.dp),
+    onDismiss: () -> Unit,
+    content: (@Composable ColumnScope.() -> Unit)? = null,
+) {
+    Dialog(
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        ),
+        onDismissRequest = { onDismiss() },
+    ) {
+
+        Box(
+            modifier = modifier.background(
+                MaxiPulsTheme.colors.uiKit.background,
+                shape = RoundedCornerShape(50.dp)
+            ).clip(RoundedCornerShape(50.dp))
+        ) {
+            Column(
+                Modifier.fillMaxWidth().padding(paddingValues),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                content?.invoke(this)
             }
         }
     }

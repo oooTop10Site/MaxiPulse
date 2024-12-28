@@ -22,6 +22,7 @@ class UIKitColors(
     val sportsmanAvatarBackground: Color,
     val textDropDown: Color,
     val disable: Color,
+    val textColorWithAlpha: Color,
 
     val red500: Color,
 
@@ -59,6 +60,7 @@ fun uiKitColors() = UIKitColors(
     sportsmanAvatarBackground = Color(0xFFD9D9D9),
     textDropDown = Color(0xFFC5C5C5),
     disable = Color(0xFF3093F9),
+    textColorWithAlpha = Color.Black.copy(alpha = 0.25f),
 
     red500 = Color(0xFFF48FB0),
 

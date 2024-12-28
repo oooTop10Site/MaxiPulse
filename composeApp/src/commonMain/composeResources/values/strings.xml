@@ -194,6 +194,14 @@
     <string name="scale_8_text">Очень-очень сложно</string>
     <string name="scale_9_text">Максимально сложно</string>
 
+    <string name="assigned_training">Назначенная тренировка</string>
+    <string name="what_is_assigned_training">Что такое назначенная тренировка?</string>
+    <string name="put_on_the_sensor">Наденьте\nдатчик</string>
+    <string name="time_to_training">Время позаниматься</string>
+    <string name="device_fully_and_turn_on">Убедитесь, что устройство заряжено и включено</string>
+    <string name="searching_sensor">Идет поиск датчика</string>
+
+
     <string name="training_info">Персональная карточка спортсмена содержит следующую\nинформацию:</string>
     <string name="send">Отправить</string>
     <string name="rating">Рейтинг</string>

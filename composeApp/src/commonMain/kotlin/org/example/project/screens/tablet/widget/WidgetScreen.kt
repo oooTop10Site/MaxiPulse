@@ -181,7 +181,6 @@ class WidgetScreen : Screen {
                                 draggableContent = {
                                     WidgetItem(
                                         modifier = Modifier.fillMaxSize().alpha(0.6f),
-                                        backgroundIcon = it.background,
                                         title = stringResource(it.title),
                                         icon = it.icon,
                                         size = WidgetSize.Small,
@@ -206,7 +205,6 @@ class WidgetScreen : Screen {
                                     ),
                                     isEditing = state.isEditing,
                                     changeEdit = { viewModel.changeSelect(it) },
-                                    backgroundIcon = Res.drawable.purple_brush,
                                     title = stringResource(it.title),
                                     icon = it.icon,
                                     size = WidgetSize.Small,
@@ -237,7 +235,6 @@ class WidgetScreen : Screen {
                                     draggableContent = {
                                         WidgetItem(
                                             modifier = Modifier.fillMaxSize().alpha(0.6f),
-                                            backgroundIcon = it.background,
                                             title = stringResource(it.title),
                                             icon = it.icon,
                                             showElevation = false,
@@ -261,7 +258,6 @@ class WidgetScreen : Screen {
                                                 )
                                             },
                                         ),
-                                        backgroundIcon = Res.drawable.purple_brush,
                                         title = stringResource(it.title),
                                         icon = it.icon,
                                         size = WidgetSize.Small,
@@ -285,7 +281,6 @@ class WidgetScreen : Screen {
                                 draggableContent = {
                                     WidgetItem(
                                         modifier = Modifier.fillMaxSize().alpha(0.6f),
-                                        backgroundIcon = it.background,
                                         title = stringResource(it.title),
                                         icon = it.icon,
                                         showElevation = false,
@@ -309,7 +304,6 @@ class WidgetScreen : Screen {
                                             )
                                         }
                                     ),
-                                    backgroundIcon = Res.drawable.purple_brush,
                                     title = stringResource(it.title),
                                     icon = it.icon,
                                     size = WidgetSize.Large,
@@ -340,7 +334,6 @@ class WidgetScreen : Screen {
 @Composable
 fun WidgetItem(
     modifier: Modifier = Modifier,
-    backgroundIcon: DrawableResource,
     title: String,
     icon: DrawableResource,
     size: WidgetSize,
@@ -438,6 +431,34 @@ fun UglyGradientBackground(modifier: Modifier = Modifier) {
         // Белый цвет с альфа-каналом
         drawRect(
             color = Color.White.copy(alpha = 0.2f), // белый цвет с альфа-каналом
+            size = size
+        )
+    }
+}
+
+@Composable
+fun PurpleGradientBackground(modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier.fillMaxSize()) {
+        val width = size.width
+        val height = size.height
+
+        // Линейный градиент
+        drawRect(
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    Color(0xFFFFA93A), // первый цвет
+                    Color(0xFFE81F61), // второй цвет
+                    Color(0xFF3093F9)  // третий цвет
+                ),
+                start = Offset(x = -0.38f * width, y = -0.37f * height), // Координаты адаптивны
+                end = Offset(x = 1.75f * width, y = 0.45f * height) // Координаты адаптивны
+            ),
+            size = size
+        )
+
+        // Белый полупрозрачный слой
+        drawRect(
+            color = Color.White.copy(alpha = 0.3f), // Белый цвет с альфа-каналом
             size = size
         )
     }
