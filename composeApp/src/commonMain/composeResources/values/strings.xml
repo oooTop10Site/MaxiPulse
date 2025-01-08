@@ -141,7 +141,7 @@
     <string name="kcal">ККАЛ</string>
     <string name="heart_rate_avg_max">ЧСС пик/средний</string>
     <string name="by_zone_chss">По пороговым значениям ЧСС</string>
-    <string name="standing_position">Положеxние стоя</string>
+    <string name="standing_position">Положение стоя</string>
     <string name="heart_rate_peak_player">ЧСС пик игрока</string>
     <string name="chss_peak">ЧСС срееднее</string>
     <string name="chss_avg">ЧСС пик</string>
@@ -200,6 +200,9 @@
     <string name="time_to_training">Время позаниматься</string>
     <string name="device_fully_and_turn_on">Убедитесь, что устройство заряжено и включено</string>
     <string name="searching_sensor">Идет поиск датчика</string>
+    <string name="options">Опции</string>
+    <string name="groups">Группы</string>
+    <string name="next">Далее</string>
 
 
     <string name="training_info">Персональная карточка спортсмена содержит следующую\nинформацию:</string>

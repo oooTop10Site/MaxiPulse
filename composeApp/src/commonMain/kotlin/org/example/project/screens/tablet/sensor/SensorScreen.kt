@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -71,21 +72,13 @@ class SensorScreen : Screen {
 
     @Composable
     override fun Content() {
-        val screenSize = ScreenSize.currentOrThrow
         val viewModel = rememberScreenModel {
             SensorViewModel()
         }
         val state by viewModel.stateFlow.collectAsState()
-        val chunkSize = when {
-            !state.isGrid -> 1
-            screenSize.widthSizeClass == WindowWidthSizeClass.Medium -> 2
-            screenSize.widthSizeClass == WindowWidthSizeClass.Expanded -> 2
-            screenSize.widthSizeClass == WindowWidthSizeClass.Compact -> 1
-            else -> 1
-        }
 
         LaunchedEffect(viewModel) {
-            viewModel.loadSensors()
+            viewModel.connectSocket()
         }
         MaxiPageContainer(topBar = {
             Column(
@@ -102,16 +95,6 @@ class SensorScreen : Screen {
                         ),
                         modifier = Modifier.align(Alignment.Center)
                     )
-                    Icon(
-                        if (state.isGrid) painterResource(Res.drawable.grid_ic) else painterResource(
-                            Res.drawable.rectangle_listv2
-                        ),
-                        contentDescription = null,
-                        modifier = Modifier.size(30.dp).clickableBlank {
-                            viewModel.changeIsGrid()
-                        }.align(Alignment.CenterEnd),
-                        tint = MaxiPulsTheme.colors.uiKit.textColor,
-                    )
                 }
                 HorizontalDivider(
                     modifier = Modifier.fillMaxWidth(),
@@ -120,32 +103,78 @@ class SensorScreen : Screen {
             }
         }) {
 
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
             ) {
-                Text(
-                    text = stringResource(Res.string.saved_devices),
-                    style = MaxiPulsTheme.typography.bold.copy(
-                        fontSize = 16.sp,
-                        lineHeight = 16.sp,
-                        color = MaxiPulsTheme.colors.uiKit.textColor
-                    ),
-                )
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth().weight(1f, state.isLoading)
-                        .animateContentSize(),
-                    contentPadding = PaddingValues(vertical = 20.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    items(state.savedSensors.chunked(chunkSize)) { chunk ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(25.dp)
+                    Spacer(Modifier.size(20.dp))
+                    Text(
+                        text = stringResource(Res.string.saved_devices),
+                        style = MaxiPulsTheme.typography.bold.copy(
+                            fontSize = 16.sp,
+                            lineHeight = 16.sp,
+                            color = MaxiPulsTheme.colors.uiKit.textColor
+                        ),
+                    )
+                    Spacer(Modifier.size(5.dp))
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth().weight(1f, state.isLoading)
+                            .animateContentSize(),
+                        contentPadding = PaddingValues(vertical = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
+                        items(state.savedSensors) { it ->
+                            SensorCard(
+                                modifier = Modifier.weight(1f),
+                                sensorUI = it,
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(Res.drawable.close_solid_ic),
+                                        contentDescription = null,
+                                        tint = MaxiPulsTheme.colors.uiKit.primary,
+                                        modifier = Modifier.clickableBlank() {
+                                        }.size(30.dp)
+                                    )
+                                }
+                            ) {
+                            }
+                        }
+                    }
+                }
+                Spacer(Modifier.size(20.dp))
+                VerticalDivider(
+                    Modifier.fillMaxHeight(),
+                    color = MaxiPulsTheme.colors.uiKit.divider
+                )
+                Spacer(Modifier.size(20.dp))
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(Modifier.size(20.dp))
+                    Text(
+                        text = stringResource(Res.string.accessed_devices),
+                        style = MaxiPulsTheme.typography.bold.copy(
+                            fontSize = 16.sp,
+                            lineHeight = 16.sp,
+                            color = MaxiPulsTheme.colors.uiKit.textColor
+                        ),
+                    )
+                    Spacer(Modifier.size(5.dp))
+                    if (state.isLoading) {
+                        Box(contentAlignment = Alignment.Center, modifier = Modifier.weight(1f)) {
+                            SearchAvailableDevices(modifier = Modifier.fillMaxSize())
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth().weight(1f, state.isLoading),
+                            contentPadding = PaddingValues(vertical = 20.dp),
+                            verticalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
-                            chunk.forEach {
+                            items(state.savedSensors) { it ->
                                 SensorCard(
                                     modifier = Modifier.weight(1f),
                                     sensorUI = it,
@@ -155,90 +184,16 @@ class SensorScreen : Screen {
                                             contentDescription = null,
                                             tint = MaxiPulsTheme.colors.uiKit.primary,
                                             modifier = Modifier.clickableBlank() {
-
                                             }.size(30.dp)
                                         )
                                     }
                                 ) {
                                 }
                             }
-                            if (chunk.size != chunkSize) {
-                                for (i in 1..chunkSize - chunk.size) {
-                                    Box(modifier = Modifier.weight(1f))
-                                }
-                            }
-                        }
-                    }
-                }
-
-                HorizontalDivider(
-                    Modifier.fillMaxWidth(),
-                    color = MaxiPulsTheme.colors.uiKit.divider
-                )
-
-                Spacer(Modifier.size(20.dp))
-                Text(
-                    text = stringResource(Res.string.accessed_devices),
-                    style = MaxiPulsTheme.typography.bold.copy(
-                        fontSize = 16.sp,
-                        lineHeight = 16.sp,
-                        color = MaxiPulsTheme.colors.uiKit.textColor
-                    ),
-                )
-                if (state.isLoading) {
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier.weight(1f)) {
-                        SearchAvailableDevices(modifier = Modifier.fillMaxSize())
-                    }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxWidth().weight(1f, state.isLoading),
-                        contentPadding = PaddingValues(vertical = 20.dp),
-                        verticalArrangement = Arrangement.spacedBy(20.dp)
-                    ) {
-                        items(state.sensors.chunked(chunkSize)) { chunk ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(25.dp)
-                            ) {
-                                chunk.forEach {
-                                    SensorCard(
-                                        modifier = Modifier.weight(1f),
-                                        sensorUI = it,
-                                        icon = {
-                                            Box(
-                                                modifier = Modifier.size(30.dp)
-                                                    .background(
-                                                        MaxiPulsTheme.colors.uiKit.primary,
-                                                        shape = CircleShape
-                                                    )
-                                                    .clip(CircleShape),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                Icon(
-                                                    painterResource(Res.drawable.add_round_ic),
-                                                    contentDescription = null,
-                                                    modifier = Modifier.size(18.dp).clickableBlank {
-
-                                                    },
-                                                    tint = MaxiPulsTheme.colors.uiKit.lightTextColor
-                                                )
-                                            }
-                                        }
-                                    ) {
-                                    }
-                                }
-                                if (chunk.size != chunkSize) {
-                                    for (i in 1..chunkSize - chunk.size) {
-                                        Box(modifier = Modifier.weight(1f))
-                                    }
-                                }
-                            }
                         }
                     }
                 }
             }
-
         }
     }
 }

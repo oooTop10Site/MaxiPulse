@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -91,7 +92,7 @@ fun MaxiAlertDialog(
                         MaxiButton(
                             shape = RoundedCornerShape(15.dp),
                             modifier = Modifier.padding(paddingValuesButton)
-                                .height(54.dp).width(150.dp),
+                                .height(54.dp).width(160.dp),
                             onClick = {
                                 accept()
                             },
@@ -126,6 +127,7 @@ fun MaxiAlertDialog(
 fun MaxiAlertDialog(
     modifier: Modifier = Modifier,
     paddingValues: PaddingValues = PaddingValues(50.dp),
+    shape: Dp = 50.dp,
     onDismiss: () -> Unit,
     content: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
@@ -139,8 +141,8 @@ fun MaxiAlertDialog(
         Box(
             modifier = modifier.background(
                 MaxiPulsTheme.colors.uiKit.background,
-                shape = RoundedCornerShape(50.dp)
-            ).clip(RoundedCornerShape(50.dp))
+                shape = RoundedCornerShape(shape)
+            ).clip(RoundedCornerShape(shape))
         ) {
             Column(
                 Modifier.fillMaxWidth().padding(paddingValues),
@@ -169,7 +171,7 @@ fun AlertButtons(
     ) {
 
         MaxiOutlinedButton(
-            modifier = Modifier.height(54.dp).width(150.dp),
+            modifier = Modifier.height(54.dp).width(170.dp),
             text = cancelText,
             onClick = {
                 cancel()
@@ -178,7 +180,7 @@ fun AlertButtons(
 
         MaxiButton(
             shape = RoundedCornerShape(15.dp),
-            modifier = Modifier.height(54.dp).width(150.dp),
+            modifier = Modifier.height(54.dp).width(170.dp),
             onClick = {
                 accept()
             },

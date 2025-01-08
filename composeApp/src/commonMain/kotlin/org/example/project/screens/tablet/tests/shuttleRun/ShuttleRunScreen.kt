@@ -76,7 +76,7 @@ class ShuttleRunScreen : Screen {
                 viewModel.container.sideEffectFlow.collect {
                     when(it) {
                         ShuttleRunEvent.StopShuttleRun -> {
-                            navigator.push(ShuttleRunResultScreen())
+                            navigator.replace(ShuttleRunResultScreen())
                         }
                     }
                 }

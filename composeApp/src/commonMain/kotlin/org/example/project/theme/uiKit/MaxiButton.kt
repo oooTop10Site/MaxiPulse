@@ -85,6 +85,36 @@ fun MaxiButton(
                 textAlign = TextAlign.Center,
             )
         }
+
+        ButtonTextStyle.MobileBold -> MaxiPulsTheme.typography.bold.copy(
+            fontSize = 16.sp,
+            lineHeight = 16.sp,
+            textAlign = TextAlign.Center,
+        )
+
+        ButtonTextStyle.MobileSemiBold -> MaxiPulsTheme.typography.bold.copy(
+            fontSize = 16.sp,
+            lineHeight = 16.sp,
+            textAlign = TextAlign.Center,
+        )
+
+        ButtonTextStyle.MobileMedium -> MaxiPulsTheme.typography.bold.copy(
+            fontSize = 16.sp,
+            lineHeight = 16.sp,
+            textAlign = TextAlign.Center,
+        )
+
+        ButtonTextStyle.MobileRegular -> MaxiPulsTheme.typography.bold.copy(
+            fontSize = 16.sp,
+            lineHeight = 16.sp,
+            textAlign = TextAlign.Center,
+        )
+
+        ButtonTextStyle.MobileSmall -> MaxiPulsTheme.typography.bold.copy(
+            fontSize = 16.sp,
+            lineHeight = 16.sp,
+            textAlign = TextAlign.Center,
+        )
     }
     Button(
         {
@@ -174,6 +204,36 @@ fun MaxiButton(
                 textAlign = TextAlign.Center,
             )
         }
+
+        ButtonTextStyle.MobileBold -> MaxiPulsTheme.typography.bold.copy(
+            fontSize = 16.sp,
+            lineHeight = 16.sp,
+            textAlign = TextAlign.Center,
+        )
+
+        ButtonTextStyle.MobileSemiBold -> MaxiPulsTheme.typography.bold.copy(
+            fontSize = 16.sp,
+            lineHeight = 16.sp,
+            textAlign = TextAlign.Center,
+        )
+
+        ButtonTextStyle.MobileMedium -> MaxiPulsTheme.typography.bold.copy(
+            fontSize = 16.sp,
+            lineHeight = 16.sp,
+            textAlign = TextAlign.Center,
+        )
+
+        ButtonTextStyle.MobileRegular -> MaxiPulsTheme.typography.bold.copy(
+            fontSize = 16.sp,
+            lineHeight = 16.sp,
+            textAlign = TextAlign.Center,
+        )
+
+        ButtonTextStyle.MobileSmall -> MaxiPulsTheme.typography.bold.copy(
+            fontSize = 16.sp,
+            lineHeight = 16.sp,
+            textAlign = TextAlign.Center,
+        )
     }
     Button(
         {
@@ -206,4 +266,10 @@ enum class ButtonTextStyle {
     Medium,
     Regular,
     Small,
+
+    MobileBold,
+    MobileSemiBold,
+    MobileMedium,
+    MobileRegular,
+    MobileSmall,
 }

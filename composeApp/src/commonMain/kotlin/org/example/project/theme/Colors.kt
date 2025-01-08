@@ -23,6 +23,8 @@ class UIKitColors(
     val textDropDown: Color,
     val disable: Color,
     val textColorWithAlpha: Color,
+    val black50: Color,
+    val black25: Color,
 
     val red500: Color,
 
@@ -73,6 +75,9 @@ fun uiKitColors() = UIKitColors(
     green500 = Color(0xFF7ECA22),
     white = Color.White,
     white500 = Color(0xFFEEEEEE),
+
+    black50 = Color(0xFF000000).copy(alpha = 0.5f),
+    black25 = Color(0xFF000000).copy(alpha = 0.25f),
 
     shimmerColor = listOf(
         Color(0xFFB8B5B5),

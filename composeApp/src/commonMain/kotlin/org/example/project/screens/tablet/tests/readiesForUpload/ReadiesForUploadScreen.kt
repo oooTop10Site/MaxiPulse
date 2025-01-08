@@ -64,7 +64,7 @@ class ReadiesForUploadScreen : Screen {
                 viewModel.container.sideEffectFlow.collect {
                     when (it) {
                         ReadiesForUploadEvent.Result -> {
-                            navigator.push(ReadiesForUploadResultScreen())
+                            navigator.replace(ReadiesForUploadResultScreen())
                         }
                     }
                 }

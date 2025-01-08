@@ -302,7 +302,7 @@ private fun LargeLeftMenu(
     tabNavigator: TabNavigator,
     navigator1: TabNavigator
 ) {
-    val tabsFirst = listOf(MainTab(), TestTab, LogTab, UTPTab, LoadAnalizeTab)
+    val tabsFirst = listOf(MainTab(), TestTab, LogTab, UTPTab)
     val tabsSecond = listOf(CompositionsTab, SportsmanTab, SensorTab, SettingsTab)
     Row(
         modifier = Modifier
@@ -375,44 +375,87 @@ private fun LargeLeftMenu(
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 10.dp)
             )
-            LazyColumn(
+            Column(
                 modifier = Modifier.padding(horizontal = 33.dp).weight(1f),
-                verticalArrangement = Arrangement.spacedBy(20.dp),
-                contentPadding = PaddingValues(vertical = 20.dp),
+//                contentPadding = PaddingValues(vertical = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(tabsFirst + tabsSecond) { tabEach ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth().clickableBlank() {
-                            tabNavigator.current = tabEach
-                        }
-                    ) {
-                        tabEach.options.icon?.let {
-                            Icon(
-                                painter = it,
-                                modifier = Modifier.size(30.dp)
-                                    .align(Alignment.CenterVertically),
-                                contentDescription = null,
-                                tint = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
-                                else MaxiPulsTheme.colors.uiKit.lightTextColor
-                            )
-                        }
-                        if (isOpen.value) {
-
-                            Text(
-                                text = tabEach.options.title,
-                                style = MaxiPulsTheme.typography.medium.copy(
-                                    fontSize = 14.sp,
-                                    color = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
+                Spacer(Modifier.size(20.dp))
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                ) {
+                    tabsFirst.forEach { tabEach ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth().clickableBlank() {
+                                tabNavigator.current = tabEach
+                            }
+                        ) {
+                            tabEach.options.icon?.let {
+                                Icon(
+                                    painter = it,
+                                    modifier = Modifier.size(30.dp)
+                                        .align(Alignment.CenterVertically),
+                                    contentDescription = null,
+                                    tint = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
                                     else MaxiPulsTheme.colors.uiKit.lightTextColor
-                                ),
-                                modifier = Modifier.padding(start = 18.dp).weight(1f)
-                            )
+                                )
+                            }
+                            if (isOpen.value) {
+
+                                Text(
+                                    text = tabEach.options.title,
+                                    style = MaxiPulsTheme.typography.medium.copy(
+                                        fontSize = 14.sp,
+                                        color = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
+                                        else MaxiPulsTheme.colors.uiKit.lightTextColor
+                                    ),
+                                    modifier = Modifier.padding(start = 18.dp).weight(1f)
+                                )
+                            }
                         }
                     }
                 }
+                Spacer(Modifier.weight(1f))
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                ) {
+                    tabsSecond.forEach { tabEach ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth().clickableBlank() {
+                                tabNavigator.current = tabEach
+                            }
+                        ) {
+                            tabEach.options.icon?.let {
+                                Icon(
+                                    painter = it,
+                                    modifier = Modifier.size(30.dp)
+                                        .align(Alignment.CenterVertically),
+                                    contentDescription = null,
+                                    tint = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
+                                    else MaxiPulsTheme.colors.uiKit.lightTextColor
+                                )
+                            }
+                            if (isOpen.value) {
+
+                                Text(
+                                    text = tabEach.options.title,
+                                    style = MaxiPulsTheme.typography.medium.copy(
+                                        fontSize = 14.sp,
+                                        color = if (tabNavigator.current.key == tabEach.key) MaxiPulsTheme.colors.uiKit.primary
+                                        else MaxiPulsTheme.colors.uiKit.lightTextColor
+                                    ),
+                                    modifier = Modifier.padding(start = 18.dp).weight(1f)
+                                )
+                            }
+                        }
+                    }
+                }
+                Spacer(Modifier.size(20.dp))
+
             }
 
             HorizontalDivider(

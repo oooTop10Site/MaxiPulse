@@ -466,7 +466,7 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
             }
             if(state.isOpenDialog) {
                 MaxiAlertDialog(
-                    modifier = Modifier.fillMaxWidth().padding(50.dp),
+                    modifier = Modifier.fillMaxWidth(0.8f).padding(50.dp),
                     onDismiss = { viewModel.changeDialog() },
                     accept = { viewModel.changeDialog() },
                     cancel = {

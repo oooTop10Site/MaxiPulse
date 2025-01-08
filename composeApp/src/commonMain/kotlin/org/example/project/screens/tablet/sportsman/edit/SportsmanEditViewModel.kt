@@ -252,6 +252,7 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
 
     fun changeSport(gameTypeUI: GameTypeUI) = intent {
         if(gameTypeUI.id != state.sportsmanUI.gameTypeId) {
+            println("change gameTypeUI - $gameTypeUI")
             reduce {
                 state.copy(
                     sportsmanUI = state.sportsmanUI.copy(

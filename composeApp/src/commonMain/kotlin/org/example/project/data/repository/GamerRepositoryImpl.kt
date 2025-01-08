@@ -99,7 +99,9 @@ class GamerRepositoryImpl(
             add(Form.FormBodyInt("chss_pao", sportsmanUI.chssPao))
             add(Form.FormBody("imt", sportsmanUI.imt.toString()))
             add(Form.FormBody("mpk", sportsmanUI.mpk.toString()))
+            println("sportsmanUI.gameTypeId - ${sportsmanUI.gameTypeId}")
             if (sportsmanUI.gameTypeId.isNotBlank()) {
+                println("sportsmanUI.gameTypeId1 - ${sportsmanUI.gameTypeId}")
                 add(Form.FormBody("game_type_id", sportsmanUI.gameTypeId))
                 add(Form.FormBody("training_stage_id", sportsmanUI.trainigStageId))
                 add(Form.FormBody("rank_id", sportsmanUI.rankId))

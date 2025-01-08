@@ -4,11 +4,12 @@ import org.example.project.domain.model.sportsman.SensorUI
 
 data class MobileTrainingState(
     val selectSensor: SensorUI?,
-
+    val isStart: Boolean,
 ) {
     companion object {
         val InitState = MobileTrainingState(
-            selectSensor = null
+            selectSensor = null,
+            isStart = false
         )
     }
 }

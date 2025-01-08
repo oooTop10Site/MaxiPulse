@@ -108,7 +108,7 @@ class LoginScreen : Screen {
                 viewModel.container.sideEffectFlow.collect {
                     when (it) {
                         LoginEvent.Success -> {
-                            rootNavigator.push(MainTabScreen())
+                            rootNavigator.replaceAll(MainTabScreen())
                         }
                     }
                 }

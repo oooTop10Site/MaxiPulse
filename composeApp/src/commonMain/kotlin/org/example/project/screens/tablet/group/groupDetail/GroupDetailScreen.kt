@@ -76,57 +76,53 @@ class GroupDetailScreen(private val groupId: String) : Screen {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Spacer(Modifier.size(20.dp))
-                    Row(
-                        Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier.size(40.dp)
-                                .background(MaxiPulsTheme.colors.uiKit.primary, shape = CircleShape)
-                                .clip(CircleShape).clickableBlank(role = Role.Button) {
-                                    rootNavigator.pop()
-                                },
-                            contentAlignment = Alignment.Center
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                painterResource(Res.drawable.back_ic),
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp),
-                                tint = MaxiPulsTheme.colors.uiKit.lightTextColor
-                            )
-                        }
-
-                        Text(
-                            text = state.groupUI.title,
-                            style = MaxiPulsTheme.typography.bold.copy(
-                                fontSize = 20.sp,
-                                color = MaxiPulsTheme.colors.uiKit.textColor,
-                                textAlign = TextAlign.Center
-                            ),
-                            modifier = Modifier.weight(1f),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(40.dp)) {
                             Box(
                                 modifier = Modifier.size(40.dp)
                                     .background(
                                         MaxiPulsTheme.colors.uiKit.primary,
                                         shape = CircleShape
                                     )
-                                    .clip(CircleShape),
+                                    .clip(CircleShape).clickableBlank(role = Role.Button) {
+                                        rootNavigator.pop()
+                                    },
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    painterResource(Res.drawable.pencil),
+                                    painterResource(Res.drawable.back_ic),
                                     contentDescription = null,
-                                    modifier = Modifier.size(24.dp).clickableBlank {
-                                        rootNavigator.push(GroupEditScreen(groupId = groupId))
-                                    },
+                                    modifier = Modifier.size(24.dp),
                                     tint = MaxiPulsTheme.colors.uiKit.lightTextColor
                                 )
                             }
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(40.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier.size(40.dp)
+                                        .background(
+                                            MaxiPulsTheme.colors.uiKit.primary,
+                                            shape = CircleShape
+                                        )
+                                        .clip(CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        painterResource(Res.drawable.pencil),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(24.dp).clickableBlank {
+                                            rootNavigator.push(GroupEditScreen(groupId = groupId))
+                                        },
+                                        tint = MaxiPulsTheme.colors.uiKit.lightTextColor
+                                    )
+                                }
 //                            Box(
 //                                modifier = Modifier.size(40.dp)
 //                                    .background(
@@ -147,12 +143,22 @@ class GroupDetailScreen(private val groupId: String) : Screen {
                                 )
                             }
 //                        }
+                        }
+                        Text(
+                            text = state.groupUI.title,
+                            style = MaxiPulsTheme.typography.bold.copy(
+                                fontSize = 20.sp,
+                                color = MaxiPulsTheme.colors.uiKit.textColor,
+                                textAlign = TextAlign.Center
+                            ),
+                            modifier = Modifier.align(Alignment.Center),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                     Spacer(
                         Modifier.size(20.dp)
                     )
-
-
                 }
             }
         ) {

@@ -36,6 +36,7 @@ import maxipuls.composeapp.generated.resources.add_ic
 import maxipuls.composeapp.generated.resources.composition
 import maxipuls.composeapp.generated.resources.grid_ic
 import maxipuls.composeapp.generated.resources.group
+import maxipuls.composeapp.generated.resources.groups
 import maxipuls.composeapp.generated.resources.rectangle_listv2
 import maxipuls.composeapp.generated.resources.search
 import org.example.project.ext.clickableBlank
@@ -77,7 +78,7 @@ class GroupScreen : Screen {
                 ) {
                     Spacer(Modifier.size(20.dp))
                     TopBarTitle(
-                        text = stringResource(Res.string.composition),
+                        text = stringResource(Res.string.groups),
                         showCurrentTime = true,
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
                     )

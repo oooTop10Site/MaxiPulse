@@ -1,10 +1,12 @@
 package org.example.project.screens.mobile.training
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -23,6 +26,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
@@ -33,6 +37,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.assigned_training
 import maxipuls.composeapp.generated.resources.choose_sensor
+import maxipuls.composeapp.generated.resources.next
 import maxipuls.composeapp.generated.resources.put_on_the_sensor
 import maxipuls.composeapp.generated.resources.shuttle_running
 import maxipuls.composeapp.generated.resources.start
@@ -45,6 +50,7 @@ import org.example.project.screens.tablet.widget.UglyGradientBackground
 import org.example.project.screens.tablet.widget.WidgetItem
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.BackIcon
+import org.example.project.theme.uiKit.ButtonTextStyle
 import org.example.project.theme.uiKit.MaxiAlertDialog
 import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiPageContainerMobile
@@ -94,12 +100,23 @@ class MobileTrainingScreen : Screen {
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = safeAreaHorizontal(), vertical = 20.dp).height(40.dp)
                     .align(Alignment.BottomCenter),
-                onClick = {},
+                onClick = {
+                    viewModel.changeIsStart()
+                },
                 text = stringResource(
                     Res.string.start
                 )
             )
-
+            if (state.isStart) {
+                SelectSensorAlertDialog(
+                    onDismiss = {
+                        viewModel.changeIsStart()
+                    },
+                    success = {
+                        viewModel.changeIsStart()
+                    }
+                )
+            }
         }
     }
 }
@@ -107,8 +124,6 @@ class MobileTrainingScreen : Screen {
 
 @Composable
 fun SelectSensorAlertDialog(
-    modifier: Modifier = Modifier,
-    isShow: Boolean,
     onDismiss: () -> Unit,
     success: () -> Unit
 ) {
@@ -117,18 +132,61 @@ fun SelectSensorAlertDialog(
         modifier = Modifier.fillMaxWidth().height(404.dp)
             .padding(horizontal = safeAreaHorizontal()),
         paddingValues = PaddingValues(20.dp),
+        shape = 15.dp,
         onDismiss = {
             onDismiss()
         },
     ) {
-        Text(
-            text = stringResource(Res.string.choose_sensor),
-            style = MaxiPulsTheme.typography.medium.copy(
-                fontSize = 16.sp,
-                lineHeight = 16.sp,
-                color = MaxiPulsTheme.colors.uiKit.textColor,
-            ),
-        )
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(Res.string.choose_sensor),
+                style = MaxiPulsTheme.typography.medium.copy(
+                    fontSize = 16.sp,
+                    lineHeight = 16.sp,
+                    color = MaxiPulsTheme.colors.uiKit.textColor,
+                ),
+            )
+            Spacer(Modifier.weight(1f))
+            Card(
+                elevation = CardDefaults.cardElevation(defaultElevation = 7.dp, hoveredElevation = 2.dp),
+                colors = CardDefaults.cardColors(containerColor = MaxiPulsTheme.colors.uiKit.white),
+                modifier = Modifier.size(200.dp),
+                shape = CircleShape
+            ) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "Colibri", style = MaxiPulsTheme.typography.bold.copy(
+                            fontSize = 32.sp,
+                            lineHeight = 32.sp,
+                            color = MaxiPulsTheme.colors.uiKit.primary
+                        )
+                    )
+                }
+            }
+
+            Spacer(Modifier.size(10.dp))
+            Row(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                val select = 1
+                for (i in listOf<Int>(1, 2, 3)) {
+                    Box(
+                        modifier = Modifier.size(10.dp).clip(CircleShape).background(
+                            shape = CircleShape,
+                            color = if (select == i) MaxiPulsTheme.colors.uiKit.black50 else MaxiPulsTheme.colors.uiKit.black25
+                        )
+                    )
+                }
+            }
+            Spacer(Modifier.weight(1f))
+            MaxiButton(modifier = Modifier.height(40.dp).fillMaxWidth(), onClick = {
+
+            }, text = stringResource(Res.string.next), buttonTextStyle = ButtonTextStyle.MobileBold)
+        }
 
     }
 }
