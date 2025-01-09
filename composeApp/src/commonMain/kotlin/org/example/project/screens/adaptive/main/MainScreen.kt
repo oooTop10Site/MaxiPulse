@@ -11,8 +11,9 @@ import org.example.project.domain.model.test.TestUI
 import org.example.project.screens.adaptive.main.contents.MainDesktopContent
 import org.example.project.screens.adaptive.main.contents.MainMobileContent
 import org.example.project.screens.adaptive.root.ScreenSize
+import org.koin.core.component.KoinComponent
 
-class MainScreen(val testUI: TestUI? = null) : Screen {
+class MainScreen(val testUI: TestUI? = null) : Screen, KoinComponent {
     @Composable
     override fun Content() {
         val viewModel = rememberScreenModel {

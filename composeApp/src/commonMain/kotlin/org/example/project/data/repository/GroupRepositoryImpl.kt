@@ -12,6 +12,7 @@ import org.example.project.platform.Failure
 import org.example.project.platform.Form
 import org.example.project.platform.MultipartManager
 import org.example.project.platform.apiCall
+import kotlin.collections.addAll
 
 class GroupRepositoryImpl(
     private val maxiPulseApi: MaxiPulseApi,
@@ -105,8 +106,16 @@ class GroupRepositoryImpl(
     }
 
     override suspend fun groupDelete(groupId: String): Either<Failure, Unit> {
+        val list = buildList<Form> {
+            add(Form.FormBody("type", "group"))
+        }
+
+
+        val body = multipartManager.createMultipart(
+            list
+        )
         return apiCall {
-            maxiPulseApi.deleteGroup(id = groupId)
+            maxiPulseApi.deleteGroup(id = groupId, body)
         }
     }
 }

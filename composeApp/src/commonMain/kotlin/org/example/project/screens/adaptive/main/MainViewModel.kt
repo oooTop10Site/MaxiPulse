@@ -26,6 +26,16 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
         }
     }
 
+    fun addSensor(sensorUI: SensorUI) = intent {
+        if (sensorUI.sensorId !in state.sensors.map { it.sensorId }) {
+            reduce {
+                state.copy(
+                    sensors = state.sensors + sensorUI
+                )
+            }
+        }
+    }
+
     fun changeIsStartTraining() = intent {
         reduce {
             state.copy(
@@ -37,7 +47,7 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
     fun changeAlertDialog(alertDialog: MainAlertDialog?) = intent {
         reduce {
             state.copy(
-                alertDialog = alertDialog
+                alertDialog = alertDialog,
             )
         }
     }

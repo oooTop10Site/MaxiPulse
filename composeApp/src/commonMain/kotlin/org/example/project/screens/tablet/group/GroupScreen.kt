@@ -132,7 +132,9 @@ class GroupScreen : Screen {
                             modifier = Modifier.background(
                                 MaxiPulsTheme.colors.uiKit.primary,
                                 shape = CircleShape
-                            ).clip(CircleShape).size(40.dp), contentAlignment = Alignment.Center
+                            ).clip(CircleShape).size(40.dp).clickableBlank {
+                                rootNavigator.push(GroupEditScreen(groupId = ""))
+                            }, contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 painterResource(Res.drawable.add_ic),

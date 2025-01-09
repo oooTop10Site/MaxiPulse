@@ -26,16 +26,28 @@ internal class GroupEditViewModel :
     fun save(addSportsmans: List<String> = emptyList<String>()) = intent {
         val message = getString(Res.string.success_save)
         launchOperation(operation = {
-            groupRepository.editGroup(
-                groupId = state.groupUI.id,
-                name = state.groupUI.title,
-                image = state.groupUI.avatar,
-                sportmans = state.filteredSportsmans.map { it.id } + addSportsmans
-            )
+            if (state.groupUI.id.isNotBlank()) {
+                groupRepository.editGroup(
+                    groupId = state.groupUI.id,
+                    name = state.groupUI.title,
+                    image = state.groupUI.avatar,
+                    sportmans = state.filteredSportsmans.map { it.id } + addSportsmans
+                )
+            } else {
+                groupRepository.createGroup(
+                    name = state.groupUI.title,
+                    image = state.groupUI.avatar,
+                    sportmans = state.filteredSportsmans.map { it.id } + addSportsmans)
+            }
         },
             success = {
                 observerManager.putMessage(message)
-                loadData(state.groupUI.id)
+                if(state.groupUI.id.isNotBlank()) {
+                    loadData(state.groupUI.id)
+                } else {
+                    postSideEffectLocal(GroupEditEvent.SuccessNavBack)
+
+                }
                 allSportsman()
                 postSideEffectLocal(GroupEditEvent.Success)
             })
@@ -84,31 +96,33 @@ internal class GroupEditViewModel :
     }
 
     fun loadData(groupId: String) = intent {
-        launchOperation(
-            operation = {
-                groupRepository.getGroupById(groupId)
-            },
-            success = {
-                reduceLocal {
-                    state.copy(
-                        groupUI = it
-                    )
+        if (groupId.isNotBlank()) {
+            launchOperation(
+                operation = {
+                    groupRepository.getGroupById(groupId)
+                },
+                success = {
+                    reduceLocal {
+                        state.copy(
+                            groupUI = it
+                        )
+                    }
                 }
-            }
-        )
-        launchOperation(
-            operation = {
-                gamerRepository.getGamersByGroupId(groupId)
-            },
-            success = {
-                reduceLocal {
-                    state.copy(
-                        sportsmans = it,
-                        filteredSportsmans = it.filter { it.id !in state.deleteSportsman }
-                    )
+            )
+            launchOperation(
+                operation = {
+                    gamerRepository.getGamersByGroupId(groupId)
+                },
+                success = {
+                    reduceLocal {
+                        state.copy(
+                            sportsmans = it,
+                            filteredSportsmans = it.filter { it.id !in state.deleteSportsman }
+                        )
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     fun deleteSportsman(id: String) = intent {

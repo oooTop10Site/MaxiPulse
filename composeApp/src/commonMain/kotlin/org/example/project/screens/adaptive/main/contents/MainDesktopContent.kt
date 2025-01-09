@@ -30,7 +30,9 @@ import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -69,8 +71,13 @@ import maxipuls.composeapp.generated.resources.what_do_if_sensor_not_active
 import maxipuls.composeapp.generated.resources.what_do_if_sensor_not_active_desc
 import org.example.project.domain.model.ButtonActions
 import org.example.project.domain.model.MainAlertDialog
+import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.domain.model.test.TestUI
 import org.example.project.ext.clickableBlank
+import org.example.project.ext.granted
+import org.example.project.platform.permission.model.Permission
+import org.example.project.platform.permission.service.PermissionsService
+import org.example.project.platform.scanBluetoothSensors
 import org.example.project.screens.adaptive.main.MainEvent
 import org.example.project.screens.adaptive.main.MainState
 import org.example.project.screens.adaptive.main.MainViewModel
@@ -92,10 +99,46 @@ import org.example.project.utils.Constants
 import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import kotlin.getValue
 
 
 @Composable
-internal fun MainDesktopContent(viewModel: MainViewModel, state: MainState, testUI: TestUI?) {
+internal fun KoinComponent.MainDesktopContent(
+    viewModel: MainViewModel,
+    state: MainState,
+    testUI: TestUI?
+) {
+    var sensorShow by remember { mutableStateOf(false) }
+    var sensorPermission by remember { mutableStateOf(false) }
+    val permissionService: PermissionsService by inject()
+    permissionService.checkPermissionFlow(Permission.BLUETOOTH_CONNECT)
+        .collectAsState(permissionService.checkPermission(Permission.BLUETOOTH_CONNECT))
+        .granted {
+            if (sensorPermission) {
+                sensorShow = true
+            }
+        }
+
+    LaunchedEffect(state.alertDialog) {
+        if (state.alertDialog is MainAlertDialog.SelectSensor) {
+            if (permissionService.checkPermission(Permission.BLUETOOTH_CONNECT)
+                    .granted()
+            ) {
+                sensorShow = true
+            } else {
+                sensorPermission = true
+                permissionService.providePermission(Permission.BLUETOOTH_CONNECT)
+            }
+            if (sensorShow) {
+                scanBluetoothSensors {
+                    println("device - $it")
+                    viewModel.addSensor(it)
+                }
+            }
+        }
+    }
     MaxiPageContainer() {
         val rootNavigator = RootNavigator.currentOrThrow
         val navigator = LocalNavigator.currentOrThrow
@@ -291,6 +334,7 @@ internal fun MainDesktopContent(viewModel: MainViewModel, state: MainState, test
                                     lastname = it.lastname,
                                     compositionText = "Состав - ${it.compositionNumber}",
                                     sensorId = it.sensor?.sensorId.orEmpty(),
+                                    sensorName = it.sensor?.deviceName.orEmpty(),
                                     isSelect = isSelect,
                                     isBorder = state.isActiveSensor && isSelect,
                                     clickSensor = {
@@ -439,7 +483,7 @@ internal fun MainDesktopContent(viewModel: MainViewModel, state: MainState, test
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Text(
-                                        text = "Movesense ${it.sensorId}",
+                                        text = "${it.deviceName} ${it.sensorId}",
                                         style = MaxiPulsTheme.typography.regular.copy(
                                             color = MaxiPulsTheme.colors.uiKit.textColor,
                                             fontSize = 16.sp,

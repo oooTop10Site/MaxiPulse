@@ -1,5 +1,6 @@
 package org.example.project.platform.permission
 
+import org.example.project.platform.permission.delegate.BluetoothPermissionDelegate
 import org.example.project.platform.permission.delegate.PermissionDelegate
 import org.example.project.platform.permission.delegate.ReadFilesPermissionDelegate
 import org.example.project.platform.permission.model.Permission
@@ -12,9 +13,9 @@ import org.example.project.platform.permission.delegate.ManageExternalStoragePer
 
 
 val platformPermissionsModule: Module = module {
-
     single<PermissionDelegate>(named(Permission.READ_EXTERNAL_STORAGE.name)) { ReadFilesPermissionDelegate() }
     single<PermissionDelegate>(named(Permission.MANAGE_EXTERNAL_STORAGE.name)) { ManageExternalStoragePermissionDelegate() }
+    single<PermissionDelegate>(named(Permission.BLUETOOTH_CONNECT.name)) { BluetoothPermissionDelegate() }
     single<PermissionsService> {
         PermissionsServiceImpl()
     }

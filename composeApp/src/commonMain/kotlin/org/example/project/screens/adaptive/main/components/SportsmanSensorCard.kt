@@ -45,6 +45,7 @@ fun SportsmanSensorCard(
     middleName: String,
     compositionText: String,
     sensorId: String,
+    sensorName: String,
     isSelect: Boolean,
     isBorder: Boolean,
     clickSensor: () -> Unit,
@@ -154,7 +155,7 @@ fun SportsmanSensorCard(
             }
         ) {
             Text(
-                text = if (sensorId.isBlank()) stringResource(Res.string.sensor_not_found) else "Movesense $sensorId",
+                text = if (sensorId.isBlank()) stringResource(Res.string.sensor_not_found) else "$sensorName $sensorId",
                 style = MaxiPulsTheme.typography.regular.copy(
                     color = MaxiPulsTheme.colors.uiKit.textColor,
                     fontSize = 14.sp,

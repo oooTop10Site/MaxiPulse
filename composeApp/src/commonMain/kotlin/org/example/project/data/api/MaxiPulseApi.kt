@@ -70,6 +70,7 @@ interface MaxiPulseApi {
     @POST("api/group/{id}")
     suspend fun editGroup(@Path("id") id: String, @Body request: MultiPartFormDataContent)
 
-    @DELETE("api/group/{id}?type=group")
-    suspend fun deleteGroup(@Path("id") id: String)
+    @Multipart
+    @POST("api/group/delete/{id}")
+    suspend fun deleteGroup(@Path("id") id: String, @Body request: MultiPartFormDataContent)
 }
