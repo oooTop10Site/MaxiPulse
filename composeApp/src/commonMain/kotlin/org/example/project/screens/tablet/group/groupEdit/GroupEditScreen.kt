@@ -105,7 +105,7 @@ class GroupEditScreen(private val groupId: String) : Screen {
                         }
 
                         GroupEditEvent.SuccessDelete -> {
-                            rootNavigator.pop()
+                            rootNavigator.popUntilRoot()
                         }
 
                         GroupEditEvent.SuccessNavBack -> {
