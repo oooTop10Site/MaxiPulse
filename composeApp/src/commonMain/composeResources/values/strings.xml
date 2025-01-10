@@ -195,6 +195,9 @@
     <string name="scale_9_text">Максимально сложно</string>
 
     <string name="assigned_training">Назначенная тренировка</string>
+    <string name="time_in_zones">Время в зонах</string>
+    <string name="training_is_end">Тренеровка\nзавершена</string>
+    <string name="results">Результаты</string>
     <string name="what_is_assigned_training">Что такое назначенная тренировка?</string>
     <string name="put_on_the_sensor">Наденьте\nдатчик</string>
     <string name="time_to_training">Время позаниматься</string>
@@ -203,6 +206,7 @@
     <string name="options">Опции</string>
     <string name="groups">Группы</string>
     <string name="next">Далее</string>
+    <string name="duration">Продолжительность</string>
 
 
     <string name="training_info">Персональная карточка спортсмена содержит следующую\nинформацию:</string>

@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -75,9 +76,9 @@ import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.domain.model.test.TestUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.granted
+import org.example.project.platform.ScanBluetoothSensorsManager
 import org.example.project.platform.permission.model.Permission
 import org.example.project.platform.permission.service.PermissionsService
-import org.example.project.platform.scanBluetoothSensors
 import org.example.project.screens.adaptive.main.MainEvent
 import org.example.project.screens.adaptive.main.MainState
 import org.example.project.screens.adaptive.main.MainViewModel
@@ -110,6 +111,7 @@ internal fun KoinComponent.MainDesktopContent(
     state: MainState,
     testUI: TestUI?
 ) {
+    val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
     var sensorShow by remember { mutableStateOf(false) }
     var sensorPermission by remember { mutableStateOf(false) }
     val permissionService: PermissionsService by inject()
@@ -120,7 +122,11 @@ internal fun KoinComponent.MainDesktopContent(
                 sensorShow = true
             }
         }
-
+    DisposableEffect(Unit) {
+        onDispose {
+            scanBluetoothSensorsManager.stopScan()
+        }
+    }
     LaunchedEffect(state.alertDialog) {
         if (state.alertDialog is MainAlertDialog.SelectSensor) {
             if (permissionService.checkPermission(Permission.BLUETOOTH_CONNECT)
@@ -132,7 +138,7 @@ internal fun KoinComponent.MainDesktopContent(
                 permissionService.providePermission(Permission.BLUETOOTH_CONNECT)
             }
             if (sensorShow) {
-                scanBluetoothSensors {
+                scanBluetoothSensorsManager.scanBluetoothSensors {
                     println("device - $it")
                     viewModel.addSensor(it)
                 }

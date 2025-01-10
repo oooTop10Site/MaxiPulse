@@ -70,6 +70,14 @@ fun Long.secondsToUI(): String {
     return "${hours.addZero()}:${minutes.addZero()}:${seconds.addZero()}"
 }
 
+fun Int.secondsToUI(): String {
+    val hours = this / (1 * 60 * 60)
+    val minutes = (this / (1 * 60)) % 60
+    val seconds = (this / 1) % 60
+
+    return "${hours.addZero()}:${minutes.addZero()}:${seconds.addZero()}"
+}
+
 
 fun LocalDate.toServer(): String {
     return "${this.year}-${this.monthNumber.addZero()}-${this.dayOfMonth.addZero()}"
