@@ -25,6 +25,8 @@ internal class MobileTrainingViewModel :
     }
 
     fun changeSelectSensor(sensorUI: SensorUI) = intent {
+        println("state.selectSensor?.heartRate.orEmpty() - ${state.selectSensor}")
+        println("sensorUI.heartRate - ${sensorUI}")
         reduce {
             state.copy(
                 selectSensor = sensorUI.copy(heartRate = state.selectSensor?.heartRate.orEmpty() + sensorUI.heartRate),

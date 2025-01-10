@@ -113,14 +113,16 @@ class MobileTrainingScreen : Screen, KoinComponent {
         val navigator = RootNavigator.currentOrThrow
         val state by viewModel.stateFlow.collectAsState()
 
-        LaunchedEffect(state.selectSensor) {
-            if (state.selectSensor != null) {
-                println("ТЕПЕРЬ БУДЕТ МЯСО")
-                scanBluetoothSensorsManager.scanBluetoothSensors {
-                    println("SCANDEVICE новый инстанс - $it")
-                    println("id текущего инстанса - ${it.sensorId}")
-                    if (it.sensorId == state.selectSensor?.sensorId) {
-                        viewModel.changeSelectSensor(it)
+        LaunchedEffect(Unit) {
+            launch {
+                if (state.selectSensor != null) {
+                    println("ТЕПЕРЬ БУДЕТ МЯСО")
+                    scanBluetoothSensorsManager.scanBluetoothSensors {
+                        println("SCANDEVICE новый инстанс - $it")
+                        println("id текущего инстанса - ${it.sensorId}")
+                        if (it.sensorId == state.selectSensor?.sensorId) {
+                            viewModel.changeSelectSensor(it)
+                        }
                     }
                 }
             }
@@ -128,7 +130,8 @@ class MobileTrainingScreen : Screen, KoinComponent {
 
         DisposableEffect(Unit) {
             onDispose {
-                scanBluetoothSensorsManager.stopScan()
+                scanBluetoothSensorsManager.stopScan() {}
+                println("ЕБУЧИЙ СТОП")
             }
         }
 
@@ -181,7 +184,7 @@ class MobileTrainingScreen : Screen, KoinComponent {
                         viewModel.changeConnectSensorDialog()
                     } else {
                         if (state.isStart) {
-                            scanBluetoothSensorsManager.stopScan()
+                            scanBluetoothSensorsManager.stopScan() {}
                             state.selectSensor?.let {
                                 navigator.replace(MobileTrainingResultScreen(it))
                             }

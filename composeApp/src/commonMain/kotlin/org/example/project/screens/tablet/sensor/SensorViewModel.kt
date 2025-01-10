@@ -7,6 +7,7 @@ import kotlinx.serialization.json.Json
 import org.example.project.data.mapper.toUI
 import org.example.project.data.model.sensor.SensorResponse
 import org.example.project.domain.manager.AuthManager
+import org.example.project.domain.repository.SensorRepository
 import org.example.project.platform.BaseScreenModel
 import org.example.project.platform.PlatformSocket
 import org.example.project.platform.PlatformSocketListener
@@ -17,8 +18,24 @@ import kotlin.getValue
 
 internal class SensorViewModel : BaseScreenModel<SensorState, SensorEvent>(SensorState.InitState) {
     val authManager: AuthManager by inject()
+    val sensorRepository: SensorRepository by inject()
     private val webSocket =
         PlatformSocket("ws://192.168.0.108:8000/ws", authManager.token.orEmpty())
+
+    fun loadSensors() = intent {
+        launchOperation(
+            operation = {
+                sensorRepository.getSensors()
+            },
+            success ={
+                reduceLocal {
+                    state.copy(
+                        savedSensors = it
+                    )
+                }
+            }
+        )
+    }
 
     fun connectSocket() {
         println("алоха я тут")

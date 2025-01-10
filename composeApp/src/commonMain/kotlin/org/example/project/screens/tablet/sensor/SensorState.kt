@@ -1,11 +1,12 @@
 package org.example.project.screens.tablet.sensor
 
+import org.example.project.domain.model.sensor.SensorPreviewUI
 import org.example.project.domain.model.sportsman.SensorStatus
 import org.example.project.domain.model.sportsman.SensorUI
 
 data class SensorState(
-    val sensors: List<SensorUI>,
-    val savedSensors: List<SensorUI>,
+    val sensors: List<SensorPreviewUI>,
+    val savedSensors: List<SensorPreviewUI>,
     val isGrid: Boolean,
     val isLoading: Boolean,
 ) {

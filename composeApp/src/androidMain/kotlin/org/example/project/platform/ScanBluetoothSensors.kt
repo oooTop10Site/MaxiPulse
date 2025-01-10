@@ -17,6 +17,7 @@ import org.koin.core.component.KoinComponent
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.getValue
+import kotlin.math.abs
 
 internal actual class ScanBluetoothSensorsManager :
     KoinComponent {
@@ -29,76 +30,69 @@ internal actual class ScanBluetoothSensorsManager :
     actual fun scanBluetoothSensors(
         onDeviceFound: (SensorUI) -> Unit,
     ) {
-        stopScan()
-        // Проверка, поддерживает ли устройство Bluetooth
         if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
+            stopScan {  }
             return
         }
+        stopScan() {
+            scanCallback = object : ScanCallback() {
+                override fun onScanResult(callbackType: Int, result: ScanResult) {
+                    Log.d("SCANDEVICE", "-------------------")
 
-        scanCallback = object : ScanCallback() {
-            override fun onScanResult(callbackType: Int, result: ScanResult) {
-                Log.d("SCANDEVICE", "-------------------")
+                    super.onScanResult(callbackType, result)
+                    val scanRecord = result.scanRecord
+                    val rssi = result.rssi
 
-                super.onScanResult(callbackType, result)
-                val scanRecord = result.scanRecord
-                val rssi = result.rssi
-                Log.d("SCANDEVICE", "rssi - $rssi")
+                    val manufacturerSpecificData = scanRecord?.manufacturerSpecificData
 
-                val manufacturerSpecificData = scanRecord?.manufacturerSpecificData
-                Log.d("SCANDEVICE", "manufacturerSpecificData - $manufacturerSpecificData")
-
-                manufacturerSpecificData?.let { data ->
-                    for (i in 0 until data.size()) {
-                        val manufacturerId = data.keyAt(i)
-                        val manufacturerBytes = data.valueAt(i)
-                        Log.d("SCANDEVICE", "manufacturerId - $manufacturerId")
-                        if (manufacturerId == 159) {
-                            // Получаем имя устройства и его идентификатор
-                            val deviceName = result.device.name ?: "Unknown Device"
-                            val sensorId =
-                                result.device.address // Обычно используется MAC-адрес устройства
-                            // Создаем объект SensorUI и передаем в callback
-                            val sensor = SensorUI(
-                                sensorId = sensorId,
-                                deviceName = deviceName,
-                                status = SensorStatus.Active
-                            )
-                            try {
-                                val decodedData = decodeSensorData(
-                                    manufacturerBytes.map { it.toInt() },
-                                    sensorUI = sensor
+                    manufacturerSpecificData?.let { data ->
+                        for (i in 0 until data.size()) {
+                            val manufacturerId = data.keyAt(i)
+                            val manufacturerBytes = data.valueAt(i)
+                            if (manufacturerId == 159) {
+                                // Получаем имя устройства и его идентификатор
+                                val deviceName = result.device.name ?: "Unknown Device"
+                                val sensorId =
+                                    result.device.address // Обычно используется MAC-адрес устройства
+                                // Создаем объект SensorUI и передаем в callback
+                                val sensor = SensorUI(
+                                    sensorId = sensorId,
+                                    deviceName = deviceName,
+                                    status = SensorStatus.Active
                                 )
-                                onDeviceFound(decodedData)
-                                Log.d("SCANDEVICE", decodedData.toString())
-                            } catch (e: Exception) {
-                                Log.e("SCANDEVICE", "Failed to decode sensor data: ${e.message}")
+                                try {
+                                    val decodedData = decodeSensorData(
+                                        manufacturerBytes.map { it.toInt() },
+                                        sensorUI = sensor
+                                    )
+                                    onDeviceFound(decodedData)
+                                } catch (e: Exception) {
+                                    Log.e(
+                                        "SCANDEVICE",
+                                        "Failed to decode sensor data: ${e.message}"
+                                    )
+                                }
                             }
                         }
-                    }
-                } ?: Log.w("SCANDEVICE", "No manufacturer-specific data found")
-            }
+                    } ?: Log.w("SCANDEVICE", "No manufacturer-specific data found")
+                }
 
-            override fun onScanFailed(errorCode: Int) {
-                super.onScanFailed(errorCode)
-                // Обработка ошибок сканирования (если нужно)
+                override fun onScanFailed(errorCode: Int) {
+                    super.onScanFailed(errorCode)
+                    // Обработка ошибок сканирования (если нужно)
+                }
             }
+            bluetoothLeScanner.startScan(scanCallback)
         }
-        val scanFilters = listOf<ScanFilter>()
-        // Стартуем сканирование BLE устройств
-        val scanSettings = ScanSettings.Builder()
-            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-            .build()
-        println("START SCAN")
-        bluetoothLeScanner.startScan(scanFilters, scanSettings, scanCallback)
-
     }
 
     @SuppressLint("MissingPermission")
-    actual fun stopScan() {
+    actual fun stopScan(doAfter: () -> Unit) {
         scanCallback?.let {
             println("STOP SCAN")
             bluetoothLeScanner.stopScan(it)
-        }
+            doAfter()
+        } ?: doAfter()
     }
 }
 
@@ -118,7 +112,7 @@ fun decodeSensorData(dataList: List<Int>, sensorUI: SensorUI): SensorUI {
         battery = battery,
         runningCounter = runningCounter,
         acc = value1Acc,
-        heartRate = sensorUI.heartRate + heartRate,
+        heartRate = sensorUI.heartRate + abs(heartRate),
         rr = rr
     )
 }

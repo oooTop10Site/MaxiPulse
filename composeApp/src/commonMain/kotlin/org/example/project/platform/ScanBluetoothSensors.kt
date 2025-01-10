@@ -7,5 +7,5 @@ import org.koin.core.component.KoinComponent
 
 internal expect class ScanBluetoothSensorsManager() {
     fun scanBluetoothSensors(onDeviceFound: (SensorUI) -> Unit)
-    fun stopScan()
+    fun stopScan(doAfter: () -> Unit)
 }

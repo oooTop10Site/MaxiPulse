@@ -16,6 +16,7 @@ import org.example.project.data.model.group.GroupResponse
 import org.example.project.data.model.login.LoginRequest
 import org.example.project.data.model.login.LoginResponse
 import org.example.project.data.model.rank.RankResponse
+import org.example.project.data.model.sensor.SensorPreviewResponse
 import org.example.project.data.model.sportsman.GamerResponse
 import org.example.project.data.model.trainingStage.TrainingStageResponse
 
@@ -76,6 +77,7 @@ interface MaxiPulseApi {
 
     //sensor
 
-    @GET
-    suspend fun
+    @GET("api/sensor")
+    suspend fun getSensor(): BaseResponse<List<SensorPreviewResponse>>
+
 }

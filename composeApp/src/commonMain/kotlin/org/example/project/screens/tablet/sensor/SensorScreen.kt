@@ -23,13 +23,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -38,10 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.currentOrThrow
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.sensor
-import org.example.project.screens.adaptive.root.ScreenSize
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiPageContainer
 import androidx.compose.runtime.getValue
@@ -51,13 +47,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import maxipuls.composeapp.generated.resources.accessed_devices
-import maxipuls.composeapp.generated.resources.add_round_ic
 import maxipuls.composeapp.generated.resources.close_solid_ic
-import maxipuls.composeapp.generated.resources.grid_ic
 import maxipuls.composeapp.generated.resources.indicator_ic
-import maxipuls.composeapp.generated.resources.rectangle_listv2
 import maxipuls.composeapp.generated.resources.saved_devices
 import maxipuls.composeapp.generated.resources.search_available_devices
+import org.example.project.domain.model.sensor.SensorPreviewUI
 import org.example.project.domain.model.sportsman.SensorStatus
 import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.ext.clickableBlank
@@ -65,8 +59,6 @@ import org.example.project.ext.toColor
 import org.example.project.ext.toText
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import kotlin.collections.chunked
-import kotlin.collections.forEach
 
 class SensorScreen : Screen {
 
@@ -79,6 +71,7 @@ class SensorScreen : Screen {
 
         LaunchedEffect(viewModel) {
             viewModel.connectSocket()
+            viewModel.loadSensors()
         }
         MaxiPageContainer(topBar = {
             Column(
@@ -127,7 +120,7 @@ class SensorScreen : Screen {
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
                         items(state.savedSensors) { it ->
-                            SensorCard(
+                            SensorPreviewCard(
                                 modifier = Modifier.weight(1f),
                                 sensorUI = it,
                                 icon = {
@@ -175,7 +168,7 @@ class SensorScreen : Screen {
                             verticalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
                             items(state.savedSensors) { it ->
-                                SensorCard(
+                                SensorPreviewCard(
                                     modifier = Modifier.weight(1f),
                                     sensorUI = it,
                                     icon = {
@@ -200,9 +193,9 @@ class SensorScreen : Screen {
 
 
 @Composable
-internal fun SensorCard(
+internal fun SensorPreviewCard(
     modifier: Modifier = Modifier,
-    sensorUI: SensorUI,
+    sensorUI: SensorPreviewUI,
     icon: @Composable (() -> Unit)? = null,
     onClick: () -> Unit,
 ) {
@@ -228,7 +221,7 @@ internal fun SensorCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        sensorUI.sensorId,
+                        sensorUI.mac,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaxiPulsTheme.typography.semiBold.copy(
@@ -244,7 +237,7 @@ internal fun SensorCard(
                         color = MaxiPulsTheme.colors.uiKit.divider
                     )
                     Text(
-                        sensorUI.deviceName,
+                        sensorUI.name,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaxiPulsTheme.typography.semiBold.copy(
