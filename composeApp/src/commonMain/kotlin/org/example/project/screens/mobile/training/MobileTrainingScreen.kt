@@ -117,11 +117,13 @@ class MobileTrainingScreen : Screen, KoinComponent {
             if (state.selectSensor != null && !startObserve) {
                 startObserve = true
                 println("ТЕПЕРЬ БУДЕТ МЯСО")
-                scanBluetoothSensorsManager.scanBluetoothSensors {
-                    println("SCANDEVICE новый инстанс - $it")
-                    println("id текущего инстанса - ${it.sensorId}")
-                    if (it.sensorId == state.selectSensor?.sensorId) {
-                        viewModel.changeSelectSensor(it)
+                launch() {
+                    scanBluetoothSensorsManager.scanBluetoothSensors {
+                        println("SCANDEVICE новый инстанс - $it")
+                        println("id текущего инстанса - ${it.sensorId}")
+                        if (it.sensorId == state.selectSensor?.sensorId) {
+                            viewModel.changeSelectSensor(it)
+                        }
                     }
                 }
             }
