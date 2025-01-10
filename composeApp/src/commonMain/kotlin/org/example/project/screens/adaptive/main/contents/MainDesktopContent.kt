@@ -124,7 +124,7 @@ internal fun KoinComponent.MainDesktopContent(
         }
     DisposableEffect(Unit) {
         onDispose {
-            scanBluetoothSensorsManager.stopScan()
+            scanBluetoothSensorsManager.stopScan() {}
         }
     }
     LaunchedEffect(state.alertDialog) {

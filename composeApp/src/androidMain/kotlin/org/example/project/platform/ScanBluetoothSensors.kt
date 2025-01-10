@@ -34,7 +34,7 @@ internal actual class ScanBluetoothSensorsManager :
             stopScan {  }
             return
         }
-        stopScan() {
+//        stopScan() {
             scanCallback = object : ScanCallback() {
                 override fun onScanResult(callbackType: Int, result: ScanResult) {
                     Log.d("SCANDEVICE", "-------------------")
@@ -83,7 +83,7 @@ internal actual class ScanBluetoothSensorsManager :
                 }
             }
             bluetoothLeScanner.startScan(scanCallback)
-        }
+//        }
     }
 
     @SuppressLint("MissingPermission")

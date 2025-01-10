@@ -112,17 +112,16 @@ class MobileTrainingScreen : Screen, KoinComponent {
         }
         val navigator = RootNavigator.currentOrThrow
         val state by viewModel.stateFlow.collectAsState()
-
-        LaunchedEffect(Unit) {
-            launch {
-                if (state.selectSensor != null) {
-                    println("ТЕПЕРЬ БУДЕТ МЯСО")
-                    scanBluetoothSensorsManager.scanBluetoothSensors {
-                        println("SCANDEVICE новый инстанс - $it")
-                        println("id текущего инстанса - ${it.sensorId}")
-                        if (it.sensorId == state.selectSensor?.sensorId) {
-                            viewModel.changeSelectSensor(it)
-                        }
+        var startObserve by remember { mutableStateOf(false) }
+        LaunchedEffect(state.selectSensor) {
+            if (state.selectSensor != null && !startObserve) {
+                startObserve = true
+                println("ТЕПЕРЬ БУДЕТ МЯСО")
+                scanBluetoothSensorsManager.scanBluetoothSensors {
+                    println("SCANDEVICE новый инстанс - $it")
+                    println("id текущего инстанса - ${it.sensorId}")
+                    if (it.sensorId == state.selectSensor?.sensorId) {
+                        viewModel.changeSelectSensor(it)
                     }
                 }
             }
