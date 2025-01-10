@@ -73,4 +73,9 @@ interface MaxiPulseApi {
     @Multipart
     @POST("api/group/delete/{id}")
     suspend fun deleteGroup(@Path("id") id: String, @Body request: MultiPartFormDataContent)
+
+    //sensor
+
+    @GET
+    suspend fun
 }

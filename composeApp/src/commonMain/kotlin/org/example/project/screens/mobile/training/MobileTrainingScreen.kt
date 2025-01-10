@@ -246,11 +246,6 @@ class MobileTrainingScreen : Screen, KoinComponent {
                 }
             }
         }
-        DisposableEffect(Unit) {
-            onDispose {
-                scanBluetoothSensorsManager.stopScan()
-            }
-        }
         if (sensorShow) {
             when (state) {
                 SelectTypeSensor -> {
