@@ -107,15 +107,15 @@ class MobileTrainingResultScreen(private val sensorUI: SensorUI) : Screen {
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
                     )
-                    ResultItem(title = Res.string.chss_peak, value = "0")
+                    ResultItem(title = Res.string.chss_peak, value = sensorUI.heartRate.max().toString())
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
                     )
-                    ResultItem(title = Res.string.chss_avg, value = "0")
+                    ResultItem(title = Res.string.chss_avg, value = sensorUI.heartRate.average().toInt().toString())
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
                     )
-                    ResultItem(title = Res.string.chss_min, value = "0")
+                    ResultItem(title = Res.string.chss_min, value = sensorUI.heartRate.min().toString())
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
                     )
