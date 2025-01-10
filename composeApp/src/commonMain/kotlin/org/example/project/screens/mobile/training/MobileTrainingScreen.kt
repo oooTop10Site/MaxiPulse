@@ -115,6 +115,7 @@ class MobileTrainingScreen : Screen, KoinComponent {
 
         LaunchedEffect(state.selectSensor) {
             if (state.selectSensor != null) {
+                println("ТЕПЕРЬ БУДЕТ МЯСО")
                 scanBluetoothSensorsManager.scanBluetoothSensors {
                     println("SCANDEVICE новый инстанс - $it")
                     println("id текущего инстанса - ${it.sensorId}")
