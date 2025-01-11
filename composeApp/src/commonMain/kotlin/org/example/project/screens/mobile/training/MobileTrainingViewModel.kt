@@ -40,7 +40,7 @@ internal class MobileTrainingViewModel :
         reduce {
             state.copy(
                 currentTraining = state.currentTraining.copy(
-                    sensorUI = state.currentTraining.sensorUI.copy(
+                    sensorUI = sensorUI.copy(
                         heartRate = state.currentTraining.sensorUI.heartRate + sensorUI.heartRate
                     )
                 ),

@@ -266,7 +266,7 @@ class MobileTrainingScreen : Screen, KoinComponent {
                 }
 
                 SearchSensor -> {
-                    SearchSensor(onDismiss = onDismiss, onSuccess = {
+                    SearchSensor(devices = devices, onDismiss = onDismiss, onSuccess = {
                         state = SelectSensor
                     })
                 }
@@ -396,7 +396,7 @@ class MobileTrainingScreen : Screen, KoinComponent {
     }
 
     @Composable
-    fun SearchSensor(onDismiss: () -> Unit, onSuccess: () -> Unit) {
+    fun SearchSensor(devices: List<SensorUI>, onDismiss: () -> Unit, onSuccess: () -> Unit) {
         var animationTarget by remember { mutableStateOf(0f) }
 
         val searchProgress by animateFloatAsState(
@@ -404,9 +404,14 @@ class MobileTrainingScreen : Screen, KoinComponent {
             animationSpec = tween(durationMillis = 3000) // Длительность анимации
         )
         LaunchedEffect(Unit) {
-            animationTarget = 1f
-            delay(3000L)
-            onSuccess()
+            animationTarget = 0.7f
+        }
+        LaunchedEffect(devices) {
+            if (devices.isNotEmpty()) {
+                animationTarget = 1f
+                delay(1000L)
+                onSuccess()
+            }
         }
         MaxiAlertDialog(
             modifier = Modifier.fillMaxWidth().height(404.dp)
