@@ -118,6 +118,7 @@
     <string name="start_test">Начать тест</string>
     <string name="lying_position">Положение лежа</string>
     <string name="chss_min">ЧСС покоя</string>
+    <string name="chss_minimum">ЧСС мин</string>
     <string name="settings_chss_zone">Настройка пульсовых зон</string>
     <string name="by_age">По возрасту</string>
     <string name="chss">ЧСС</string>

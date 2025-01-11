@@ -24,12 +24,26 @@ internal class MobileTrainingViewModel :
         }
     }
 
+    fun incrementTime() = intent {
+        reduce {
+            state.copy(
+                currentTraining = state.currentTraining.copy(
+                    duration = state.currentTraining.duration + 1
+                )
+            )
+        }
+    }
+
     fun changeSelectSensor(sensorUI: SensorUI) = intent {
-        println("state.selectSensor?.heartRate.orEmpty() - ${state.selectSensor}")
+        println("state.selectSensor?.heartRate.orEmpty() - ${state.currentTraining.sensorUI}")
         println("sensorUI.heartRate - ${sensorUI}")
         reduce {
             state.copy(
-                selectSensor = sensorUI.copy(heartRate = state.selectSensor?.heartRate.orEmpty() + sensorUI.heartRate),
+                currentTraining = state.currentTraining.copy(
+                    sensorUI = state.currentTraining.sensorUI.copy(
+                        heartRate = state.currentTraining.sensorUI.heartRate + sensorUI.heartRate
+                    )
+                ),
             )
         }
     }

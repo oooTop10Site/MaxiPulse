@@ -29,6 +29,7 @@ import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.assigned_training
 import maxipuls.composeapp.generated.resources.chss_avg
 import maxipuls.composeapp.generated.resources.chss_min
+import maxipuls.composeapp.generated.resources.chss_minimum
 import maxipuls.composeapp.generated.resources.chss_peak
 import maxipuls.composeapp.generated.resources.duration
 import maxipuls.composeapp.generated.resources.end
@@ -38,6 +39,7 @@ import maxipuls.composeapp.generated.resources.training_is_end
 import maxipuls.composeapp.generated.resources.trimp
 import maxipuls.composeapp.generated.resources.zone_number
 import org.example.project.domain.model.sportsman.SensorUI
+import org.example.project.domain.model.training.TrainingUI
 import org.example.project.ext.secondsToUI
 import org.example.project.screens.adaptive.root.RootNavigator
 import org.example.project.screens.mobile.borgScale.MobileBackIcon
@@ -50,7 +52,7 @@ import org.example.project.utils.safeAreaHorizontal
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
-class MobileTrainingResultScreen(private val sensorUI: SensorUI) : Screen {
+class MobileTrainingResultScreen(private val trainingUI: TrainingUI) : Screen {
 
     @Composable
     override fun Content() {
@@ -103,19 +105,19 @@ class MobileTrainingResultScreen(private val sensorUI: SensorUI) : Screen {
                     elevation = CardDefaults.cardElevation(defaultElevation = 7.dp, hoveredElevation = 2.dp),
                     colors = CardDefaults.cardColors(containerColor = MaxiPulsTheme.colors.uiKit.white)
                 ) {
-                    ResultItem(title = Res.string.duration, value = "0")
+                    ResultItem(title = Res.string.duration, value = trainingUI.duration.secondsToUI())
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
                     )
-                    ResultItem(title = Res.string.chss_peak, value = sensorUI.heartRate.max().toString())
+                    ResultItem(title = Res.string.chss_peak, value = trainingUI.sensorUI.heartRate.max().toString())
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
                     )
-                    ResultItem(title = Res.string.chss_avg, value = sensorUI.heartRate.average().toInt().toString())
+                    ResultItem(title = Res.string.chss_avg, value = trainingUI.sensorUI.heartRate.average().toInt().toString())
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
                     )
-                    ResultItem(title = Res.string.chss_min, value = sensorUI.heartRate.min().toString())
+                    ResultItem(title = Res.string.chss_minimum, value = trainingUI.sensorUI.heartRate.min().toString())
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
                     )

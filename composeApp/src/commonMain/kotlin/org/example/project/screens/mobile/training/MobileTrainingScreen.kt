@@ -113,15 +113,21 @@ class MobileTrainingScreen : Screen, KoinComponent {
         val navigator = RootNavigator.currentOrThrow
         val state by viewModel.stateFlow.collectAsState()
         var startObserve by remember { mutableStateOf(false) }
-        LaunchedEffect(state.selectSensor) {
-            if (state.selectSensor != null && !startObserve) {
+        LaunchedEffect(state.isStart) {
+            while (state.isStart) {
+                delay(995L)
+                viewModel.incrementTime()
+            }
+        }
+        LaunchedEffect(state.currentTraining.sensorUI) {
+            if (state.currentTraining.sensorUI != SensorUI.Empty && !startObserve) {
                 startObserve = true
                 println("ТЕПЕРЬ БУДЕТ МЯСО")
                 launch() {
                     scanBluetoothSensorsManager.scanBluetoothSensors {
                         println("SCANDEVICE новый инстанс - $it")
                         println("id текущего инстанса - ${it.sensorId}")
-                        if (it.sensorId == state.selectSensor?.sensorId) {
+                        if (it.sensorId == state.currentTraining.sensorUI.sensorId) {
                             viewModel.changeSelectSensor(it)
                         }
                     }
@@ -147,18 +153,19 @@ class MobileTrainingScreen : Screen, KoinComponent {
                 }
             )
         }) {
-            state.selectSensor?.let {
-                Text(
-                    text = it.heartRate.lastOrNull().orEmpty().toString(),
-                    style = MaxiPulsTheme.typography.bold.copy(
-                        fontSize = 128.sp,
-                        lineHeight = 128.sp,
-                        color = MaxiPulsTheme.colors.uiKit.textColor
-                    ),
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
-            if (state.selectSensor == null) {
+            if (state.currentTraining.sensorUI != SensorUI.Empty) {
+                state.currentTraining.sensorUI.let {
+                    Text(
+                        text = it.heartRate.lastOrNull().orEmpty().toString(),
+                        style = MaxiPulsTheme.typography.bold.copy(
+                            fontSize = 128.sp,
+                            lineHeight = 128.sp,
+                            color = MaxiPulsTheme.colors.uiKit.textColor
+                        ),
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            } else {
                 Text(
                     text = stringResource(Res.string.put_on_the_sensor),
                     style = MaxiPulsTheme.typography.bold.copy(
@@ -181,12 +188,12 @@ class MobileTrainingScreen : Screen, KoinComponent {
                     .padding(horizontal = safeAreaHorizontal(), vertical = 20.dp).height(40.dp)
                     .align(Alignment.BottomCenter),
                 onClick = {
-                    if (state.selectSensor == null) {
+                    if (state.currentTraining.sensorUI == SensorUI.Empty) {
                         viewModel.changeConnectSensorDialog()
                     } else {
                         if (state.isStart) {
                             scanBluetoothSensorsManager.stopScan() {}
-                            state.selectSensor?.let {
+                            state.currentTraining.let {
                                 navigator.replace(MobileTrainingResultScreen(it))
                             }
                         } else {
