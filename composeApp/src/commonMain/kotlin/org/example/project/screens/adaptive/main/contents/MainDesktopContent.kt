@@ -123,11 +123,6 @@ internal fun KoinComponent.MainDesktopContent(
                 sensorShow = true
             }
         }
-    DisposableEffect(Unit) {
-        onDispose {
-            scanBluetoothSensorsManager.stopScan() {}
-        }
-    }
     LaunchedEffect(state.alertDialog) {
         if (state.alertDialog is MainAlertDialog.SelectSensor) {
             if (permissionService.checkPermission(Permission.BLUETOOTH_CONNECT)
