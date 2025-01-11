@@ -129,20 +129,20 @@ internal fun KoinComponent.MainDesktopContent(
     }
     LaunchedEffect(state.alertDialog) {
         if (state.alertDialog is MainAlertDialog.SelectSensor) {
-            if (permissionService.checkPermission(Permission.BLUETOOTH_CONNECT)
-                    .granted()
-            ) {
-                sensorShow = true
-            } else {
-                sensorPermission = true
-                permissionService.providePermission(Permission.BLUETOOTH_CONNECT)
-            }
-            if (sensorShow) {
+//            if (permissionService.checkPermission(Permission.BLUETOOTH_CONNECT)
+//                    .granted()
+//            ) {
+//                sensorShow = true
+//            } else {
+//                sensorPermission = true
+//                permissionService.providePermission(Permission.BLUETOOTH_CONNECT)
+//            }
+//            if (sensorShow) {
                 scanBluetoothSensorsManager.scanBluetoothSensors {
                     println("device - $it")
                     viewModel.addSensor(it)
                 }
-            }
+//            }
         }
     }
     MaxiPageContainer() {
