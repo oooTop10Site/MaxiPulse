@@ -21,6 +21,8 @@ internal class TrainingViewModel :
         reduce {
             state.copy(
                 sportsmans = state.sportsmans.map { sportsman ->
+                    println("sportsman.sensor?.sensorId - ${sportsman.sensor?.sensorId}")
+                    println("sensorUI.sensorId  - ${sensorUI.sensorId}")
                     if (sportsman.sensor?.sensorId == sensorUI.sensorId && sportsman.isTraining) {
                         println("Нашли нащего спорстмена")
                         sportsman.copy(
