@@ -1,13 +1,35 @@
 package org.example.project.screens.tablet.training
 
+import org.example.project.domain.model.sportsman.SensorUI
+import org.example.project.domain.model.sportsman.SportsmanSensorUI
 import org.example.project.domain.model.sportsman.TrainingSportsmanUI
 import org.example.project.platform.BaseScreenModel
+import org.example.project.platform.ScanBluetoothSensorsManager
+import org.example.project.platform.permission.service.PermissionsService
+import org.koin.core.component.inject
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 
 internal class TrainingViewModel :
     BaseScreenModel<TrainingState, TrainingEvent>(TrainingState.InitState) {
+    val permissionService: PermissionsService by inject()
+    val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
+    fun newDataFromSportsman(sensorUI: SensorUI) = intent {
+        reduce {
+            state.copy(
+                sportsmans = state.sportsmans.map { sportsman ->
+                    if (sportsman.sensor?.sensorId == sensorUI.sensorId && sportsman.isTraining) {
+                        sportsman.copy(
+                            sensor = sensorUI.copy(
+                                heartRate = sportsman.sensor.heartRate + sensorUI.heartRate
+                            )
+                        )
+                    } else sportsman
+                }
+            )
+        }
+    }
 
     fun changeIsTrimp() = intent {
         reduce {
@@ -17,7 +39,15 @@ internal class TrainingViewModel :
         }
     }
 
-    fun changeSelectSportsman(sportsmanUI: TrainingSportsmanUI? = null) = intent {
+    fun loadSportsman(sportsmans: List<SportsmanSensorUI>) = intent {
+        reduce {
+            state.copy(
+                sportsmans = sportsmans
+            )
+        }
+    }
+
+    fun changeSelectSportsman(sportsmanUI: SportsmanSensorUI? = null) = intent {
         reduce {
             state.copy(
                 selectSportsman = sportsmanUI

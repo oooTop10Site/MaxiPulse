@@ -24,6 +24,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -31,6 +32,9 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import org.example.project.theme.uiKit.MaxiPageContainer
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -68,9 +72,14 @@ import maxipuls.composeapp.generated.resources.zone3
 import maxipuls.composeapp.generated.resources.zone4
 import maxipuls.composeapp.generated.resources.zone5
 import org.example.project.domain.model.ButtonActions
+import org.example.project.domain.model.sportsman.SportsmanSensorUI
 import org.example.project.domain.model.sportsman.TrainingSportsmanUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.formatSeconds
+import org.example.project.ext.granted
+import org.example.project.platform.ScanBluetoothSensorsManager
+import org.example.project.platform.permission.model.Permission
+import org.example.project.platform.permission.service.PermissionsService
 import org.example.project.screens.adaptive.root.RootNavigator
 import org.example.project.screens.tablet.training.trainingResult.TrainingResultScreen
 import org.example.project.theme.MaxiPulsTheme
@@ -85,18 +94,52 @@ import org.example.project.theme.uiKit.MaxiSwitch
 import org.example.project.utils.orEmpty
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.core.component.inject
+import kotlin.getValue
 import kotlin.math.roundToInt
 
-class TrainingScreen : Screen {
+class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
 
     @Composable
     override fun Content() {
         val viewModel = rememberScreenModel {
             TrainingViewModel()
         }
+        var sensorShow by remember { mutableStateOf(false) }
+        var sensorPermission by remember { mutableStateOf(false) }
+        viewModel.permissionService.checkPermissionFlow(Permission.BLUETOOTH_CONNECT)
+            .collectAsState(viewModel.permissionService.checkPermission(Permission.BLUETOOTH_CONNECT))
+            .granted {
+                if (sensorPermission) {
+                    sensorShow = true
+                }
+            }
+        DisposableEffect(Unit) {
+            onDispose {
+                viewModel.scanBluetoothSensorsManager.stopScan() {}
+            }
+        }
+
         val state by viewModel.stateFlow.collectAsState()
         val navigator = RootNavigator.currentOrThrow
+        LaunchedEffect(sensorShow) {
+            if (sensorShow) {
+                viewModel.scanBluetoothSensorsManager.scanBluetoothSensors {
+                    println("device - $it")
+                    viewModel.newDataFromSportsman(it)
+                }
+            }
+        }
         LaunchedEffect(viewModel) {
+            if (viewModel.permissionService.checkPermission(Permission.BLUETOOTH_CONNECT)
+                    .granted()
+            ) {
+                sensorShow = true
+            } else {
+                sensorPermission = true
+                viewModel.permissionService.providePermission(Permission.BLUETOOTH_CONNECT)
+            }
+            viewModel.loadSportsman(sportsmans)
             viewModel.container.sideEffectFlow.collect {
                 when (it) {
                     TrainingEvent.StopTraining -> navigator.push(TrainingResultScreen())
@@ -104,6 +147,9 @@ class TrainingScreen : Screen {
             }
         }
         LaunchedEffect(state.isStart) {
+            if (state.isStart) {
+
+            }
             launch() {
                 while (state.isStart) {
                     delay(999L)
@@ -337,7 +383,7 @@ class TrainingScreen : Screen {
 @Composable
 private fun SportsmanContent(
     modifier: Modifier = Modifier,
-    sportsmanUI: TrainingSportsmanUI,
+    sportsmanUI: SportsmanSensorUI,
     dismiss: () -> Unit,
     endTraining: () -> Unit
 ) {
@@ -402,7 +448,7 @@ private fun SportsmanContent(
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = "${sportsmanUI.lastname}\n${
-                                sportsmanUI.firstname
+                                sportsmanUI.name
                             } ${sportsmanUI.middleName}",
                             style = MaxiPulsTheme.typography.medium.copy(
                                 color = MaxiPulsTheme.colors.uiKit.textColor,
@@ -444,7 +490,7 @@ private fun SportsmanContent(
                             )
                         }
                     }
-                    if(sportsmanUI.isTraining) {
+                    if (sportsmanUI.isTraining) {
                         MaxiButton(
                             buttonActions = ButtonActions.Unlimit,
                             modifier = Modifier.weight(1f).height(89.dp),
@@ -531,7 +577,7 @@ private fun SportsmanContent(
                 color = MaxiPulsTheme.colors.uiKit.divider
             )
 
-            HeartRateGraph(modifier = Modifier.weight(1f), heartRateData = sportsmanUI.heartBits)
+            HeartRateGraph(modifier = Modifier.weight(1f), heartRateData = sportsmanUI.sensor?.heartRate.orEmpty())
 
         }
     }
@@ -541,12 +587,14 @@ private fun SportsmanContent(
 @Composable
 private fun ChssSportsmanItem(
     modifier: Modifier = Modifier,
-    sportsmanUI: TrainingSportsmanUI,
+    sportsmanUI: SportsmanSensorUI,
     onClick: () -> Unit,
 ) {
+    val hmax = 230
+    val hmin = 0
     Box(
         modifier.background(
-            color = sportsmanUI.color,
+            color =    Color(0xFF3B6ECF),
             shape = RoundedCornerShape(25.dp)
         ).clip(RoundedCornerShape(25.dp)).clickableBlank { onClick() }
     ) {
@@ -565,11 +613,11 @@ private fun ChssSportsmanItem(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = sportsmanUI.heartBits.lastOrNull()?.value?.toString().orEmpty(),
+                    text = sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.toString().orEmpty(),
                     style = MaxiPulsTheme.typography.bold.copy(
                         fontSize = 32.sp,
                         lineHeight = 32.sp,
-                        color = sportsmanUI.color
+                        color =    Color(0xFF3B6ECF)
                     ),
                     maxLines = 1,
                     modifier = Modifier
@@ -593,7 +641,7 @@ private fun ChssSportsmanItem(
                 )
                 Text(
                     text = "${
-                        (sportsmanUI.heartRateMax.toFloat() / sportsmanUI.heartBits.maxOf { it.value }
+                        (230 / sportsmanUI.sensor?.heartRate.orEmpty().max()
                             .toFloat() * 100).roundToInt()
                     }%",
                     style = MaxiPulsTheme.typography.semiBold.copy(
@@ -627,7 +675,7 @@ private fun ChssSportsmanItem(
                 )
                 Spacer(Modifier.size(4.dp))
                 Text(
-                    text = sportsmanUI.firstname,
+                    text = sportsmanUI.name,
                     style = MaxiPulsTheme.typography.semiBold.copy(
                         fontSize = 20.sp,
                         lineHeight = 20.sp,
@@ -653,12 +701,14 @@ private fun ChssSportsmanItem(
 @Composable
 private fun TrimpSportsmanItem(
     modifier: Modifier = Modifier,
-    sportsmanUI: TrainingSportsmanUI,
+    sportsmanUI: SportsmanSensorUI,
     onClick: () -> Unit,
 ) {
+    val hmax = sportsmanUI.heartRateMax
+    val hmin = sportsmanUI.heartRateMin
     Box(
         modifier.background(
-            color = sportsmanUI.color,
+            color =    Color(0xFF3B6ECF),
             shape = RoundedCornerShape(25.dp)
         ).clip(RoundedCornerShape(25.dp)).clickableBlank { onClick() }
     ) {
@@ -688,7 +738,7 @@ private fun TrimpSportsmanItem(
                 )
                 Spacer(Modifier.size(4.dp))
                 Text(
-                    text = sportsmanUI.firstname,
+                    text = sportsmanUI.name,
                     style = MaxiPulsTheme.typography.semiBold.copy(
                         fontSize = 16.sp,
                         lineHeight = 16.sp,
@@ -714,7 +764,7 @@ private fun TrimpSportsmanItem(
                     textAlign = TextAlign.Center,
                 )
                 Text(
-                    text = sportsmanUI.heartBits.lastOrNull()?.value?.toString().orEmpty(),
+                    text = sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.toString().orEmpty(),
                     style = MaxiPulsTheme.typography.semiBold.copy(
                         fontSize = 20.sp,
                         lineHeight = 20.sp,
@@ -743,11 +793,10 @@ private fun TrimpSportsmanItem(
                 ) {
                     Box(
                         modifier = Modifier.fillMaxHeight().fillMaxWidth(
-                            sportsmanUI.heartBits.lastOrNull()?.value.orEmpty()
-                                .toFloat() / sportsmanUI.heartRateMax.toFloat()
+                            sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull().orEmpty().toFloat() / hmax.toFloat()
                         )
                             .background(
-                                color = sportsmanUI.color,
+                                color =    Color(0xFF3B6ECF),
                                 shape = RoundedCornerShape(10.dp)
                             ).clip(RoundedCornerShape(10.dp))
                     )
@@ -759,21 +808,21 @@ private fun TrimpSportsmanItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = sportsmanUI.heartRateMin.toString(),
+                        text = hmin.toString(),
                         style = MaxiPulsTheme.typography.bold.copy(
                             fontSize = 20.sp,
                             lineHeight = 20.sp,
-                            color = sportsmanUI.color
+                            color =   Color(0xFF3B6ECF)
                         ),
                         maxLines = 1,
                         textAlign = TextAlign.Center,
                     )
                     Text(
-                        text = sportsmanUI.heartRateMax.toString(),
+                        text = hmax.toString(),
                         style = MaxiPulsTheme.typography.semiBold.copy(
                             fontSize = 14.sp,
                             lineHeight = 14.sp,
-                            color = sportsmanUI.color
+                            color =    Color(0xFF3B6ECF)
                         ),
                         maxLines = 1,
                         textAlign = TextAlign.Center,

@@ -11,6 +11,8 @@ fun SportsmanUI.toSensorUI(): SportsmanSensorUI {
         middleName = middleName,
         lastname = lastname,
         compositionNumber = groupId,
-        id = id
+        id = id,
+        avatar = avatar,
+        age = age
     )
 }
