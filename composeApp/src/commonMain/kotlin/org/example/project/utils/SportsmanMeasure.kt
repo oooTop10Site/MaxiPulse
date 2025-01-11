@@ -16,6 +16,8 @@ object SportsmanMeasure {
         val a = if (isMale) 0.64 else 0.86
         val b = if (isMale) 1.92 else 1.67
         val e = 2.718
+        println(reserveChss)
+        println("timeMin - t")
         return t * reserveChss * a * e.pow(reserveChss * b)
     }
 
