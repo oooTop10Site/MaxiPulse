@@ -125,6 +125,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
         val navigator = RootNavigator.currentOrThrow
         LaunchedEffect(sensorShow) {
             if (sensorShow) {
+                println("СТАРТУУУУЕМММ")
                 viewModel.scanBluetoothSensorsManager.scanBluetoothSensors {
                     println("device - $it")
                     viewModel.newDataFromSportsman(it)
