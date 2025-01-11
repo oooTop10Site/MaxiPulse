@@ -108,9 +108,9 @@ fun decodeSensorData(dataList: List<Int>, sensorUI: SensorUI): SensorUI {
     val rr = buffer.getShort(byteArray.size - 2).toInt()
 
     return sensorUI.copy(
-        companyId = companyId,
+        companyId = companyId.toInt(),
         battery = battery,
-        runningCounter = runningCounter,
+        runningCounter = runningCounter.toInt(),
         acc = value1Acc,
         heartRate = sensorUI.heartRate + abs(heartRate),
         rr = rr
