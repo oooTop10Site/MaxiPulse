@@ -12,6 +12,7 @@ import org.example.project.domain.repository.SensorRepository
 import org.example.project.platform.BaseScreenModel
 import org.example.project.platform.PlatformSocket
 import org.example.project.platform.PlatformSocketListener
+import org.example.project.utils.Constants
 import org.koin.core.component.inject
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
@@ -21,7 +22,7 @@ internal class SensorViewModel : BaseScreenModel<SensorState, SensorEvent>(Senso
     val authManager: AuthManager by inject()
     val sensorRepository: SensorRepository by inject()
     private val webSocket =
-        PlatformSocket("ws://192.168.0.108:8000/ws", authManager.token.orEmpty())
+        PlatformSocket(Constants.BASE_SOCKET_URL, authManager.token.orEmpty())
 
     fun loadSensors() = intent {
         launchOperation(
