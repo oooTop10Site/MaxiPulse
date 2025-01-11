@@ -77,6 +77,7 @@ import org.example.project.domain.model.sportsman.TrainingSportsmanUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.formatSeconds
 import org.example.project.ext.granted
+import org.example.project.ext.max
 import org.example.project.platform.ScanBluetoothSensorsManager
 import org.example.project.platform.permission.model.Permission
 import org.example.project.platform.permission.service.PermissionsService
@@ -641,7 +642,7 @@ private fun ChssSportsmanItem(
                 )
                 Text(
                     text = "${
-                        (230 / sportsmanUI.sensor?.heartRate.orEmpty().max()
+                        (230 / sportsmanUI.sensor?.heartRate.orEmpty().max(0)
                             .toFloat() * 100).roundToInt()
                     }%",
                     style = MaxiPulsTheme.typography.semiBold.copy(

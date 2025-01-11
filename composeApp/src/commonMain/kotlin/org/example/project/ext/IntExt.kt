@@ -12,6 +12,14 @@ fun Int.toAnalizeColor(): Color {
     }
 }
 
+fun List<Int>.max(default: Int): Int {
+    return try {
+        this.max()
+    } catch (e: Exception) {
+        default
+    }
+}
+
 //fun Int.toRightMark(): Double {
 //    var result = this
 //    if (result > 140) {

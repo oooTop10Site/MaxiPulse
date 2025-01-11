@@ -70,7 +70,7 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
         }
     }
 
-    fun startTraining(testUI: TestUI?) = intent {
+    fun startTraining(testUI: TestUI?, checkCond: Boolean = true,) = intent {
         val alertDialog = when {
             state.sportsmans.find { it.sensor == null && it.id in state.selectSportsmans } != null -> MainAlertDialog.PlayerWithNoActiveSensor
             else -> null
@@ -80,7 +80,7 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
                 alertDialog = alertDialog
             )
         }
-        if (alertDialog == null) {
+        if (alertDialog == null || !checkCond) {
             when (testUI) {
                 is TestUI.ReadiesForUpload -> {
                     postSideEffect(MainEvent.ReadiesForUpload)

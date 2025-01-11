@@ -405,7 +405,7 @@ internal actual fun KoinComponent.MainContent(
                     modifier = Modifier.padding(horizontal = 20.dp).width(600.dp),
                     title = stringResource(Res.string.attention),
                     accept = {
-                        viewModel.changeAlertDialog(null)
+                        viewModel.startTraining(testUI, false)
                     },
                     acceptText = stringResource(Res.string.ok),
                     cancelText = stringResource(Res.string.cancel),
