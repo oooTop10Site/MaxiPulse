@@ -125,7 +125,7 @@ class MobileTrainingResultScreen(private val trainingUI: TrainingUI) : Screen {
                     )
                     ResultItem(
                         title = Res.string.chss_avg,
-                        value = (trainingUI.sensorUI.heartRate.sum() / trainingUI.sensorUI.heartRate.size).toString()
+                        value = trainingUI.sensorUI.heartRate.average().toString()
                     )
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)

@@ -144,8 +144,8 @@
     <string name="by_zone_chss">По пороговым значениям ЧСС</string>
     <string name="standing_position">Положение стоя</string>
     <string name="heart_rate_peak_player">ЧСС пик игрока</string>
-    <string name="chss_peak">ЧСС срееднее</string>
-    <string name="chss_avg">ЧСС пик</string>
+    <string name="chss_peak">ЧСС пик</string>
+    <string name="chss_avg">ЧСС срееднее</string>
     <string name="equal">Значение</string>
     <string name="average">Средняя</string>
     <string name="minimal">Низкая</string>
