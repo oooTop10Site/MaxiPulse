@@ -136,6 +136,9 @@ class MobileTrainingResultScreen(private val trainingUI: TrainingUI) : Screen {
                         title = Res.string.chss_minimum,
                         value = trainingUI.sensorUI.heartRate.min().toString()
                     )
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
+                    )
                     ResultItem(
                         title = Res.string.trimp,
                         value = SportsmanMeasure.trimp(
@@ -146,10 +149,6 @@ class MobileTrainingResultScreen(private val trainingUI: TrainingUI) : Screen {
                             chssMax = 220
                         ).toString()
                     )
-                    HorizontalDivider(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
-                    )
-                    ResultItem(title = Res.string.trimp, value = "0")
                 }
                 Spacer(Modifier.weight(1f))
                 Text(
