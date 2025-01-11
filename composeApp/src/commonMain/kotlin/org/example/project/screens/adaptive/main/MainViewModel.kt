@@ -81,6 +81,11 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
             )
         }
         if (alertDialog == null || !checkCond) {
+            reduce {
+                state.copy(
+                    alertDialog = null
+                )
+            }
             when (testUI) {
                 is TestUI.ReadiesForUpload -> {
                     postSideEffect(MainEvent.ReadiesForUpload)
