@@ -98,6 +98,9 @@ import org.example.project.theme.uiKit.MaxiRadioButton
 import org.example.project.utils.orEmpty
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 
 class MobileTrainingScreen : Screen, KoinComponent {
     private val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
@@ -284,7 +287,7 @@ class MobileTrainingScreen : Screen, KoinComponent {
     fun SelectSensor(
         onDismiss: () -> Unit,
         onSuccess: (SensorUI) -> Unit,
-        sensors: List<SensorUI>
+        sensors: SnapshotStateList<SensorUI>
     ) {
         var selectSensor: SensorUI? by remember { mutableStateOf(null) }
         MaxiAlertDialog(
@@ -396,13 +399,14 @@ class MobileTrainingScreen : Screen, KoinComponent {
     }
 
     @Composable
-    fun SearchSensor(devices: List<SensorUI>, onDismiss: () -> Unit, onSuccess: () -> Unit) {
+    fun SearchSensor(devices: SnapshotStateList<SensorUI>, onDismiss: () -> Unit, onSuccess: () -> Unit) {
         var animationTarget by remember { mutableStateOf(0f) }
 
         val searchProgress by animateFloatAsState(
             targetValue = animationTarget,
             animationSpec = tween(durationMillis = 3000) // Длительность анимации
         )
+        println("devices в SearchSensor - $devices")
         LaunchedEffect(Unit) {
             animationTarget = 0.7f
         }
