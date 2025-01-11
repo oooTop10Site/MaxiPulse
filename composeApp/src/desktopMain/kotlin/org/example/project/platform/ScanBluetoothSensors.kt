@@ -39,11 +39,8 @@ internal actual class ScanBluetoothSensorsManager :
     fun connectSocket(
         onDeviceFound: (SensorUI) -> Unit, onCatch: (Throwable) -> Unit
     ) {
-        println("алоха я тут")
         webSocket.openSocket(object : PlatformSocketListener {
             override fun onFailure(t: Throwable) {
-                println("socket - ${t.message}")
-                println("socket - ${t.cause}")
                 webSocket.closeSocket(1000, "")
 //                connectionAborted = true
                 CoroutineScope(Dispatchers.IO).launch {
@@ -53,20 +50,16 @@ internal actual class ScanBluetoothSensorsManager :
             }
 
             override fun onOpen() {
-                println("socket - connect")
             }
 
             override fun onClosing(code: Int, reason: String) {
-                println("socket - onClosing")
             }
 
             override fun onMessage(msg: String) {
-                println("socket - onMessage")
                 handleMessage(msg, onDeviceFound = onDeviceFound)
             }
 
             override fun onClosed(code: Int, reason: String) {
-                println("socket - onClosed")
             }
 
         })

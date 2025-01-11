@@ -19,9 +19,7 @@ internal class TrainingViewModel :
         println("---------------")
         println("зашли в newDataFromSportsman")
         println("state.sportsmans  - ${state.sportsmans}")
-        state.sportsmans.map {
-            println("он пидорас -> $it")
-        }
+        println("${state.sportsmans.size} пидорасов")
         val newSportsmans = state.sportsmans.map { sportsman ->
             println("sportsman.sensor?.sensorId - ${sportsman.sensor?.sensorId}")
             println("sensorUI.sensorId  - ${sensorUI.sensorId}")
@@ -34,6 +32,7 @@ internal class TrainingViewModel :
                 )
             } else sportsman
         }
+        println("newSportsmans - $newSportsmans")
         reduce {
             state.copy(
                 sportsmans = newSportsmans

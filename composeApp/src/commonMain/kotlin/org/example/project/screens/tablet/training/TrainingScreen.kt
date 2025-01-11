@@ -127,7 +127,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
             if (sensorShow) {
                 println("СТАРТУУУУЕМММ")
                 viewModel.scanBluetoothSensorsManager.scanBluetoothSensors {
-                    println("device - $it")
+                    println("DEVICE - $it")
                     viewModel.newDataFromSportsman(it, sportsmans)
                 }
             }
