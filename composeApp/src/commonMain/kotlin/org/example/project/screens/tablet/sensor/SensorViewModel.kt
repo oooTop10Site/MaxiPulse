@@ -7,6 +7,7 @@ import kotlinx.serialization.json.Json
 import org.example.project.data.mapper.toUI
 import org.example.project.data.model.sensor.SensorResponse
 import org.example.project.domain.manager.AuthManager
+import org.example.project.domain.model.sensor.SensorPreviewUI
 import org.example.project.domain.repository.SensorRepository
 import org.example.project.platform.BaseScreenModel
 import org.example.project.platform.PlatformSocket
@@ -27,10 +28,25 @@ internal class SensorViewModel : BaseScreenModel<SensorState, SensorEvent>(Senso
             operation = {
                 sensorRepository.getSensors()
             },
-            success ={
+            success = {
                 reduceLocal {
                     state.copy(
                         savedSensors = it
+                    )
+                }
+            }
+        )
+    }
+
+    fun addSensor(sensorPreviewUI: SensorPreviewUI) = intent {
+        launchOperation(
+            operation = {
+                sensorRepository.addSensor(mac = sensorPreviewUI.mac, name = sensorPreviewUI.name)
+            },
+            success = {
+                reduceLocal {
+                    state.copy(
+                        savedSensors = state.savedSensors + sensorPreviewUI
                     )
                 }
             }

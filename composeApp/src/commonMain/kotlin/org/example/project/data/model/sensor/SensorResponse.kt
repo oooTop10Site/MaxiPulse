@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class SensorResponse (
-    @SerialName("device_name") val deviceName: String? = null,
+    @SerialName("name") val deviceName: String? = null,
     @SerialName("address") val deviceAddress: String? = null,
     @SerialName("rssi") val rssi: Int? = null,
     @SerialName("company_id") val companyId: Int? = null,

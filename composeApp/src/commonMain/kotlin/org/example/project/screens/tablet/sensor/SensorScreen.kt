@@ -47,6 +47,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import maxipuls.composeapp.generated.resources.accessed_devices
+import maxipuls.composeapp.generated.resources.add_round_ic
 import maxipuls.composeapp.generated.resources.close_solid_ic
 import maxipuls.composeapp.generated.resources.indicator_ic
 import maxipuls.composeapp.generated.resources.saved_devices
@@ -167,16 +168,17 @@ class SensorScreen : Screen {
                             contentPadding = PaddingValues(vertical = 20.dp),
                             verticalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
-                            items(state.savedSensors) { it ->
+                            items(state.sensors) { it ->
                                 SensorPreviewCard(
                                     modifier = Modifier.weight(1f),
                                     sensorUI = it,
                                     icon = {
                                         Icon(
-                                            painter = painterResource(Res.drawable.close_solid_ic),
+                                            painter = painterResource(Res.drawable.add_round_ic),
                                             contentDescription = null,
                                             tint = MaxiPulsTheme.colors.uiKit.primary,
                                             modifier = Modifier.clickableBlank() {
+                                                viewModel.addSensor(it)
                                             }.size(30.dp)
                                         )
                                     }
