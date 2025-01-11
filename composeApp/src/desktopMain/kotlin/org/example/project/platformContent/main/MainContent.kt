@@ -1,4 +1,4 @@
-package org.example.project.screens.adaptive.main.contents
+package org.example.project.platformContent.main
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
@@ -33,7 +33,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -72,7 +71,6 @@ import maxipuls.composeapp.generated.resources.what_do_if_sensor_not_active
 import maxipuls.composeapp.generated.resources.what_do_if_sensor_not_active_desc
 import org.example.project.domain.model.ButtonActions
 import org.example.project.domain.model.MainAlertDialog
-import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.domain.model.test.TestUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.granted
@@ -104,24 +102,13 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.getValue
 
-
 @Composable
-internal fun KoinComponent.MainDesktopContent(
+internal actual fun KoinComponent.MainContent(
     viewModel: MainViewModel,
     state: MainState,
     testUI: TestUI?
 ) {
     val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
-    var sensorShow by remember { mutableStateOf(false) }
-    var sensorPermission by remember { mutableStateOf(false) }
-    val permissionService: PermissionsService by inject()
-    permissionService.checkPermissionFlow(Permission.BLUETOOTH_CONNECT)
-        .collectAsState(permissionService.checkPermission(Permission.BLUETOOTH_CONNECT))
-        .granted {
-            if (sensorPermission) {
-                sensorShow = true
-            }
-        }
     DisposableEffect(Unit) {
         onDispose {
             scanBluetoothSensorsManager.stopScan() {}
@@ -129,19 +116,9 @@ internal fun KoinComponent.MainDesktopContent(
     }
     LaunchedEffect(state.alertDialog) {
         if (state.alertDialog is MainAlertDialog.SelectSensor) {
-            if (permissionService.checkPermission(Permission.BLUETOOTH_CONNECT)
-                    .granted()
-            ) {
-                sensorShow = true
-            } else {
-                sensorPermission = true
-                permissionService.providePermission(Permission.BLUETOOTH_CONNECT)
-            }
-            if (sensorShow) {
-                scanBluetoothSensorsManager.scanBluetoothSensors {
-                    println("device - $it")
-                    viewModel.addSensor(it)
-                }
+            scanBluetoothSensorsManager.scanBluetoothSensors {
+                println("device - $it")
+                viewModel.addSensor(it)
             }
         }
     }
@@ -544,4 +521,5 @@ internal fun KoinComponent.MainDesktopContent(
             null -> {}
         }
     }
+
 }
