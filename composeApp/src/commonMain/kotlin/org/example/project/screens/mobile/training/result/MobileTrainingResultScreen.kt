@@ -102,22 +102,38 @@ class MobileTrainingResultScreen(private val trainingUI: TrainingUI) : Screen {
                     shape = RoundedCornerShape(
                         15.dp
                     ),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 7.dp, hoveredElevation = 2.dp),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 7.dp,
+                        hoveredElevation = 2.dp
+                    ),
                     colors = CardDefaults.cardColors(containerColor = MaxiPulsTheme.colors.uiKit.white)
                 ) {
-                    ResultItem(title = Res.string.duration, value = trainingUI.duration.secondsToUI())
+                    println("result heart rate - ${trainingUI.sensorUI.heartRate}")
+                    ResultItem(
+                        title = Res.string.duration,
+                        value = trainingUI.duration.secondsToUI()
+                    )
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
                     )
-                    ResultItem(title = Res.string.chss_peak, value = trainingUI.sensorUI.heartRate.max().toString())
+                    ResultItem(
+                        title = Res.string.chss_peak,
+                        value = trainingUI.sensorUI.heartRate.max().toString()
+                    )
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
                     )
-                    ResultItem(title = Res.string.chss_avg, value = trainingUI.sensorUI.heartRate.average().toInt().toString())
+                    ResultItem(
+                        title = Res.string.chss_avg,
+                        value = (trainingUI.sensorUI.heartRate.sum() / trainingUI.sensorUI.heartRate.size).toString()
+                    )
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
                     )
-                    ResultItem(title = Res.string.chss_minimum, value = trainingUI.sensorUI.heartRate.min().toString())
+                    ResultItem(
+                        title = Res.string.chss_minimum,
+                        value = trainingUI.sensorUI.heartRate.min().toString()
+                    )
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
                     )
@@ -144,12 +160,13 @@ class MobileTrainingResultScreen(private val trainingUI: TrainingUI) : Screen {
                 zonesDuration.forEachIndexed { index, item ->
                     Row(
                         modifier = Modifier.height(37.dp).clip(RoundedCornerShape(100.dp))
-                            .fillMaxWidth().background(color = item.first, shape = RoundedCornerShape(100.dp)),
+                            .fillMaxWidth()
+                            .background(color = item.first, shape = RoundedCornerShape(100.dp)),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = stringResource(Res.string.zone_number, index+1),
+                            text = stringResource(Res.string.zone_number, index + 1),
                             style = MaxiPulsTheme.typography.regular.copy(
                                 color = MaxiPulsTheme.colors.uiKit.textColor,
                                 fontSize = 14.sp,
