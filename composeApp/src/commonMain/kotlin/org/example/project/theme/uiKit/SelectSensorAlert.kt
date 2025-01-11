@@ -1,12 +1,15 @@
 package org.example.project.theme.uiKit
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,6 +36,7 @@ import org.example.project.domain.model.MainAlertDialog
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.adaptive.main.MainState
 import org.example.project.screens.adaptive.main.MainViewModel
+import org.example.project.screens.tablet.sensor.SearchAvailableDevices
 import org.example.project.theme.MaxiPulsTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -45,7 +49,7 @@ internal fun SelectSensor(
 ) {
     var selectSensor by remember { mutableStateOf(alertData.sportsman.sensor) }
     MaxiAlertDialog(
-        modifier = Modifier.padding(horizontal = 20.dp).width(600.dp),
+        modifier = Modifier.padding(horizontal = 20.dp).width(600.dp).animateContentSize(),
         title = stringResource(Res.string.choose_sensor),
         paddingValues = PaddingValues(
             start = 20.dp,
@@ -72,53 +76,59 @@ internal fun SelectSensor(
         },
         paddingAfterTitle = false,
         descriptionContent = {
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth()
-                    .heightIn(min = 350.dp, max = 500.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(vertical = 40.dp),
-                verticalArrangement = Arrangement.spacedBy(13.dp)
-            ) {
-                items(state.sensors) {
-                    val alreadyExist =
-                        it in state.sportsmans.filter { it != alertData.sportsman }
-                            .map { it.sensor }
-                    val isSelect = selectSensor == it
-                    Row(
-                        modifier = Modifier.fillMaxWidth().background(
-                            color = if (isSelect) MaxiPulsTheme.colors.uiKit.grey800 else MaxiPulsTheme.colors.uiKit.grey400,
-                            shape = RoundedCornerShape(25.dp)
-                        ).clip(RoundedCornerShape(25.dp)).clickableBlank {
-                            if (it != selectSensor) {
-                                selectSensor = it
+            if (state.sensors == null) {
+                Box(modifier = Modifier.heightIn(400.dp), contentAlignment = Alignment.Center) {
+                    SearchAvailableDevices(modifier = Modifier.size(200.dp))
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth()
+                        .heightIn(min = 350.dp, max = 500.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    contentPadding = PaddingValues(vertical = 40.dp),
+                    verticalArrangement = Arrangement.spacedBy(13.dp)
+                ) {
+                    items(state.sensors) {
+                        val alreadyExist =
+                            it in state.sportsmans.filter { it != alertData.sportsman }
+                                .map { it.sensor }
+                        val isSelect = selectSensor == it
+                        Row(
+                            modifier = Modifier.fillMaxWidth().background(
+                                color = if (isSelect) MaxiPulsTheme.colors.uiKit.grey800 else MaxiPulsTheme.colors.uiKit.grey400,
+                                shape = RoundedCornerShape(25.dp)
+                            ).clip(RoundedCornerShape(25.dp)).clickableBlank {
+                                if (it != selectSensor) {
+                                    selectSensor = it
+                                }
+                            },
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "${it.deviceName} ${it.sensorId}",
+                                style = MaxiPulsTheme.typography.regular.copy(
+                                    color = MaxiPulsTheme.colors.uiKit.textColor,
+                                    fontSize = 16.sp,
+                                    lineHeight = 16.sp
+                                ),
+                                color = if (isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.textColor,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.padding(
+                                    top = 17.dp,
+                                    bottom = 17.dp,
+                                    start = 20.dp
+                                )
+                            )
+                            if (alreadyExist) {
+                                Icon(
+                                    painter = painterResource(Res.drawable.error_ic),
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(end = 20.dp),
+                                    tint = if (isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.primary
+                                )
                             }
-                        },
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "${it.deviceName} ${it.sensorId}",
-                            style = MaxiPulsTheme.typography.regular.copy(
-                                color = MaxiPulsTheme.colors.uiKit.textColor,
-                                fontSize = 16.sp,
-                                lineHeight = 16.sp
-                            ),
-                            color = if (isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.textColor,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.padding(
-                                top = 17.dp,
-                                bottom = 17.dp,
-                                start = 20.dp
-                            )
-                        )
-                        if (alreadyExist) {
-                            Icon(
-                                painter = painterResource(Res.drawable.error_ic),
-                                contentDescription = null,
-                                modifier = Modifier.padding(end = 20.dp),
-                                tint = if (isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.primary
-                            )
                         }
                     }
                 }

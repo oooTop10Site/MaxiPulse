@@ -13,7 +13,7 @@ data class MainState(
     val isStartTraining: Boolean,
     val isActiveSensor: Boolean,
     val alertDialog: MainAlertDialog?,
-    val sensors: List<SensorUI>,
+    val sensors: List<SensorUI>?,
     //mobile
     val avatar: String,
     val task: List<MainTaskUI>,
@@ -32,9 +32,7 @@ data class MainState(
             isStartTraining = false,
             isActiveSensor = false,
             alertDialog = null,
-            sensors = listOf(
-
-            ),
+            sensors = null,
             avatar = "",
             name = "Иван",
             lastname = "Иванов",

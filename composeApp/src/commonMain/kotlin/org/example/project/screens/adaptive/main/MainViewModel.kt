@@ -45,10 +45,10 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
     }
 
     fun addSensor(sensorUI: SensorUI) = intent {
-        if (sensorUI.sensorId !in state.sensors.map { it.sensorId }) {
+        if (sensorUI.sensorId !in state.sensors.orEmpty().map { it.sensorId }) {
             reduce {
                 state.copy(
-                    sensors = state.sensors + sensorUI
+                    sensors = state.sensors.orEmpty() + sensorUI
                 )
             }
         }

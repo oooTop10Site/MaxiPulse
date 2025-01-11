@@ -26,16 +26,19 @@ internal actual class ScanBluetoothSensorsManager :
     val authManager: AuthManager by inject()
     private val webSocket = PlatformSocket(Constants.BASE_SOCKET_URL, authManager.token.orEmpty())
     actual fun scanBluetoothSensors(
+        onCatch: (Throwable) -> Unit,
         onDeviceFound: (SensorUI) -> Unit,
     ) {
-        connectSocket { onDeviceFound(it) }
+        connectSocket(onCatch = onCatch, onDeviceFound = onDeviceFound)
     }
 
     actual fun stopScan(doAfter: () -> Unit) {
         webSocket.closeSocket(1000, "ЗАКРЫЛ РУЧКАМИ")
     }
 
-    fun connectSocket(onDeviceFound: (SensorUI) -> Unit) {
+    fun connectSocket(
+        onDeviceFound: (SensorUI) -> Unit, onCatch: (Throwable) -> Unit
+    ) {
         println("алоха я тут")
         webSocket.openSocket(object : PlatformSocketListener {
             override fun onFailure(t: Throwable) {
@@ -45,7 +48,7 @@ internal actual class ScanBluetoothSensorsManager :
 //                connectionAborted = true
                 CoroutineScope(Dispatchers.IO).launch {
                     delay(3000L)
-                    connectSocket(onDeviceFound)
+                    connectSocket(onDeviceFound, onCatch)
                 }
             }
 
