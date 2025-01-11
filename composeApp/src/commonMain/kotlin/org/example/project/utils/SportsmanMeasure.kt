@@ -13,14 +13,14 @@ object SportsmanMeasure {
     ): Double {
 
         println("СЧИТАЕМ ТРИМП")
-        println("chssMaxOnTraining - chssMaxOnTraining")
-        val reserveChss = (chssMaxOnTraining - chssReasting) / (chssMax - chssReasting)
+        println("chssMaxOnTraining - $chssMaxOnTraining")
+        val reserveChss = (chssMaxOnTraining - chssReasting).toDouble() / (chssMax - chssReasting).toDouble()
         val t = trainingTimeSeconds.toDouble() / 60.0
         val a = if (isMale) 0.64 else 0.86
         val b = if (isMale) 1.92 else 1.67
         val e = 2.718
         println(reserveChss)
-        println("timeMin - t")
+        println("timeMin - $t")
         return t * reserveChss * a * e.pow(reserveChss * b)
     }
 
