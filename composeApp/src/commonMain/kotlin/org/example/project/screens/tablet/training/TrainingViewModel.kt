@@ -19,20 +19,24 @@ internal class TrainingViewModel :
         println("---------------")
         println("зашли в newDataFromSportsman")
         println("state.sportsmans  - ${state.sportsmans}")
+        state.sportsmans.map {
+            println("он пидорас -> $it")
+        }
+        val newSportsmans = state.sportsmans.map { sportsman ->
+            println("sportsman.sensor?.sensorId - ${sportsman.sensor?.sensorId}")
+            println("sensorUI.sensorId  - ${sensorUI.sensorId}")
+            if (sportsman.sensor?.sensorId == sensorUI.sensorId && sportsman.isTraining) {
+                println("Нашли нащего спорстмена")
+                sportsman.copy(
+                    sensor = sensorUI.copy(
+                        heartRate = sportsman.sensor.heartRate + sensorUI.heartRate
+                    )
+                )
+            } else sportsman
+        }
         reduce {
             state.copy(
-                sportsmans = state.sportsmans.map { sportsman ->
-                    println("sportsman.sensor?.sensorId - ${sportsman.sensor?.sensorId}")
-                    println("sensorUI.sensorId  - ${sensorUI.sensorId}")
-                    if (sportsman.sensor?.sensorId == sensorUI.sensorId && sportsman.isTraining) {
-                        println("Нашли нащего спорстмена")
-                        sportsman.copy(
-                            sensor = sensorUI.copy(
-                                heartRate = sportsman.sensor.heartRate + sensorUI.heartRate
-                            )
-                        )
-                    } else sportsman
-                }
+                sportsmans = newSportsmans
             )
         }
     }
