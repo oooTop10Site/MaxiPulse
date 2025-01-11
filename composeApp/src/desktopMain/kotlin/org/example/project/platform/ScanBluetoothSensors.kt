@@ -12,7 +12,7 @@ internal actual class ScanBluetoothSensorsManager :
 
     }
 
-    actual fun stopScan() {
+    actual fun stopScan(doAfter: () -> Unit) {
 
     }
 }

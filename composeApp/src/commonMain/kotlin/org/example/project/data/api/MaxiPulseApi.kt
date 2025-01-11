@@ -80,4 +80,7 @@ interface MaxiPulseApi {
     @GET("api/sensor")
     suspend fun getSensor(): BaseResponse<List<SensorPreviewResponse>>
 
+    @POST("api/sensor")
+    suspend fun addSensor(@Body request: SensorPreviewResponse): Unit
+
 }
