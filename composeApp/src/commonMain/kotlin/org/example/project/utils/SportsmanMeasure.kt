@@ -11,6 +11,9 @@ object SportsmanMeasure {
         chssMaxOnTraining: Int,
         chssMax: Int
     ): Double {
+
+        println("СЧИТАЕМ ТРИМП")
+        println("chssMaxOnTraining - chssMaxOnTraining")
         val reserveChss = (chssMaxOnTraining - chssReasting) / (chssMax - chssReasting)
         val t = trainingTimeSeconds.toDouble() / 60.0
         val a = if (isMale) 0.64 else 0.86
