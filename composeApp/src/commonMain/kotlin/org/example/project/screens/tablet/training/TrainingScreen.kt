@@ -149,9 +149,6 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
             }
         }
         LaunchedEffect(state.isStart) {
-            if (state.isStart) {
-
-            }
             launch() {
                 while (state.isStart) {
                     delay(999L)
@@ -647,8 +644,8 @@ private fun ChssSportsmanItem(
                 )
                 Text(
                     text = "${
-                        (230 / sportsmanUI.sensor?.heartRate.orEmpty().max(0)
-                            .toFloat() * 100).roundToInt()
+                        ((sportsmanUI.sensor?.heartRate.orEmpty().max(0)
+                            .toFloat()/hmax) * 100).roundToInt()
                     }%",
                     style = MaxiPulsTheme.typography.semiBold.copy(
                         fontSize = 20.sp,
