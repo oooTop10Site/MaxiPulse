@@ -18,27 +18,22 @@ internal class TrainingViewModel :
     fun newDataFromSportsman(sensorUI: SensorUI, sportsmans: List<SportsmanSensorUI>) = intent {
         println("---------------")
         println("зашли в newDataFromSportsman")
-        if (state.sportsmans.isEmpty()) {
-            reduce {
-                state.copy(sportsmans = sportsmans)
-            }
-        } else {}.apply {
-            reduce {
-                state.copy(
-                    sportsmans = state.sportsmans.map { sportsman ->
-                        println("sportsman.sensor?.sensorId - ${sportsman.sensor?.sensorId}")
-                        println("sensorUI.sensorId  - ${sensorUI.sensorId}")
-                        if (sportsman.sensor?.sensorId == sensorUI.sensorId && sportsman.isTraining) {
-                            println("Нашли нащего спорстмена")
-                            sportsman.copy(
-                                sensor = sensorUI.copy(
-                                    heartRate = sportsman.sensor.heartRate + sensorUI.heartRate
-                                )
+        println("state.sportsmans  - ${state.sportsmans}")
+        reduce {
+            state.copy(
+                sportsmans = state.sportsmans.map { sportsman ->
+                    println("sportsman.sensor?.sensorId - ${sportsman.sensor?.sensorId}")
+                    println("sensorUI.sensorId  - ${sensorUI.sensorId}")
+                    if (sportsman.sensor?.sensorId == sensorUI.sensorId && sportsman.isTraining) {
+                        println("Нашли нащего спорстмена")
+                        sportsman.copy(
+                            sensor = sensorUI.copy(
+                                heartRate = sportsman.sensor.heartRate + sensorUI.heartRate
                             )
-                        } else sportsman
-                    }
-                )
-            }
+                        )
+                    } else sportsman
+                }
+            )
         }
     }
 

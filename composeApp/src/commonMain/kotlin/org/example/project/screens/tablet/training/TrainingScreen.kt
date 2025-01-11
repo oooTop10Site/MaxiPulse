@@ -133,6 +133,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
             }
         }
         LaunchedEffect(viewModel) {
+            viewModel.loadSportsman(sportsmans)
             if (viewModel.permissionService.checkPermission(Permission.BLUETOOTH_CONNECT)
                     .granted()
             ) {
@@ -578,7 +579,10 @@ private fun SportsmanContent(
                 color = MaxiPulsTheme.colors.uiKit.divider
             )
 
-            HeartRateGraph(modifier = Modifier.weight(1f), heartRateData = sportsmanUI.sensor?.heartRate.orEmpty())
+            HeartRateGraph(
+                modifier = Modifier.weight(1f),
+                heartRateData = sportsmanUI.sensor?.heartRate.orEmpty()
+            )
 
         }
     }
@@ -595,7 +599,7 @@ private fun ChssSportsmanItem(
     val hmin = 0
     Box(
         modifier.background(
-            color =    Color(0xFF3B6ECF),
+            color = Color(0xFF3B6ECF),
             shape = RoundedCornerShape(25.dp)
         ).clip(RoundedCornerShape(25.dp)).clickableBlank { onClick() }
     ) {
@@ -614,11 +618,12 @@ private fun ChssSportsmanItem(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.toString().orEmpty(),
+                    text = sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.toString()
+                        .orEmpty(),
                     style = MaxiPulsTheme.typography.bold.copy(
                         fontSize = 32.sp,
                         lineHeight = 32.sp,
-                        color =    Color(0xFF3B6ECF)
+                        color = Color(0xFF3B6ECF)
                     ),
                     maxLines = 1,
                     modifier = Modifier
@@ -709,7 +714,7 @@ private fun TrimpSportsmanItem(
     val hmin = sportsmanUI.heartRateMin
     Box(
         modifier.background(
-            color =    Color(0xFF3B6ECF),
+            color = Color(0xFF3B6ECF),
             shape = RoundedCornerShape(25.dp)
         ).clip(RoundedCornerShape(25.dp)).clickableBlank { onClick() }
     ) {
@@ -765,7 +770,8 @@ private fun TrimpSportsmanItem(
                     textAlign = TextAlign.Center,
                 )
                 Text(
-                    text = sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.toString().orEmpty(),
+                    text = sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.toString()
+                        .orEmpty(),
                     style = MaxiPulsTheme.typography.semiBold.copy(
                         fontSize = 20.sp,
                         lineHeight = 20.sp,
@@ -794,10 +800,11 @@ private fun TrimpSportsmanItem(
                 ) {
                     Box(
                         modifier = Modifier.fillMaxHeight().fillMaxWidth(
-                            sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull().orEmpty().toFloat() / hmax.toFloat()
+                            sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull().orEmpty()
+                                .toFloat() / hmax.toFloat()
                         )
                             .background(
-                                color =    Color(0xFF3B6ECF),
+                                color = Color(0xFF3B6ECF),
                                 shape = RoundedCornerShape(10.dp)
                             ).clip(RoundedCornerShape(10.dp))
                     )
@@ -813,7 +820,7 @@ private fun TrimpSportsmanItem(
                         style = MaxiPulsTheme.typography.bold.copy(
                             fontSize = 20.sp,
                             lineHeight = 20.sp,
-                            color =   Color(0xFF3B6ECF)
+                            color = Color(0xFF3B6ECF)
                         ),
                         maxLines = 1,
                         textAlign = TextAlign.Center,
@@ -823,7 +830,7 @@ private fun TrimpSportsmanItem(
                         style = MaxiPulsTheme.typography.semiBold.copy(
                             fontSize = 14.sp,
                             lineHeight = 14.sp,
-                            color =    Color(0xFF3B6ECF)
+                            color = Color(0xFF3B6ECF)
                         ),
                         maxLines = 1,
                         textAlign = TextAlign.Center,
