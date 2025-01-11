@@ -406,16 +406,10 @@ class MobileTrainingScreen : Screen, KoinComponent {
             targetValue = animationTarget,
             animationSpec = tween(durationMillis = 3000) // Длительность анимации
         )
-        println("devices в SearchSensor - $devices")
         LaunchedEffect(Unit) {
-            animationTarget = 0.7f
-        }
-        LaunchedEffect(devices) {
-            if (devices.isNotEmpty()) {
-                animationTarget = 1f
-                delay(1000L)
-                onSuccess()
-            }
+            animationTarget = 1f
+            delay(3000L)
+            onSuccess()
         }
         MaxiAlertDialog(
             modifier = Modifier.fillMaxWidth().height(404.dp)
