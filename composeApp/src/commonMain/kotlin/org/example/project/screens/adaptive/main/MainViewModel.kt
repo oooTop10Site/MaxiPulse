@@ -70,7 +70,7 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
         }
     }
 
-    fun startTraining(testUI: TestUI?, checkCond: Boolean = true,) = intent {
+    fun startTraining(testUI: TestUI?, checkCond: Boolean = true) = intent {
         val alertDialog = when {
             state.sportsmans.find { it.sensor == null && it.id in state.selectSportsmans } != null -> MainAlertDialog.PlayerWithNoActiveSensor
             else -> null
@@ -96,7 +96,9 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
                 }
 
                 null -> {
-                    postSideEffect(MainEvent.Training)
+                    println("state.sportsmans - ${state.sportsmans}")
+                    println("state.selectSportsmans - ${state.selectSportsmans}")
+                    postSideEffect(MainEvent.Training(sportsmans = state.sportsmans.filter { it.id in state.selectSportsmans }))
                 }
             }
         }

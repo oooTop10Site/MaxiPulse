@@ -169,7 +169,7 @@ internal fun KoinComponent.MainDesktopContent(
                     when (it) {
                         MainEvent.ShuttleRun -> rootNavigator.push(ShuttleRunScreen())
                         MainEvent.ReadiesForUpload -> rootNavigator.push(ReadiesForUploadScreen())
-                        MainEvent.Training -> rootNavigator.push(TrainingScreen(state.sportsmans.filter { it.id in state.selectSportsmans }))
+                        is MainEvent.Training -> rootNavigator.push(TrainingScreen(it.sportsmans))
                     }
                 }
             }
