@@ -5,6 +5,8 @@ import org.example.project.domain.model.MainAlertDialog
 import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.domain.model.sportsman.SportsmanSensorUI
 import org.example.project.domain.model.test.TestUI
+import org.example.project.domain.repository.GamerRepository
+import org.example.project.ext.toSensorUI
 import org.example.project.platform.BaseScreenModel
 import org.koin.core.component.inject
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -16,6 +18,7 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.InitState) {
 
     val observerManager: MessageObserverManager by inject()
+    val sportsmanRepository: GamerRepository by inject()
 
     @OptIn(OrbitExperimental::class)
     fun changeSearch(value: String) = blockingIntent {
@@ -24,6 +27,21 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
                 search = value
             )
         }
+    }
+
+    fun loadSportsman() = intent {
+        launchOperation(
+            operation = {
+                sportsmanRepository.getGamers()
+            },
+            success = {
+                reduceLocal {
+                    state.copy(
+                        sportsmans = it.map { it.toSensorUI() }
+                    )
+                }
+            }
+        )
     }
 
     fun addSensor(sensorUI: SensorUI) = intent {
@@ -62,14 +80,16 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
                 alertDialog = alertDialog
             )
         }
-        if(alertDialog == null) {
-            when(testUI) {
+        if (alertDialog == null) {
+            when (testUI) {
                 is TestUI.ReadiesForUpload -> {
                     postSideEffect(MainEvent.ReadiesForUpload)
                 }
+
                 is TestUI.ShuttleRun -> {
                     postSideEffect(MainEvent.ShuttleRun)
                 }
+
                 null -> {
                     postSideEffect(MainEvent.Training)
                 }

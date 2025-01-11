@@ -163,6 +163,7 @@ internal fun KoinComponent.MainDesktopContent(
         }
 
         LaunchedEffect(viewModel) {
+            viewModel.loadSportsman()
             launch {
                 viewModel.container.sideEffectFlow.collect {
                     when (it) {

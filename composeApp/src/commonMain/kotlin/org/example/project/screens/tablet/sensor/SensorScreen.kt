@@ -47,6 +47,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import maxipuls.composeapp.generated.resources.accessed_devices
+import maxipuls.composeapp.generated.resources.add_ic
 import maxipuls.composeapp.generated.resources.add_round_ic
 import maxipuls.composeapp.generated.resources.close_solid_ic
 import maxipuls.composeapp.generated.resources.indicator_ic
@@ -174,7 +175,7 @@ class SensorScreen : Screen {
                                     sensorUI = it,
                                     icon = {
                                         Icon(
-                                            painter = painterResource(Res.drawable.add_round_ic),
+                                            painter = painterResource(Res.drawable.add_ic),
                                             contentDescription = null,
                                             tint = MaxiPulsTheme.colors.uiKit.primary,
                                             modifier = Modifier.clickableBlank() {

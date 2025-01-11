@@ -3,8 +3,8 @@ package org.example.project.domain.model.sportsman
 import cafe.adriel.voyager.core.lifecycle.JavaSerializable
 
 data class SensorUI(
-    val companyId: UShort = 0u,
-    val runningCounter: UInt = 0u,
+    val companyId: Int = 0,
+    val runningCounter: Int = 0,
     val battery: Int = 0,
     val acc: Float = 0f,
     val heartRate: List<Int> = emptyList(),
@@ -15,8 +15,8 @@ data class SensorUI(
 ): JavaSerializable {
     companion object {
         val Empty = SensorUI(
-            0u,
-            0u,
+            0,
+            0,
             0,
             0f,
             emptyList(),
