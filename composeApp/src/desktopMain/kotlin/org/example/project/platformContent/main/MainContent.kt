@@ -94,6 +94,7 @@ import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.theme.uiKit.MaxiPageContainer
 import org.example.project.theme.uiKit.MaxiSwitch
+import org.example.project.theme.uiKit.SelectSensor
 import org.example.project.utils.Constants
 import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
@@ -415,88 +416,7 @@ internal actual fun KoinComponent.MainContent(
             }
 
             is MainAlertDialog.SelectSensor -> {
-                var selectSensor by remember { mutableStateOf(alertData.sportsman.sensor) }
-                MaxiAlertDialog(
-                    modifier = Modifier.padding(horizontal = 20.dp).width(600.dp),
-                    title = stringResource(Res.string.choose_sensor),
-                    paddingValues = PaddingValues(
-                        start = 20.dp,
-                        end = 20.dp,
-                        top = 30.dp,
-                        bottom = 40.dp
-                    ),
-                    paddingValuesButton = PaddingValues(
-                        horizontal = 20.dp
-                    ),
-                    accept = {
-                        selectSensor?.let {
-                            viewModel.changeSensorValidation(
-                                it,
-                                alertData.sportsman.id
-                            )
-                        }
-                    },
-                    acceptText = stringResource(Res.string.ok),
-                    cancelText = stringResource(Res.string.cancel),
-                    alertDialogButtons = MaxiAlertDialogButtons.CancelAccept,
-                    onDismiss = {
-                        viewModel.changeAlertDialog(null)
-                    },
-                    paddingAfterTitle = false,
-                    descriptionContent = {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxWidth()
-                                .heightIn(min = 350.dp, max = 500.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            contentPadding = PaddingValues(vertical = 40.dp),
-                            verticalArrangement = Arrangement.spacedBy(13.dp)
-                        ) {
-                            items(state.sensors) {
-                                val alreadyExist =
-                                    it in state.sportsmans.filter { it != alertData.sportsman }
-                                        .map { it.sensor }
-                                val isSelect = selectSensor == it
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().background(
-                                        color = if (isSelect) MaxiPulsTheme.colors.uiKit.grey800 else MaxiPulsTheme.colors.uiKit.grey400,
-                                        shape = RoundedCornerShape(25.dp)
-                                    ).clip(RoundedCornerShape(25.dp)).clickableBlank {
-                                        if (it != selectSensor) {
-                                            selectSensor = it
-                                        }
-                                    },
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Text(
-                                        text = "${it.deviceName} ${it.sensorId}",
-                                        style = MaxiPulsTheme.typography.regular.copy(
-                                            color = MaxiPulsTheme.colors.uiKit.textColor,
-                                            fontSize = 16.sp,
-                                            lineHeight = 16.sp
-                                        ),
-                                        color = if (isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.textColor,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        modifier = Modifier.padding(
-                                            top = 17.dp,
-                                            bottom = 17.dp,
-                                            start = 20.dp
-                                        )
-                                    )
-                                    if (alreadyExist) {
-                                        Icon(
-                                            painter = painterResource(Res.drawable.error_ic),
-                                            contentDescription = null,
-                                            modifier = Modifier.padding(end = 20.dp),
-                                            tint = if (isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.primary
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    },
-                )
+                SelectSensor(viewModel, state = state, alertData)
             }
 
             is MainAlertDialog.SensorAlreadyAssigned -> {

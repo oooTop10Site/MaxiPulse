@@ -26,6 +26,7 @@ fun SensorResponse.toSensorUI(): SensorUI {
         acc = acc?.toFloat().orEmpty(),
         rr = rateInterval.orEmpty(),
         sensorId = deviceAddress.orEmpty(),
+        heartRate = listOf(heartRate.orEmpty()),
         status = SensorStatus.Active //todo
     )
 }
