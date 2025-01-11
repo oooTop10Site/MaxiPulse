@@ -21,7 +21,7 @@ fun SensorResponse.toSensorUI(): SensorUI {
     return SensorUI(
         companyId = companyId.orEmpty(),
         runningCounter = runningCounter.orEmpty(),
-        battery = battery?.toIntOrNull().orEmpty(),
+        battery = battery.orEmpty(),
         deviceName = deviceName.orEmpty(),
         acc = acc?.toFloat().orEmpty(),
         rr = rateInterval.orEmpty(),
