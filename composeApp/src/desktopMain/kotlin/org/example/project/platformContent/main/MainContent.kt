@@ -110,11 +110,6 @@ internal actual fun KoinComponent.MainContent(
     testUI: TestUI?
 ) {
     val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
-    DisposableEffect(Unit) {
-        onDispose {
-            scanBluetoothSensorsManager.stopScan() {}
-        }
-    }
     LaunchedEffect(state.alertDialog) {
         if (state.alertDialog is MainAlertDialog.SelectSensor) {
             scanBluetoothSensorsManager.scanBluetoothSensors {
@@ -148,7 +143,6 @@ internal actual fun KoinComponent.MainContent(
                         MainEvent.ShuttleRun -> rootNavigator.push(ShuttleRunScreen())
                         MainEvent.ReadiesForUpload -> rootNavigator.push(ReadiesForUploadScreen())
                         is MainEvent.Training -> {
-                            scanBluetoothSensorsManager.stopScan() {}
                             rootNavigator.push(TrainingScreen(it.sportsmans))
                         }
                     }
