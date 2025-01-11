@@ -146,7 +146,7 @@ internal actual fun KoinComponent.MainContent(
                     when (it) {
                         MainEvent.ShuttleRun -> rootNavigator.push(ShuttleRunScreen())
                         MainEvent.ReadiesForUpload -> rootNavigator.push(ReadiesForUploadScreen())
-                        MainEvent.Training -> rootNavigator.push(TrainingScreen())
+                        MainEvent.Training -> rootNavigator.push(TrainingScreen(state.sportsmans.filter { it.id in state.selectSportsmans }))
                     }
                 }
             }
