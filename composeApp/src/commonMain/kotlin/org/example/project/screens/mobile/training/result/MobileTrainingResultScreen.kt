@@ -40,6 +40,7 @@ import maxipuls.composeapp.generated.resources.trimp
 import maxipuls.composeapp.generated.resources.zone_number
 import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.domain.model.training.TrainingUI
+import org.example.project.ext.max
 import org.example.project.ext.secondsToUI
 import org.example.project.screens.adaptive.root.RootNavigator
 import org.example.project.screens.mobile.borgScale.MobileBackIcon
@@ -48,6 +49,7 @@ import org.example.project.theme.uiKit.ButtonTextStyle
 import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiPageContainerMobile
 import org.example.project.theme.uiKit.TopBarMobile
+import org.example.project.utils.SportsmanMeasure
 import org.example.project.utils.safeAreaHorizontal
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -133,6 +135,16 @@ class MobileTrainingResultScreen(private val trainingUI: TrainingUI) : Screen {
                     ResultItem(
                         title = Res.string.chss_minimum,
                         value = trainingUI.sensorUI.heartRate.min().toString()
+                    )
+                    ResultItem(
+                        title = Res.string.trimp,
+                        value = SportsmanMeasure.trimp(
+                            isMale = true,
+                            trainingTimeSeconds = trainingUI.duration,
+                            chssReasting = 50,
+                            chssMaxOnTraining = trainingUI.sensorUI.heartRate.max(default = 0),
+                            chssMax = 220
+                        ).toString()
                     )
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)

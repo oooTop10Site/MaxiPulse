@@ -520,7 +520,7 @@ class MobileTrainingScreen : Screen, KoinComponent {
                     }
                 }
 
-                Spacer(Modifier.size(10.dp))
+                Spacer(Modifier.size(20.dp))
                 Row(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)

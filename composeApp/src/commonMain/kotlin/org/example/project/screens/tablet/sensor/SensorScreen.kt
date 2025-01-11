@@ -161,7 +161,10 @@ class SensorScreen : Screen {
                     Spacer(Modifier.size(5.dp))
                     if (state.isLoading) {
                         Box(contentAlignment = Alignment.Center, modifier = Modifier.weight(1f)) {
-                            SearchAvailableDevices(modifier = Modifier.fillMaxSize())
+                            SearchAvailableDevices(
+                                modifier = Modifier.fillMaxSize(),
+                                showText = false
+                            )
                         }
                     } else {
                         LazyColumn(
@@ -271,7 +274,7 @@ internal fun SensorPreviewCard(
 }
 
 @Composable
-fun SearchAvailableDevices(modifier: Modifier = Modifier) {
+fun SearchAvailableDevices(modifier: Modifier = Modifier, showText: Boolean = true) {
     val infiniteTransition = rememberInfiniteTransition()
 
     // Creates a child animation of float type as a part of the [InfiniteTransition].
@@ -297,16 +300,18 @@ fun SearchAvailableDevices(modifier: Modifier = Modifier) {
 
             }.rotate(rotate),
         )
-        Spacer(Modifier.size(20.dp))
-        Text(
-            text = stringResource(Res.string.search_available_devices),
-            style = MaxiPulsTheme.typography.bold.copy(
-                color = MaxiPulsTheme.colors.uiKit.textDropDown,
-                fontSize = 40.sp,
-                lineHeight = 40.sp
-            ),
-            modifier = Modifier.width(400.dp),
-            textAlign = TextAlign.Center
-        )
+        if (showText) {
+            Spacer(Modifier.size(20.dp))
+            Text(
+                text = stringResource(Res.string.search_available_devices),
+                style = MaxiPulsTheme.typography.bold.copy(
+                    color = MaxiPulsTheme.colors.uiKit.textDropDown,
+                    fontSize = 40.sp,
+                    lineHeight = 40.sp
+                ),
+                modifier = Modifier.width(400.dp),
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
