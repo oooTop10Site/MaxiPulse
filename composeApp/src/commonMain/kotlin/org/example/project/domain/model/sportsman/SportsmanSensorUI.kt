@@ -14,7 +14,7 @@ data class SportsmanSensorUI(
     val age: Int,
     val heartRateMax: Int = 230,
     val heartRateMin: Int = 0,
-    val isTraining: Boolean = false,
+    val isTraining: Boolean = true,
 ) : JavaSerializable {
 
     val zone1: Long
