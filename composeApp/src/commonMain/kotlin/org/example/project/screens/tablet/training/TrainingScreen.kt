@@ -128,7 +128,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
                 println("СТАРТУУУУЕМММ")
                 viewModel.scanBluetoothSensorsManager.scanBluetoothSensors {
                     println("device - $it")
-                    viewModel.newDataFromSportsman(it)
+                    viewModel.newDataFromSportsman(it, sportsmans)
                 }
             }
         }
@@ -141,7 +141,6 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
                 sensorPermission = true
                 viewModel.permissionService.providePermission(Permission.BLUETOOTH_CONNECT)
             }
-            viewModel.loadSportsman(sportsmans)
             viewModel.container.sideEffectFlow.collect {
                 when (it) {
                     TrainingEvent.StopTraining -> navigator.push(TrainingResultScreen())
