@@ -161,12 +161,12 @@ class MobileTrainingResultScreen(private val trainingUI: TrainingUI) : Screen {
                     modifier = Modifier
                 )
                 Spacer(Modifier.size(10.dp))
-                val zonesDuration = listOf<Pair<Color, Int>>(
-                    Pair(Color(0xFFD6D8F1).copy(alpha = 0.5f), 15),
-                    Pair(Color(0xFF9CACDF).copy(alpha = 0.5f), 35),
-                    Pair(Color(0xFF9ED759).copy(alpha = 0.5f), 22),
-                    Pair(Color(0xFFFFBF6B).copy(alpha = 0.5f), 11),
-                    Pair(Color(0xFFE74870).copy(alpha = 0.5f), 141)
+                val zonesDuration = listOf<Pair<Color, Long>>(
+                    Pair(Color(0xFFD6D8F1).copy(alpha = 0.5f), trainingUI.zone1),
+                    Pair(Color(0xFF9CACDF).copy(alpha = 0.5f), trainingUI.zone2),
+                    Pair(Color(0xFF9ED759).copy(alpha = 0.5f), trainingUI.zone3),
+                    Pair(Color(0xFFFFBF6B).copy(alpha = 0.5f), trainingUI.zone4),
+                    Pair(Color(0xFFE74870).copy(alpha = 0.5f), trainingUI.zone5)
                 )
                 zonesDuration.forEachIndexed { index, item ->
                     Row(

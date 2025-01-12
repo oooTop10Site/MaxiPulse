@@ -192,11 +192,11 @@ internal fun SportsmanTraininResultContent(
                 )
                 zoneColors.forEachIndexed { index, item ->
                     val duration = when (index + 1) {
-                        1 -> sportsmanTrainingResultUI.zone1
-                        2 -> sportsmanTrainingResultUI.zone2
+                        1 -> sportsmanTrainingResultUI.zone5
+                        2 -> sportsmanTrainingResultUI.zone4
                         3 -> sportsmanTrainingResultUI.zone3
-                        4 -> sportsmanTrainingResultUI.zone4
-                        5 -> sportsmanTrainingResultUI.zone5
+                        4 -> sportsmanTrainingResultUI.zone2
+                        5 -> sportsmanTrainingResultUI.zone1
                         else -> sportsmanTrainingResultUI.zone1
                     }
                     Row(
