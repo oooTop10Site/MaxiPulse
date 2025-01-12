@@ -8,4 +8,5 @@ object Constants {
     const val BASE_SOCKET_URL = "ws://192.168.0.110:8000/ws"
     val TextFieldHeight = 44.dp
     const val MAX_TRAINING_INTENSITY = 200
+    const val IsDataSocketFromSensor = true
 }
