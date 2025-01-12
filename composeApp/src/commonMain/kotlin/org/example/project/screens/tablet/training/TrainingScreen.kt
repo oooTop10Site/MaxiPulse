@@ -119,6 +119,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
             viewModel.newDataFromSportsman(it, sportsmans)
         }
         LaunchedEffect(viewModel) {
+            viewModel.loadSportsman(sportsmans)
             viewModel.container.sideEffectFlow.collect {
                 when (it) {
                     is TrainingEvent.StopTraining -> navigator.push(TrainingResultScreen(it.sportsmans))
