@@ -35,12 +35,14 @@ import maxipuls.composeapp.generated.resources.chss
 import maxipuls.composeapp.generated.resources.chss_avg
 import maxipuls.composeapp.generated.resources.chss_min
 import maxipuls.composeapp.generated.resources.chss_peak
+import maxipuls.composeapp.generated.resources.duration
 import maxipuls.composeapp.generated.resources.kcal
 import maxipuls.composeapp.generated.resources.profile
 import maxipuls.composeapp.generated.resources.training
 import maxipuls.composeapp.generated.resources.trimp
 import org.example.project.domain.model.sportsman.SportsmanTrainingResultUI
 import org.example.project.ext.secondsToUI
+import org.example.project.ext.toTimeUI
 import org.example.project.screens.tablet.training.trainingResult.TrainingResultState
 import org.example.project.screens.tablet.training.trainingResult.TrainingResultViewModel
 import org.example.project.theme.MaxiPulsTheme
@@ -65,7 +67,7 @@ internal fun SportsmanTraininResultContent(
             showCurrentTime = true
         )
         Text(
-            text = "Продолжительность: 00:34:02",
+            text = "${stringResource(Res.string.duration)}: ${sportsmanTrainingResultUI.timeTrainingSeconds.secondsToUI()}",
             style = MaxiPulsTheme.typography.regular.copy(
                 color = MaxiPulsTheme.colors.uiKit.textColor,
                 fontSize = 14.sp,

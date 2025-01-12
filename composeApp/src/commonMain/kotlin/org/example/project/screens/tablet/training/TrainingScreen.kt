@@ -615,7 +615,7 @@ private fun ChssSportsmanItem(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.toString()
+                    text = sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.value.toString()
                         .orEmpty(),
                     style = MaxiPulsTheme.typography.bold.copy(
                         fontSize = 32.sp,

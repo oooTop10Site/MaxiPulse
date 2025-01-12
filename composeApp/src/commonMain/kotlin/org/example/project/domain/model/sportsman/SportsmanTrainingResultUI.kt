@@ -1,5 +1,7 @@
 package org.example.project.domain.model.sportsman
 
+import org.example.project.utils.orEmpty
+
 data class SportsmanTrainingResultUI(
     val id: String,
     val number: Int,
@@ -21,6 +23,12 @@ data class SportsmanTrainingResultUI(
     val zone5: Long, // seconds
     val heartRate: List<HeartBit>
 ) {
+
+    val timeTrainingSeconds: Long
+        get() = (if (heartRate.size >= 2) {
+            heartRate.lastOrNull()?.mills.orEmpty() - heartRate.firstOrNull()?.mills.orEmpty()
+        } else 0) / 1000
+
     val fio: String
         get() = "$lastname $firstname $middleName"
 }

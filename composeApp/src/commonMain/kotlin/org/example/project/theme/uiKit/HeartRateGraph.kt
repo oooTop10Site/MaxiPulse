@@ -44,12 +44,12 @@ fun HeartRateGraph(
     val maxValue = 230f
     val zones = listOf(
         0f to 60f,        // Голубая зона
-        60f to 165f,      // Синяя зона
-        165f to 187f,      // Зеленая зона
-        187f to 198f,      // Оранжевая зона
-        198f to maxValue   // Красная зона
+        60f to 80f,      // Синяя зона
+        80f to 95f,      // Зеленая зона
+        95f to 130f,      // Оранжевая зона
+        130f to maxValue   // Красная зона
     )
-
+//todo
     val zoneColors = listOf(
         Color(0xFFAEC6F3), // Голубая
         Color(0xFF3B6ECF), // Синяя
@@ -152,7 +152,7 @@ fun HeartRateGraph(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 heartRateData.getEvenlyDistributedMills(5).forEach {
-                    Text(text = it.secondsToUI(), style = textStyle)
+                    Text(text = (it/1000).secondsToUI(), style = textStyle)
                 }
             }
         }
