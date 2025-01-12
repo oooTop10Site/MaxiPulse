@@ -54,6 +54,7 @@ internal actual class ScanBluetoothSensorsManager :
                 println("РАЗРЕШЕНИЕ - ${it.granted()}")
                 if (it.granted()) {
                     if (sensorPermission) {
+                        println("SensorShow - true")
                         sensorShow = true
                     }
                 }
@@ -62,12 +63,14 @@ internal actual class ScanBluetoothSensorsManager :
             if (permissionService.checkPermission(Permission.BLUETOOTH_CONNECT)
                     .granted()
             ) {
+                println("SensorShow - true")
                 sensorShow = true
             } else {
                 sensorPermission = true
                 permissionService.providePermission(Permission.BLUETOOTH_CONNECT)
             }
         }
+        println("SensorShowVAR - $sensorShow")
         if (sensorShow) {
             if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
                 stopScan { }
