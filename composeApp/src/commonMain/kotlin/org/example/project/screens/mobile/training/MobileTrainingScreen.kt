@@ -124,6 +124,7 @@ class MobileTrainingScreen : Screen, KoinComponent {
         }
         if (state.currentTraining.sensorUI != SensorUI.Empty && !startObserve) {
             startObserve = true
+            println("МЫ В - ${state.currentTraining.sensorUI != SensorUI.Empty && !startObserve}")
             scanBluetoothSensorsManager.scanBluetoothSensors {
                 println("SCANDEVICE новый инстанс - $it")
                 println("id текущего инстанса - ${it.sensorId}")
