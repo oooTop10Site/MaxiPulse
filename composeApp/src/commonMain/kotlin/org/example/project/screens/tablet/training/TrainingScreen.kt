@@ -114,12 +114,9 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
 
         val state by viewModel.stateFlow.collectAsState()
         val navigator = RootNavigator.currentOrThrow
-        LaunchedEffect(Unit) {
-            println("СТАРТУУУУЕМММ")
-            viewModel.scanBluetoothSensorsManager.scanBluetoothSensors {
-                println("DEVICE - $it")
-                viewModel.newDataFromSportsman(it, sportsmans)
-            }
+        viewModel.scanBluetoothSensorsManager.scanBluetoothSensors {
+            println("DEVICE - $it")
+            viewModel.newDataFromSportsman(it, sportsmans)
         }
         LaunchedEffect(viewModel) {
             viewModel.container.sideEffectFlow.collect {

@@ -1,5 +1,6 @@
 package org.example.project.platform
 
+import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.model.screenModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +27,8 @@ internal actual class ScanBluetoothSensorsManager :
     KoinComponent {
     val authManager: AuthManager by inject()
     private val webSocket = PlatformSocket(Constants.BASE_SOCKET_URL, authManager.token.orEmpty())
+
+    @Composable
     actual fun scanBluetoothSensors(
         onCatch: (Throwable) -> Unit,
         onDeviceFound: (SensorUI) -> Unit,

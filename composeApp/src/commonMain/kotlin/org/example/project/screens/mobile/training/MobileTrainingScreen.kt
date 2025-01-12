@@ -122,18 +122,13 @@ class MobileTrainingScreen : Screen, KoinComponent {
                 viewModel.incrementTime()
             }
         }
-        LaunchedEffect(state.currentTraining.sensorUI) {
-            if (state.currentTraining.sensorUI != SensorUI.Empty && !startObserve) {
-                startObserve = true
-                println("ТЕПЕРЬ БУДЕТ МЯСО")
-                launch() {
-                    scanBluetoothSensorsManager.scanBluetoothSensors {
-                        println("SCANDEVICE новый инстанс - $it")
-                        println("id текущего инстанса - ${it.sensorId}")
-                        if (it.sensorId == state.currentTraining.sensorUI.sensorId) {
-                            viewModel.changeSelectSensor(it)
-                        }
-                    }
+        if (state.currentTraining.sensorUI != SensorUI.Empty && !startObserve) {
+            startObserve = true
+            scanBluetoothSensorsManager.scanBluetoothSensors {
+                println("SCANDEVICE новый инстанс - $it")
+                println("id текущего инстанса - ${it.sensorId}")
+                if (it.sensorId == state.currentTraining.sensorUI.sensorId) {
+                    viewModel.changeSelectSensor(it)
                 }
             }
         }
@@ -229,12 +224,10 @@ class MobileTrainingScreen : Screen, KoinComponent {
     ) {
         val devices = remember { mutableStateListOf<SensorUI>() }
         var state by remember { mutableStateOf(SelectSensorAlertDialogStep.SelectTypeSensor) }
-        LaunchedEffect(Unit) {
-            scanBluetoothSensorsManager.scanBluetoothSensors {
-                println("device - $it")
-                if (it.sensorId !in devices.map { it.sensorId }) {
-                    devices.add(it)
-                }
+        scanBluetoothSensorsManager.scanBluetoothSensors {
+            println("device - $it")
+            if (it.sensorId !in devices.map { it.sensorId }) {
+                devices.add(it)
             }
         }
         when (state) {
