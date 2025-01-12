@@ -17,7 +17,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import org.example.project.di.KoinInjector
 import org.example.project.domain.model.sportsman.HeartBit
@@ -71,6 +73,17 @@ internal actual class ScanBluetoothSensorsManager :
             }
         }
         println("SensorShowVAR - $sensorShow")
+        var time = 0
+        while (!sensorShow) {
+            runBlocking {
+                delay(500L)
+            }
+            time += 1
+            if(time == 30) {
+                println("МНЕ ЭТОТ МИР АБСОЛЮТНО ПОНЯТЕН - $time")
+                return
+            }
+        }
         if (sensorShow) {
             if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
                 stopScan { }
