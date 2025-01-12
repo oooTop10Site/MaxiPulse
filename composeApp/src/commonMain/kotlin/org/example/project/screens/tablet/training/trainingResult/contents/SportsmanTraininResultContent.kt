@@ -309,7 +309,7 @@ internal fun SportsmanTraininResultContent(
         HeartRateGraph(
             modifier = Modifier.weight(1f).padding(bottom = 20.dp, start = 20.dp, end = 20.dp)
                 .fillMaxWidth(),
-            heartRateData = sportsmanTrainingResultUI.heartRate.map { it.value },
+            heartRateData = sportsmanTrainingResultUI.heartRate,
             showTime = true
         )
     }

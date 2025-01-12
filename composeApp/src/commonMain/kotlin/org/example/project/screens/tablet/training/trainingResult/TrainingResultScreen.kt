@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
@@ -50,6 +51,7 @@ import maxipuls.composeapp.generated.resources.profile
 import maxipuls.composeapp.generated.resources.share
 import maxipuls.composeapp.generated.resources.zip
 import org.example.project.domain.model.TrainingResultTab.*
+import org.example.project.domain.model.sportsman.SportsmanSensorUI
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.adaptive.root.RootNavigator
 import org.example.project.screens.adaptive.root.ScreenSize
@@ -64,12 +66,15 @@ import org.example.project.utils.Constants
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-class TrainingResultScreen : Screen {
+class TrainingResultScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
     @Composable
     override fun Content() {
         val navigator = RootNavigator.currentOrThrow
         val viewModel = rememberScreenModel {
             TrainingResultViewModel()
+        }
+        LaunchedEffect(viewModel) {
+            viewModel.loadSportsman(sportsmans)
         }
         val state by viewModel.stateFlow.collectAsState()
         MaxiPageContainer() {

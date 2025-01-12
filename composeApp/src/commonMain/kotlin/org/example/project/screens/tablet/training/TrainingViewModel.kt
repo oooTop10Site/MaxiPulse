@@ -80,7 +80,7 @@ internal class TrainingViewModel :
                     isStart = false
                 )
             }
-            postSideEffect(TrainingEvent.StopTraining)
+            postSideEffect(TrainingEvent.StopTraining(state.sportsmans))
         } else {
             reduce {
                 state.copy(

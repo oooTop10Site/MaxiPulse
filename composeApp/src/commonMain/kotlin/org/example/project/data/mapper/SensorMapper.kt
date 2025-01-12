@@ -3,6 +3,7 @@ package org.example.project.data.mapper
 import org.example.project.data.model.sensor.SensorPreviewResponse
 import org.example.project.data.model.sensor.SensorResponse
 import org.example.project.domain.model.sensor.SensorPreviewUI
+import org.example.project.domain.model.sportsman.HeartBit
 import org.example.project.domain.model.sportsman.SensorStatus
 import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.platform.randomUUID
@@ -17,7 +18,7 @@ fun SensorResponse.toUI(): SensorPreviewUI {
     )
 }
 
-fun SensorResponse.toSensorUI(): SensorUI {
+fun SensorResponse.toSensorUI(timeMills: Long): SensorUI {
     return SensorUI(
         companyId = companyId.orEmpty(),
         runningCounter = runningCounter.orEmpty(),
@@ -26,7 +27,7 @@ fun SensorResponse.toSensorUI(): SensorUI {
         acc = acc?.toFloat().orEmpty(),
         rr = rateInterval.orEmpty(),
         sensorId = deviceAddress.orEmpty(),
-        heartRate = listOf(heartRate.orEmpty()),
+        heartRate = listOf(HeartBit(value = heartRate.orEmpty(), mills = timeMills)),
         status = SensorStatus.Active //todo
     )
 }

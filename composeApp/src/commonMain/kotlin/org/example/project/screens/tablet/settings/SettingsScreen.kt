@@ -299,7 +299,7 @@ private fun MinimumHeartRateContent(
         HeartRateGraph(
             showY = false,
             modifier = Modifier.weight(1f).height(180.dp),
-            heartRateData = tab.minimumHeartRateUI.heartRate.map { it.value }
+            heartRateData = tab.minimumHeartRateUI.heartRate
         )
     }
 }

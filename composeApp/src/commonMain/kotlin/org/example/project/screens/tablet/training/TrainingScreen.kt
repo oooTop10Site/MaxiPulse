@@ -144,7 +144,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
             }
             viewModel.container.sideEffectFlow.collect {
                 when (it) {
-                    TrainingEvent.StopTraining -> navigator.push(TrainingResultScreen())
+                    is TrainingEvent.StopTraining -> navigator.push(TrainingResultScreen(it.sportsmans))
                 }
             }
         }
@@ -644,7 +644,7 @@ private fun ChssSportsmanItem(
                 )
                 Text(
                     text = "${
-                        ((sportsmanUI.sensor?.heartRate.orEmpty().max(0)
+                        ((sportsmanUI.sensor?.heartRate.orEmpty().map { it.value }.max(0)
                             .toFloat()/hmax) * 100).roundToInt()
                     }%",
                     style = MaxiPulsTheme.typography.semiBold.copy(
@@ -797,7 +797,7 @@ private fun TrimpSportsmanItem(
                 ) {
                     Box(
                         modifier = Modifier.fillMaxHeight().fillMaxWidth(
-                            sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull().orEmpty()
+                            sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.value.orEmpty()
                                 .toFloat() / hmax.toFloat()
                         )
                             .background(

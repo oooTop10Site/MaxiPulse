@@ -488,7 +488,7 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                             HeartBit(mills = 7000L, value = 215),
                             HeartBit(mills = 8000L, value = 217)
                         ) //mock
-                        HeartRateGraph(modifier = Modifier.height(250.dp).fillMaxWidth(), heartRateData.map { it.value })
+                        HeartRateGraph(modifier = Modifier.height(250.dp).fillMaxWidth(), heartRateData)
                     },
                 )
             }

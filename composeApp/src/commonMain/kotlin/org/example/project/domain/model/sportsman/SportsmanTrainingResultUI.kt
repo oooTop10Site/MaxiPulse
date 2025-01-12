@@ -9,7 +9,7 @@ data class SportsmanTrainingResultUI(
     val avatar: String,
     val age: Int,
     val kcal: Int,
-    val trimp: Int,
+    val trimp: Double,
     val heartRateMax: Int,
     val heartRateMin: Int,
     val heartRateAvg: Int,

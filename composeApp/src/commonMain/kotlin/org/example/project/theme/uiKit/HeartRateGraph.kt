@@ -37,7 +37,7 @@ import org.example.project.theme.MaxiPulsTheme
 @Composable
 fun HeartRateGraph(
     modifier: Modifier = Modifier,
-    heartRateData: List<Int>,
+    heartRateData: List<HeartBit>,
     showY: Boolean = true,
     showTime: Boolean = false
 ) {
@@ -112,11 +112,11 @@ fun HeartRateGraph(
                 heartRateData.forEachIndexed { index, value ->
                     // Определяем y-координату точки
                     val y = zones.foldIndexed(0f) { i, acc, (startHR, endHR) ->
-                        if (value.toFloat() in startHR..endHR) {
+                        if (value.value.toFloat() in startHR..endHR) {
                             val zoneStartY = graphHeight - (i + 1) * zoneHeight
                             val zoneEndY = graphHeight - i * zoneHeight
                             val zoneRange = endHR - startHR
-                            val normalizedY = ((value - startHR) / zoneRange) * zoneHeight
+                            val normalizedY = ((value.value - startHR) / zoneRange) * zoneHeight
                             zoneEndY - normalizedY
                         } else acc
                     }
@@ -135,27 +135,27 @@ fun HeartRateGraph(
                 )
             }
         }
-//        if (showTime) {
-//            val textStyle = MaxiPulsTheme.typography.regular.copy(
-//                fontSize = 14.sp,
-//                lineHeight = 14.sp,
-//                color = MaxiPulsTheme.colors.uiKit.textColor
-//            )
-//            // Отрисовка временной шкалы
-//            Row(
-//                modifier = Modifier.fillMaxWidth().padding(
-//                    start = if (showY) {
-//                        40.dp
-//                    } else 0.dp
-//                ).height(20.dp),
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.SpaceBetween
-//            ) {
-//                heartRateData.getEvenlyDistributedMills(5).forEach {
-//                    Text(text = it.secondsToUI(), style = textStyle)
-//                }
-//            }
-//        }
+        if (showTime) {
+            val textStyle = MaxiPulsTheme.typography.regular.copy(
+                fontSize = 14.sp,
+                lineHeight = 14.sp,
+                color = MaxiPulsTheme.colors.uiKit.textColor
+            )
+            // Отрисовка временной шкалы
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(
+                    start = if (showY) {
+                        40.dp
+                    } else 0.dp
+                ).height(20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                heartRateData.getEvenlyDistributedMills(5).forEach {
+                    Text(text = it.secondsToUI(), style = textStyle)
+                }
+            }
+        }
     }
 }
 

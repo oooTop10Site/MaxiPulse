@@ -10,7 +10,9 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import kotlinx.datetime.Clock
 import org.example.project.di.KoinInjector
+import org.example.project.domain.model.sportsman.HeartBit
 import org.example.project.domain.model.sportsman.SensorStatus
 import org.example.project.domain.model.sportsman.SensorUI
 import org.koin.core.component.KoinComponent
@@ -113,7 +115,10 @@ fun decodeSensorData(dataList: List<Int>, sensorUI: SensorUI): SensorUI {
         battery = battery,
         runningCounter = runningCounter.toInt(),
         acc = value1Acc,
-        heartRate = sensorUI.heartRate + abs(heartRate),
+        heartRate = sensorUI.heartRate + HeartBit(
+            value = abs(heartRate),
+            mills = Clock.System.now().toEpochMilliseconds()
+        ),
         rr = rr
     )
 }

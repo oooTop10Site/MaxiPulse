@@ -159,7 +159,7 @@ class MobileTrainingScreen : Screen, KoinComponent {
             if (state.currentTraining.sensorUI != SensorUI.Empty) {
                 state.currentTraining.sensorUI.let {
                     Text(
-                        text = it.heartRate.lastOrNull().orEmpty().toString(),
+                        text = it.heartRate.lastOrNull()?.value.orEmpty().toString(),
                         style = MaxiPulsTheme.typography.bold.copy(
                             fontSize = 128.sp,
                             lineHeight = 128.sp,

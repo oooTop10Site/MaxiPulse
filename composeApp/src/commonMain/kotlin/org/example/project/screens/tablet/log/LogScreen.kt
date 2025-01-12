@@ -174,7 +174,9 @@ class LogScreen : Screen {
                                 viewModel.deleteLog(it)
                             }
                         ) {
-                            rootNavigator.push(TrainingResultScreen())
+                            rootNavigator.push(TrainingResultScreen(
+                                emptyList()
+                            ))
                         }
                     }
                 }

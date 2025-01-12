@@ -120,21 +120,21 @@ class MobileTrainingResultScreen(private val trainingUI: TrainingUI) : Screen {
                     )
                     ResultItem(
                         title = Res.string.chss_peak,
-                        value = trainingUI.sensorUI.heartRate.max().toString()
+                        value = trainingUI.sensorUI.heartRate.map { it.value }.max(default = 0).toString()
                     )
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
                     )
                     ResultItem(
                         title = Res.string.chss_avg,
-                        value = trainingUI.sensorUI.heartRate.average().toString()
+                        value = trainingUI.sensorUI.heartRate.map { it.value }.average().toString()
                     )
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
                     )
                     ResultItem(
                         title = Res.string.chss_minimum,
-                        value = trainingUI.sensorUI.heartRate.min().toString()
+                        value = trainingUI.sensorUI.heartRate.map { it.value }.min().toString()
                     )
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
@@ -145,7 +145,7 @@ class MobileTrainingResultScreen(private val trainingUI: TrainingUI) : Screen {
                             isMale = true,
                             trainingTimeSeconds = trainingUI.duration,
                             chssReasting = 50,
-                            chssMaxOnTraining = trainingUI.sensorUI.heartRate.max(default = 0),
+                            chssMaxOnTraining = trainingUI.sensorUI.heartRate.map { it.value }.max(default = 0),
                             chssMax = 220
                         ).toString()
                     )

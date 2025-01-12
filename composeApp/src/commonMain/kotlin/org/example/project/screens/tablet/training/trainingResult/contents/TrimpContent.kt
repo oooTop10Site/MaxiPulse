@@ -139,7 +139,7 @@ internal fun ColumnScope.TrimpContent(
 }
 
 @Composable
-private fun CellItem(sportsmanTrainingResultUI: SportsmanTrainingResultUI, maxTrimp: Int) {
+private fun CellItem(sportsmanTrainingResultUI: SportsmanTrainingResultUI, maxTrimp: Double) {
     Row(modifier = Modifier.fillMaxWidth().height(60.dp)) {
         RegularResultBox(
             modifier = Modifier.width(150.dp).fillMaxHeight(),

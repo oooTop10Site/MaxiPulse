@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
 import okhttp3.Dispatcher
 import org.example.project.data.mapper.toSensorUI
@@ -73,7 +74,7 @@ internal actual class ScanBluetoothSensorsManager :
             val response =
                 Json { ignoreUnknownKeys = true }.decodeFromString<List<SensorResponse>>(msg)
             response.forEach {
-                onDeviceFound(it.toSensorUI())
+                onDeviceFound(it.toSensorUI(Clock.System.now().toEpochMilliseconds()))
             }
         }
     }

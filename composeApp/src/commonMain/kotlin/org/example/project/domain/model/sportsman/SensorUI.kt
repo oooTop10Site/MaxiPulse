@@ -7,7 +7,7 @@ data class SensorUI(
     val runningCounter: Int = 0,
     val battery: Int = 0,
     val acc: Float = 0f,
-    val heartRate: List<Int> = emptyList(),
+    val heartRate: List<HeartBit> = emptyList(),
     val rr: Int = 0,
     val sensorId: String,
     val deviceName: String,
