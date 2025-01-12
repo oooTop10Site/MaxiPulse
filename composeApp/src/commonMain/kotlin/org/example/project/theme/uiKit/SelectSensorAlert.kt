@@ -78,7 +78,7 @@ internal fun SelectSensor(
         descriptionContent = {
             if (state.sensors == null) {
                 Box(modifier = Modifier.heightIn(400.dp), contentAlignment = Alignment.Center) {
-                    SearchAvailableDevices(modifier = Modifier.size(200.dp))
+                    SearchAvailableDevices(modifier = Modifier.size(200.dp), false)
                 }
             } else {
                 LazyColumn(

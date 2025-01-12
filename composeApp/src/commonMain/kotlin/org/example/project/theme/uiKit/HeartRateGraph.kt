@@ -43,10 +43,10 @@ fun HeartRateGraph(
 ) {
     val maxValue = 230f
     val zones = listOf(
-        0f to 60f,        // Голубая зона
-        60f to 80f,      // Синяя зона
-        80f to 95f,      // Зеленая зона
-        95f to 130f,      // Оранжевая зона
+        0f to 70f,        // Голубая зона
+        70f to 90f,      // Синяя зона
+        90f to 110f,      // Зеленая зона
+        110f to 130f,      // Оранжевая зона
         130f to maxValue   // Красная зона
     )
 //todo

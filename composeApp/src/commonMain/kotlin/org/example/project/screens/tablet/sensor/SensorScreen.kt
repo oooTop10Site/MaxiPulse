@@ -163,7 +163,7 @@ class SensorScreen : Screen {
                         Box(contentAlignment = Alignment.Center, modifier = Modifier.weight(1f)) {
                             SearchAvailableDevices(
                                 modifier = Modifier.fillMaxSize(),
-                                showText = false
+                                showText = true
                             )
                         }
                     } else {
