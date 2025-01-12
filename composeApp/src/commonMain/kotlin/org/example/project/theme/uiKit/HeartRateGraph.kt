@@ -152,6 +152,8 @@ fun HeartRateGraph(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 heartRateData.getEvenlyDistributedMills(5).forEach {
+                    println("HEARTRATE - $it")
+                    println("HEARTRATESECONDS - ${(it/1000).secondsToUI()}")
                     Text(text = (it/1000).secondsToUI(), style = textStyle)
                 }
             }
