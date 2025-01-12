@@ -106,15 +106,6 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
         val viewModel = rememberScreenModel {
             TrainingViewModel()
         }
-        var sensorShow by remember { mutableStateOf(false) }
-        var sensorPermission by remember { mutableStateOf(false) }
-        viewModel.permissionService.checkPermissionFlow(Permission.BLUETOOTH_CONNECT)
-            .collectAsState(viewModel.permissionService.checkPermission(Permission.BLUETOOTH_CONNECT))
-            .granted {
-                if (sensorPermission) {
-                    sensorShow = true
-                }
-            }
         DisposableEffect(Unit) {
             onDispose {
                 viewModel.scanBluetoothSensorsManager.stopScan() {}
@@ -123,25 +114,14 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
 
         val state by viewModel.stateFlow.collectAsState()
         val navigator = RootNavigator.currentOrThrow
-        LaunchedEffect(sensorShow) {
-            if (sensorShow) {
-                println("СТАРТУУУУЕМММ")
-                viewModel.scanBluetoothSensorsManager.scanBluetoothSensors {
-                    println("DEVICE - $it")
-                    viewModel.newDataFromSportsman(it, sportsmans)
-                }
+        LaunchedEffect(Unit) {
+            println("СТАРТУУУУЕМММ")
+            viewModel.scanBluetoothSensorsManager.scanBluetoothSensors {
+                println("DEVICE - $it")
+                viewModel.newDataFromSportsman(it, sportsmans)
             }
         }
         LaunchedEffect(viewModel) {
-            viewModel.loadSportsman(sportsmans)
-            if (viewModel.permissionService.checkPermission(Permission.BLUETOOTH_CONNECT)
-                    .granted()
-            ) {
-                sensorShow = true
-            } else {
-                sensorPermission = true
-                viewModel.permissionService.providePermission(Permission.BLUETOOTH_CONNECT)
-            }
             viewModel.container.sideEffectFlow.collect {
                 when (it) {
                     is TrainingEvent.StopTraining -> navigator.push(TrainingResultScreen(it.sportsmans))
