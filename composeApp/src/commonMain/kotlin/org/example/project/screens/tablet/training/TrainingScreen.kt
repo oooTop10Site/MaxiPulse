@@ -114,7 +114,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
 
         val state by viewModel.stateFlow.collectAsState()
         val navigator = RootNavigator.currentOrThrow
-        viewModel.scanBluetoothSensorsManager.scanBluetoothSensors {
+        viewModel.scanBluetoothSensorsManager.scanSensors() {
             println("DEVICE - $it")
             viewModel.newDataFromSportsman(it, sportsmans)
         }
@@ -593,7 +593,7 @@ private fun ChssSportsmanItem(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.value.toString()
+                    text = sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.value.orEmpty().toString()
                         .orEmpty(),
                     style = MaxiPulsTheme.typography.bold.copy(
                         fontSize = 32.sp,

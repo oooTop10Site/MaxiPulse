@@ -125,7 +125,7 @@ class MobileTrainingScreen : Screen, KoinComponent {
         if (state.currentTraining.sensorUI != SensorUI.Empty && !startObserve) {
             startObserve = true
             println("МЫ В - ${state.currentTraining.sensorUI != SensorUI.Empty && !startObserve}")
-            scanBluetoothSensorsManager.scanBluetoothSensors {
+            scanBluetoothSensorsManager.scanSensors() {
                 println("SCANDEVICE новый инстанс - $it")
                 println("id текущего инстанса - ${it.sensorId}")
                 if (it.sensorId == state.currentTraining.sensorUI.sensorId) {
@@ -225,7 +225,7 @@ class MobileTrainingScreen : Screen, KoinComponent {
     ) {
         val devices = remember { mutableStateListOf<SensorUI>() }
         var state by remember { mutableStateOf(SelectSensorAlertDialogStep.SelectTypeSensor) }
-        scanBluetoothSensorsManager.scanBluetoothSensors {
+        scanBluetoothSensorsManager.scanSensors() {
             println("device - $it")
             if (it.sensorId !in devices.map { it.sensorId }) {
                 devices.add(it)

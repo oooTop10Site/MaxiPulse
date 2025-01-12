@@ -29,19 +29,33 @@ internal actual class ScanBluetoothSensorsManager :
     private val webSocket = PlatformSocket(Constants.BASE_SOCKET_URL, authManager.token.orEmpty())
 
     @Composable
+    actual fun scanSensors(
+        onCatch: (Throwable) -> Unit,
+        onDeviceFound: (SensorUI) -> Unit,
+    ) {
+
+        if (Constants.IsDataSocketFromSensor) {
+            scanSocketSensors(onCatch, onDeviceFound)
+        } else {
+            scanBluetoothSensors(onCatch = onCatch, onDeviceFound = onDeviceFound)
+        }
+
+    }
+
+    @Composable
     actual fun scanBluetoothSensors(
         onCatch: (Throwable) -> Unit,
         onDeviceFound: (SensorUI) -> Unit,
     ) {
-        connectSocket(onCatch = onCatch, onDeviceFound = onDeviceFound)
+        scanSocketSensors(onCatch = onCatch, onDeviceFound = onDeviceFound)
     }
 
     actual fun stopScan(doAfter: () -> Unit) {
         webSocket.closeSocket(1000, "ЗАКРЫЛ РУЧКАМИ")
     }
 
-    fun connectSocket(
-        onDeviceFound: (SensorUI) -> Unit, onCatch: (Throwable) -> Unit
+    actual fun scanSocketSensors(
+        onCatch: (Throwable) -> Unit, onDeviceFound: (SensorUI) -> Unit,
     ) {
         webSocket.openSocket(object : PlatformSocketListener {
             override fun onFailure(t: Throwable) {
@@ -49,7 +63,7 @@ internal actual class ScanBluetoothSensorsManager :
 //                connectionAborted = true
                 CoroutineScope(Dispatchers.IO).launch {
                     delay(3000L)
-                    connectSocket(onDeviceFound, onCatch)
+                    scanSocketSensors(onCatch, onDeviceFound)
                 }
             }
 

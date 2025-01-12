@@ -110,12 +110,10 @@ internal actual fun KoinComponent.MainContent(
     testUI: TestUI?
 ) {
     val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
-    LaunchedEffect(state.alertDialog) {
-        if (state.alertDialog is MainAlertDialog.SelectSensor) {
-            scanBluetoothSensorsManager.scanBluetoothSensors {
-                println("device - $it")
-                viewModel.addSensor(it)
-            }
+    if (state.alertDialog is MainAlertDialog.SelectSensor) {
+        scanBluetoothSensorsManager.scanSensors() {
+            println("device - $it")
+            viewModel.addSensor(it)
         }
     }
     MaxiPageContainer() {

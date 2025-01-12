@@ -23,13 +23,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
+import kotlinx.serialization.json.Json
+import org.example.project.data.mapper.toSensorUI
+import org.example.project.data.model.sensor.SensorResponse
 import org.example.project.di.KoinInjector
+import org.example.project.domain.manager.AuthManager
 import org.example.project.domain.model.sportsman.HeartBit
 import org.example.project.domain.model.sportsman.SensorStatus
 import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.ext.granted
 import org.example.project.platform.permission.model.Permission
 import org.example.project.platform.permission.service.PermissionsService
+import org.example.project.utils.Constants
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.nio.ByteBuffer
@@ -44,6 +49,22 @@ internal actual class ScanBluetoothSensorsManager :
     val bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
     var scanCallback: ScanCallback? = null
     val permissionService: PermissionsService by inject()
+    val authManager: AuthManager by inject()
+    private val webSocket = PlatformSocket(Constants.BASE_SOCKET_URL, authManager.token.orEmpty())
+
+    @Composable
+    actual fun scanSensors(
+        onCatch: (Throwable) -> Unit,
+        onDeviceFound: (SensorUI) -> Unit,
+    ) {
+
+        if (Constants.IsDataSocketFromSensor) {
+            scanSocketSensors(onCatch, onDeviceFound)
+        } else {
+            scanBluetoothSensors(onCatch = onCatch, onDeviceFound = onDeviceFound)
+        }
+
+    }
 
     @SuppressLint("MissingPermission")
     @Composable
@@ -129,6 +150,48 @@ internal actual class ScanBluetoothSensorsManager :
                 }
                 bluetoothLeScanner.startScan(scanCallback)
 //        }
+            }
+        }
+    }
+
+    actual fun scanSocketSensors(
+        onCatch: (Throwable) -> Unit, onDeviceFound: (SensorUI) -> Unit,
+    ) {
+        webSocket.openSocket(object : PlatformSocketListener {
+            override fun onFailure(t: Throwable) {
+                webSocket.closeSocket(1000, "")
+//                connectionAborted = true
+                CoroutineScope(Dispatchers.IO).launch {
+                    delay(3000L)
+                    scanSocketSensors(onCatch, onDeviceFound)
+                }
+            }
+
+            override fun onOpen() {
+            }
+
+            override fun onClosing(code: Int, reason: String) {
+            }
+
+            override fun onMessage(msg: String) {
+                handleMessage(msg, onDeviceFound = onDeviceFound)
+            }
+
+            override fun onClosed(code: Int, reason: String) {
+            }
+
+        })
+    }
+
+    fun handleMessage(msg: String, onDeviceFound: (SensorUI) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            /* Реализовать получение типа */
+            /**
+             * { "type": "message", "data": {"_response":{"message":"Сообщение успешно найдено","data":{"message":"тиииии","role":"role:user","created_at":"2024-08-21T14:20:26.000000Z"}}} }*/
+            val response =
+                Json { ignoreUnknownKeys = true }.decodeFromString<List<SensorResponse>>(msg)
+            response.forEach {
+                onDeviceFound(it.toSensorUI(Clock.System.now().toEpochMilliseconds()))
             }
         }
     }
