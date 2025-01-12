@@ -71,76 +71,66 @@ internal actual class ScanBluetoothSensorsManager :
                 sensorPermission = true
                 permissionService.providePermission(Permission.BLUETOOTH_CONNECT)
             }
-        }
-        println("SensorShowVAR - $sensorShow")
-        var time = 0
-        while (!sensorShow) {
-            runBlocking {
-                delay(500L)
-            }
-            time += 1
-            if(time == 30) {
-                println("МНЕ ЭТОТ МИР АБСОЛЮТНО ПОНЯТЕН - $time")
-                return
-            }
-        }
-        if (sensorShow) {
-            if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
-                stopScan { }
-                return
-            }
+            println("SensorShowVAR - $sensorShow")
+            if (sensorShow) {
+                if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
+                    stopScan { }
+                    return@launch
+                }
 //        stopScan() {
-            scanCallback = object : ScanCallback() {
-                override fun onScanResult(callbackType: Int, result: ScanResult) {
-                    Log.d("SCANDEVICE", "-------------------")
+                scanCallback = object : ScanCallback() {
+                    override fun onScanResult(callbackType: Int, result: ScanResult) {
+                        Log.d("SCANDEVICE", "-------------------")
 
-                    super.onScanResult(callbackType, result)
-                    val scanRecord = result.scanRecord
-                    val rssi = result.rssi
+                        super.onScanResult(callbackType, result)
+                        val scanRecord = result.scanRecord
+                        val rssi = result.rssi
 
-                    val manufacturerSpecificData = scanRecord?.manufacturerSpecificData
+                        val manufacturerSpecificData = scanRecord?.manufacturerSpecificData
 
-                    manufacturerSpecificData?.let { data ->
-                        for (i in 0 until data.size()) {
-                            val manufacturerId = data.keyAt(i)
-                            val manufacturerBytes = data.valueAt(i)
-                            if (manufacturerId == 159) {
-                                // Получаем имя устройства и его идентификатор
-                                val deviceName = result.device.name ?: "Unknown Device"
-                                val sensorId =
-                                    result.device.address // Обычно используется MAC-адрес устройства
-                                // Создаем объект SensorUI и передаем в callback
-                                val sensor = SensorUI(
-                                    sensorId = sensorId,
-                                    deviceName = deviceName,
-                                    status = SensorStatus.Active
-                                )
-                                try {
-                                    val decodedData = decodeSensorData(
-                                        manufacturerBytes.map { it.toInt() },
-                                        sensorUI = sensor
+                        manufacturerSpecificData?.let { data ->
+                            for (i in 0 until data.size()) {
+                                val manufacturerId = data.keyAt(i)
+                                val manufacturerBytes = data.valueAt(i)
+                                if (manufacturerId == 159) {
+                                    // Получаем имя устройства и его идентификатор
+                                    val deviceName = result.device.name ?: "Unknown Device"
+                                    val sensorId =
+                                        result.device.address // Обычно используется MAC-адрес устройства
+                                    // Создаем объект SensorUI и передаем в callback
+                                    val sensor = SensorUI(
+                                        sensorId = sensorId,
+                                        deviceName = deviceName,
+                                        status = SensorStatus.Active
                                     )
-                                    onDeviceFound(decodedData)
-                                } catch (e: Exception) {
-                                    Log.e(
-                                        "SCANDEVICE",
-                                        "Failed to decode sensor data: ${e.message}"
-                                    )
+                                    try {
+                                        val decodedData = decodeSensorData(
+                                            manufacturerBytes.map { it.toInt() },
+                                            sensorUI = sensor
+                                        )
+                                        onDeviceFound(decodedData)
+                                    } catch (e: Exception) {
+                                        Log.e(
+                                            "SCANDEVICE",
+                                            "Failed to decode sensor data: ${e.message}"
+                                        )
+                                    }
                                 }
                             }
-                        }
-                    } ?: Log.w("SCANDEVICE", "No manufacturer-specific data found")
-                }
+                        } ?: Log.w("SCANDEVICE", "No manufacturer-specific data found")
+                    }
 
-                override fun onScanFailed(errorCode: Int) {
-                    super.onScanFailed(errorCode)
-                    // Обработка ошибок сканирования (если нужно)
+                    override fun onScanFailed(errorCode: Int) {
+                        super.onScanFailed(errorCode)
+                        // Обработка ошибок сканирования (если нужно)
+                    }
                 }
-            }
-            bluetoothLeScanner.startScan(scanCallback)
+                bluetoothLeScanner.startScan(scanCallback)
 //        }
-        } else {
-            println("ЗАШЛИ В ELSE")
+            } else {
+                println("ЗАШЛИ В ELSE")
+            }
+            delay(20000L)
         }
     }
 
