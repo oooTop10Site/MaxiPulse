@@ -50,12 +50,11 @@ internal actual class ScanBluetoothSensorsManager :
         var sensorShow by mutableStateOf(false)
         var sensorPermission by mutableStateOf(false)
         CoroutineScope(Dispatchers.IO).launch {
-            launch {
-                permissionService.checkPermissionFlow(Permission.BLUETOOTH_CONNECT).collect {
-                    if (it.granted()) {
-                        if (sensorPermission) {
-                            sensorShow = true
-                        }
+            permissionService.checkPermissionFlow(Permission.BLUETOOTH_CONNECT).collect {
+                println("РАЗРЕШЕНИЕ - ${it.granted()}")
+                if (it.granted()) {
+                    if (sensorPermission) {
+                        sensorShow = true
                     }
                 }
             }
@@ -69,7 +68,7 @@ internal actual class ScanBluetoothSensorsManager :
                 permissionService.providePermission(Permission.BLUETOOTH_CONNECT)
             }
         }
-        if(sensorShow) {
+        if (sensorShow) {
             if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
                 stopScan { }
                 return
