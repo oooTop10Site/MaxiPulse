@@ -21,10 +21,10 @@ data class SportsmanSensorUI(
 ) : JavaSerializable {
 
     val zone1Range: List<Int> = IntRange(0, 70).toList()
-    val zone2Range: List<Int> = IntRange(70, 90).toList()
-    val zone3Range: List<Int> = IntRange(90, 110).toList()
-    val zone4Range: List<Int> = IntRange(110, 130).toList()
-    val zone5Range: List<Int> = IntRange(130, 230).toList()
+    val zone2Range: List<Int> = IntRange(71, 90).toList()
+    val zone3Range: List<Int> = IntRange(91, 110).toList()
+    val zone4Range: List<Int> = IntRange(111, 130).toList()
+    val zone5Range: List<Int> = IntRange(131, 230).toList()
 
     private fun calculateTimeInZone(range: List<Int>): Long {
         val heartRates = sensor?.heartRate.orEmpty()
