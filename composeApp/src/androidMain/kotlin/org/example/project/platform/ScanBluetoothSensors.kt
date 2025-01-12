@@ -10,12 +10,24 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import org.example.project.di.KoinInjector
 import org.example.project.domain.model.sportsman.HeartBit
 import org.example.project.domain.model.sportsman.SensorStatus
 import org.example.project.domain.model.sportsman.SensorUI
+import org.example.project.ext.granted
+import org.example.project.platform.permission.model.Permission
+import org.example.project.platform.permission.service.PermissionsService
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.getValue
@@ -27,66 +39,94 @@ internal actual class ScanBluetoothSensorsManager :
     val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
     val bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
     var scanCallback: ScanCallback? = null
+    val permissionService: PermissionsService by inject()
 
     @SuppressLint("MissingPermission")
     actual fun scanBluetoothSensors(
         onCatch: (Throwable) -> Unit,
         onDeviceFound: (SensorUI) -> Unit,
     ) {
-        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
-            stopScan { }
-            return
-        }
-//        stopScan() {
-        scanCallback = object : ScanCallback() {
-            override fun onScanResult(callbackType: Int, result: ScanResult) {
-                Log.d("SCANDEVICE", "-------------------")
-
-                super.onScanResult(callbackType, result)
-                val scanRecord = result.scanRecord
-                val rssi = result.rssi
-
-                val manufacturerSpecificData = scanRecord?.manufacturerSpecificData
-
-                manufacturerSpecificData?.let { data ->
-                    for (i in 0 until data.size()) {
-                        val manufacturerId = data.keyAt(i)
-                        val manufacturerBytes = data.valueAt(i)
-                        if (manufacturerId == 159) {
-                            // Получаем имя устройства и его идентификатор
-                            val deviceName = result.device.name ?: "Unknown Device"
-                            val sensorId =
-                                result.device.address // Обычно используется MAC-адрес устройства
-                            // Создаем объект SensorUI и передаем в callback
-                            val sensor = SensorUI(
-                                sensorId = sensorId,
-                                deviceName = deviceName,
-                                status = SensorStatus.Active
-                            )
-                            try {
-                                val decodedData = decodeSensorData(
-                                    manufacturerBytes.map { it.toInt() },
-                                    sensorUI = sensor
-                                )
-                                onDeviceFound(decodedData)
-                            } catch (e: Exception) {
-                                Log.e(
-                                    "SCANDEVICE",
-                                    "Failed to decode sensor data: ${e.message}"
-                                )
-                            }
+        println("ЗАШЛИ В САМУ ФУНКЦИЮ")
+        var sensorShow by mutableStateOf(false)
+        var sensorPermission by mutableStateOf(false)
+        CoroutineScope(Dispatchers.IO).launch {
+            launch {
+                permissionService.checkPermissionFlow(Permission.BLUETOOTH_CONNECT).collect {
+                    if (it.granted()) {
+                        if (sensorPermission) {
+                            sensorShow = true
                         }
                     }
-                } ?: Log.w("SCANDEVICE", "No manufacturer-specific data found")
+                }
             }
 
-            override fun onScanFailed(errorCode: Int) {
-                super.onScanFailed(errorCode)
-                // Обработка ошибок сканирования (если нужно)
+            if (permissionService.checkPermission(Permission.BLUETOOTH_CONNECT)
+                    .granted()
+            ) {
+                sensorShow = true
+            } else {
+                sensorPermission = true
+                permissionService.providePermission(Permission.BLUETOOTH_CONNECT)
             }
         }
-        bluetoothLeScanner.startScan(scanCallback)
+        if(sensorShow) {
+            if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
+                stopScan { }
+                return
+            }
+//        stopScan() {
+            scanCallback = object : ScanCallback() {
+                override fun onScanResult(callbackType: Int, result: ScanResult) {
+                    Log.d("SCANDEVICE", "-------------------")
+
+                    super.onScanResult(callbackType, result)
+                    val scanRecord = result.scanRecord
+                    val rssi = result.rssi
+
+                    val manufacturerSpecificData = scanRecord?.manufacturerSpecificData
+
+                    manufacturerSpecificData?.let { data ->
+                        for (i in 0 until data.size()) {
+                            val manufacturerId = data.keyAt(i)
+                            val manufacturerBytes = data.valueAt(i)
+                            if (manufacturerId == 159) {
+                                // Получаем имя устройства и его идентификатор
+                                val deviceName = result.device.name ?: "Unknown Device"
+                                val sensorId =
+                                    result.device.address // Обычно используется MAC-адрес устройства
+                                // Создаем объект SensorUI и передаем в callback
+                                val sensor = SensorUI(
+                                    sensorId = sensorId,
+                                    deviceName = deviceName,
+                                    status = SensorStatus.Active
+                                )
+                                try {
+                                    val decodedData = decodeSensorData(
+                                        manufacturerBytes.map { it.toInt() },
+                                        sensorUI = sensor
+                                    )
+                                    onDeviceFound(decodedData)
+                                } catch (e: Exception) {
+                                    Log.e(
+                                        "SCANDEVICE",
+                                        "Failed to decode sensor data: ${e.message}"
+                                    )
+                                }
+                            }
+                        }
+                    } ?: Log.w("SCANDEVICE", "No manufacturer-specific data found")
+                }
+
+                override fun onScanFailed(errorCode: Int) {
+                    super.onScanFailed(errorCode)
+                    // Обработка ошибок сканирования (если нужно)
+                }
+            }
+            bluetoothLeScanner.startScan(scanCallback)
 //        }
+        } else {
+            println("ЗАШЛИ В ELSE")
+        }
     }
 
     @SuppressLint("MissingPermission")

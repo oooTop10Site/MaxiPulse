@@ -228,57 +228,32 @@ class MobileTrainingScreen : Screen, KoinComponent {
         success: (SensorUI) -> Unit
     ) {
         val devices = remember { mutableStateListOf<SensorUI>() }
-        var sensorShow by remember { mutableStateOf(false) }
-        var sensorPermission by remember { mutableStateOf(false) }
-        val permissionService: PermissionsService by inject()
-        permissionService.checkPermissionFlow(Permission.BLUETOOTH_CONNECT)
-            .collectAsState(permissionService.checkPermission(Permission.BLUETOOTH_CONNECT))
-            .granted {
-                if (sensorPermission) {
-                    sensorShow = true
-                }
-            }
         var state by remember { mutableStateOf(SelectSensorAlertDialogStep.SelectTypeSensor) }
         LaunchedEffect(Unit) {
-            if (permissionService.checkPermission(Permission.BLUETOOTH_CONNECT)
-                    .granted()
-            ) {
-                sensorShow = true
-            } else {
-                sensorPermission = true
-                permissionService.providePermission(Permission.BLUETOOTH_CONNECT)
-            }
-        }
-
-        LaunchedEffect(Unit) {
-            if (sensorShow) {
-                scanBluetoothSensorsManager.scanBluetoothSensors {
-                    println("device - $it")
-                    if (it.sensorId !in devices.map { it.sensorId }) {
-                        devices.add(it)
-                    }
+            scanBluetoothSensorsManager.scanBluetoothSensors {
+                println("device - $it")
+                if (it.sensorId !in devices.map { it.sensorId }) {
+                    devices.add(it)
                 }
             }
         }
-        if (sensorShow) {
-            when (state) {
-                SelectTypeSensor -> {
-                    SelectTypeSensor(onDismiss, onButtonClick = {
-                        state = SearchSensor
-                    })
-                }
+        when (state) {
+            SelectTypeSensor -> {
+                SelectTypeSensor(onDismiss, onButtonClick = {
+                    state = SearchSensor
+                })
+            }
 
-                SearchSensor -> {
-                    SearchSensor(devices = devices, onDismiss = onDismiss, onSuccess = {
-                        state = SelectSensor
-                    })
-                }
+            SearchSensor -> {
+                SearchSensor(devices = devices, onDismiss = onDismiss, onSuccess = {
+                    state = SelectSensor
+                })
+            }
 
-                SelectSensor -> {
-                    SelectSensor(onDismiss, onSuccess = {
-                        success(it)
-                    }, sensors = devices)
-                }
+            SelectSensor -> {
+                SelectSensor(onDismiss, onSuccess = {
+                    success(it)
+                }, sensors = devices)
             }
         }
     }
@@ -399,7 +374,11 @@ class MobileTrainingScreen : Screen, KoinComponent {
     }
 
     @Composable
-    fun SearchSensor(devices: SnapshotStateList<SensorUI>, onDismiss: () -> Unit, onSuccess: () -> Unit) {
+    fun SearchSensor(
+        devices: SnapshotStateList<SensorUI>,
+        onDismiss: () -> Unit,
+        onSuccess: () -> Unit
+    ) {
         var animationTarget by remember { mutableStateOf(0f) }
 
         val searchProgress by animateFloatAsState(

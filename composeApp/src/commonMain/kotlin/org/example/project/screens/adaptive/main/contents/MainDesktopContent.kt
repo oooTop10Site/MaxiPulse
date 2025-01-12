@@ -113,31 +113,11 @@ internal fun KoinComponent.MainDesktopContent(
     testUI: TestUI?
 ) {
     val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
-    var sensorShow by remember { mutableStateOf(false) }
-    var sensorPermission by remember { mutableStateOf(false) }
-    val permissionService: PermissionsService by inject()
-    permissionService.checkPermissionFlow(Permission.BLUETOOTH_CONNECT)
-        .collectAsState(permissionService.checkPermission(Permission.BLUETOOTH_CONNECT))
-        .granted {
-            if (sensorPermission) {
-                sensorShow = true
-            }
-        }
     LaunchedEffect(state.alertDialog) {
         if (state.alertDialog is MainAlertDialog.SelectSensor) {
-            if (permissionService.checkPermission(Permission.BLUETOOTH_CONNECT)
-                    .granted()
-            ) {
-                sensorShow = true
-            } else {
-                sensorPermission = true
-                permissionService.providePermission(Permission.BLUETOOTH_CONNECT)
-            }
-            if (sensorShow) {
-                scanBluetoothSensorsManager.scanBluetoothSensors {
-                    println("device - $it")
-                    viewModel.addSensor(it)
-                }
+            scanBluetoothSensorsManager.scanBluetoothSensors {
+                println("device - $it")
+                viewModel.addSensor(it)
             }
         }
     }
