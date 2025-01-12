@@ -645,7 +645,7 @@ private fun ChssSportsmanItem(
                 Text(
                     text = "${
                         ((sportsmanUI.sensor?.heartRate.orEmpty().map { it.value }.max(0)
-                            .toFloat()/hmax) * 100).roundToInt()
+                            .toFloat() / hmax) * 100).roundToInt()
                     }%",
                     style = MaxiPulsTheme.typography.semiBold.copy(
                         fontSize = 20.sp,
@@ -754,7 +754,8 @@ private fun TrimpSportsmanItem(
             Spacer(Modifier.weight(1f))
             Row(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 9.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(Res.string.chss),
@@ -767,8 +768,8 @@ private fun TrimpSportsmanItem(
                     textAlign = TextAlign.Center,
                 )
                 Text(
-                    text = sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.toString()
-                        .orEmpty(),
+                    text = sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.value.orEmpty()
+                        .toString(),
                     style = MaxiPulsTheme.typography.semiBold.copy(
                         fontSize = 20.sp,
                         lineHeight = 20.sp,
