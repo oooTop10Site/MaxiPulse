@@ -44,6 +44,7 @@ import org.example.project.screens.tablet.sportsman.components.SportsmanCard
 import org.example.project.screens.tablet.sportsman.detail.SportsmanDetailScreen
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiPageContainer
+import org.example.project.utils.debouncedClick
 import org.jetbrains.compose.resources.painterResource
 import kotlin.collections.chunked
 
@@ -117,9 +118,9 @@ class GroupDetailScreen(private val groupId: String) : Screen {
                                     Icon(
                                         painterResource(Res.drawable.pencil),
                                         contentDescription = null,
-                                        modifier = Modifier.size(24.dp).clickableBlank {
+                                        modifier = Modifier.size(24.dp).clickableBlank(onClick = debouncedClick() {
                                             rootNavigator.push(GroupEditScreen(groupId = groupId))
-                                        },
+                                        }),
                                         tint = MaxiPulsTheme.colors.uiKit.lightTextColor
                                     )
                                 }
@@ -186,7 +187,7 @@ class GroupDetailScreen(private val groupId: String) : Screen {
                                 avatar = it.avatar,
                                 isMale = it.isMale,
                                 showEditIcon = false,
-                                onClick = {
+                                onClick = debouncedClick() {
                                     rootNavigator.push(SportsmanDetailScreen(it.id))
                                 }
                             ) {

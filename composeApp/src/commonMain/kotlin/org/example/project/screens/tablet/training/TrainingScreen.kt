@@ -93,6 +93,7 @@ import org.example.project.theme.uiKit.MaxiAlertDialogButtons
 import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.MaxiSwitch
+import org.example.project.utils.debouncedClick
 import org.example.project.utils.orEmpty
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -274,7 +275,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
             MaxiButton(
                 modifier = Modifier.padding(bottom = 20.dp).size(width = 200.dp, height = 50.dp)
                     .align(Alignment.BottomCenter),
-                onClick = {
+                onClick = debouncedClick() {
                     viewModel.changeIsStart()
                 },
                 text = if (!state.isStart) stringResource(Res.string.start) else stringResource(

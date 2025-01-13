@@ -1,5 +1,6 @@
 package org.example.project.ext
 
+import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.navigator.Navigator
 import org.example.project.domain.model.task.MainTaskUI
 import org.example.project.screens.mobile.borgScale.BorgScaleScreen

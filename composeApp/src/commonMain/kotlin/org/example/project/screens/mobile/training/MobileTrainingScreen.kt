@@ -101,6 +101,7 @@ import org.koin.core.component.inject
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import org.example.project.utils.debouncedClick
 
 class MobileTrainingScreen : Screen, KoinComponent {
     private val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
@@ -186,7 +187,7 @@ class MobileTrainingScreen : Screen, KoinComponent {
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = safeAreaHorizontal(), vertical = 20.dp).height(40.dp)
                     .align(Alignment.BottomCenter),
-                onClick = {
+                onClick = debouncedClick() {
                     if (state.currentTraining.sensorUI == SensorUI.Empty) {
                         viewModel.changeConnectSensorDialog()
                     } else {

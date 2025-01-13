@@ -96,6 +96,7 @@ import org.example.project.theme.uiKit.MaxiPageContainer
 import org.example.project.theme.uiKit.MaxiSwitch
 import org.example.project.theme.uiKit.SelectSensor
 import org.example.project.utils.Constants
+import org.example.project.utils.debouncedClick
 import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -141,7 +142,7 @@ internal actual fun KoinComponent.MainContent(
                         MainEvent.ShuttleRun -> rootNavigator.push(ShuttleRunScreen())
                         MainEvent.ReadiesForUpload -> rootNavigator.push(ReadiesForUploadScreen())
                         is MainEvent.Training -> {
-                            scanBluetoothSensorsManager.stopScan {  }
+                            scanBluetoothSensorsManager.stopScan { }
                             rootNavigator.push(TrainingScreen(it.sportsmans))
                         }
                     }
@@ -171,7 +172,7 @@ internal actual fun KoinComponent.MainContent(
             },
             bottomBar = {
                 MaxiButton(
-                    onClick = {
+                    onClick = debouncedClick() {
                         if (!state.isStartTraining) {
                             viewModel.changeIsStartTraining()
                         } else {
@@ -204,10 +205,11 @@ internal actual fun KoinComponent.MainContent(
                             Icon(
                                 painterResource(Res.drawable.settings_ic),
                                 contentDescription = null,
-                                modifier = Modifier.size(30.dp).clickableBlank {
-                                    println("Я тут")
-                                    navigator.push(WidgetScreen())
-                                },
+                                modifier = Modifier.size(30.dp)
+                                    .clickableBlank(onClick = debouncedClick() {
+                                        navigator.push(WidgetScreen())
+                                    }
+                                    ),
                                 tint = MaxiPulsTheme.colors.uiKit.lightTextColor
                             )
                         }
@@ -396,7 +398,7 @@ internal actual fun KoinComponent.MainContent(
                 MaxiAlertDialog(
                     modifier = Modifier.padding(horizontal = 20.dp).width(600.dp),
                     title = stringResource(Res.string.attention),
-                    accept = {
+                    accept = debouncedClick() {
                         viewModel.startTraining(testUI, false)
                     },
                     acceptText = stringResource(Res.string.ok),

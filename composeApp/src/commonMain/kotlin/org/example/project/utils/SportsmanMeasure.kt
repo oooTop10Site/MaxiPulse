@@ -1,6 +1,7 @@
 package org.example.project.utils
 
 import kotlin.math.pow
+import kotlin.math.roundToInt
 
 object SportsmanMeasure {
 
@@ -21,7 +22,7 @@ object SportsmanMeasure {
         val e = 2.718
         println("reserveChss - $reserveChss")
         println("timeMin - $t")
-        return t * reserveChss * a * e.pow(reserveChss * b)
+        return (t * reserveChss * a * e.pow(reserveChss * b)*100).roundToInt() / 100.0
     }
 
 }

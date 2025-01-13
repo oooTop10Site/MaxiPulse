@@ -48,6 +48,7 @@ import org.example.project.screens.adaptive.root.ScreenSize
 import org.example.project.theme.uiKit.MaxiTextFieldMenu
 import org.example.project.theme.uiKit.TopBarTitle
 import org.example.project.utils.Constants
+import org.example.project.utils.debouncedClick
 import org.jetbrains.compose.resources.painterResource
 
 class GroupScreen : Screen {
@@ -60,7 +61,7 @@ class GroupScreen : Screen {
         val state by viewModel.stateFlow.collectAsState()
         val rootNavigator = RootNavigator.currentOrThrow
         val screenSize = ScreenSize.currentOrThrow
-        val chunkSize = when  {
+        val chunkSize = when {
             !state.isGrid -> 1
             screenSize.widthSizeClass == WindowWidthSizeClass.Medium -> 2
             screenSize.widthSizeClass == WindowWidthSizeClass.Expanded -> 2
@@ -120,7 +121,9 @@ class GroupScreen : Screen {
                             placeholderText = stringResource(Res.string.group)
                         )
                         Icon(
-                           if(state.isGrid) painterResource(Res.drawable.grid_ic) else  painterResource(Res.drawable.rectangle_listv2),
+                            if (state.isGrid) painterResource(Res.drawable.grid_ic) else painterResource(
+                                Res.drawable.rectangle_listv2
+                            ),
                             contentDescription = null,
                             modifier = Modifier.size(30.dp).clickableBlank {
                                 viewModel.changeIsGrid()
@@ -132,9 +135,10 @@ class GroupScreen : Screen {
                             modifier = Modifier.background(
                                 MaxiPulsTheme.colors.uiKit.primary,
                                 shape = CircleShape
-                            ).clip(CircleShape).size(40.dp).clickableBlank {
-                                rootNavigator.push(GroupEditScreen(groupId = ""))
-                            }, contentAlignment = Alignment.Center
+                            ).clip(CircleShape).size(40.dp)
+                                .clickableBlank(onClick = debouncedClick() {
+                                    rootNavigator.push(GroupEditScreen(groupId = ""))
+                                }), contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 painterResource(Res.drawable.add_ic),
@@ -169,13 +173,13 @@ class GroupScreen : Screen {
                                 modifier = Modifier.weight(1f).height(100.dp),
                                 title = it.title,
                                 members = it.member,
-                                onClick = {
+                                onClick = debouncedClick() {
                                     rootNavigator.push(GroupDetailScreen(groupId = it.id))
+                                },
+                                onEdit = debouncedClick() {
+                                    rootNavigator.push(GroupEditScreen(groupId = it.id))
                                 }
-                            ) {
-                                rootNavigator.push(GroupEditScreen(groupId = it.id))
-
-                            }
+                            )
                         }
                         if (chunk.size != chunkSize) {
                             for (i in 1..chunkSize - chunk.size) {

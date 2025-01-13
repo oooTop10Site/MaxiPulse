@@ -47,6 +47,7 @@ import org.example.project.theme.uiKit.MaxiPageContainer
 import org.example.project.theme.uiKit.MaxiTextFieldMenu
 import org.example.project.theme.uiKit.TopBarTitle
 import org.example.project.utils.Constants
+import org.example.project.utils.debouncedClick
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.collections.chunked
@@ -177,7 +178,7 @@ class SportsmanScreen: Screen {
                                 weight = it.weight,
                                 avatar = it.avatar,
                                 isMale = it.isMale,
-                                onClick = {
+                                onClick = debouncedClick() {
                                     rootNavigator.push(SportsmanDetailScreen(it.id))
                                 }
                             ) {

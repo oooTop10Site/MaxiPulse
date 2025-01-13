@@ -74,6 +74,7 @@ import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.utils.Constants
+import org.example.project.utils.debouncedClick
 import org.example.project.utils.toStringWithCondition
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -150,9 +151,10 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                             Icon(
                                 painterResource(Res.drawable.pencil),
                                 contentDescription = null,
-                                modifier = Modifier.size(24.dp).clickableBlank {
-                                    rootNavigator.push(SportsmanEditScreen(gamerId = gamerId))
-                                },
+                                modifier = Modifier.size(24.dp)
+                                    .clickableBlank(onClick = debouncedClick() {
+                                        rootNavigator.push(SportsmanEditScreen(gamerId = gamerId))
+                                    }),
                                 tint = MaxiPulsTheme.colors.uiKit.lightTextColor
                             )
                         }
@@ -464,7 +466,7 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
 
                 }
             }
-            if(state.isOpenDialog) {
+            if (state.isOpenDialog) {
                 MaxiAlertDialog(
                     modifier = Modifier.fillMaxWidth(0.8f).padding(50.dp),
                     onDismiss = { viewModel.changeDialog() },
@@ -488,7 +490,10 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                             HeartBit(mills = 7000L, value = 215),
                             HeartBit(mills = 8000L, value = 217)
                         ) //mock
-                        HeartRateGraph(modifier = Modifier.height(250.dp).fillMaxWidth(), heartRateData)
+                        HeartRateGraph(
+                            modifier = Modifier.height(250.dp).fillMaxWidth(),
+                            heartRateData
+                        )
                     },
                 )
             }

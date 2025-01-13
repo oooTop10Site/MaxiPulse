@@ -15,17 +15,18 @@ import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.back_ic
 import org.example.project.ext.clickableBlank
 import org.example.project.theme.MaxiPulsTheme
+import org.example.project.utils.debouncedClick
 import org.jetbrains.compose.resources.painterResource
 
 
 @Composable
-fun BackIcon(modifier: Modifier = Modifier, onClick: () -> Unit,) {
+fun BackIcon(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Box(
         modifier = modifier
             .background(MaxiPulsTheme.colors.uiKit.primary, shape = CircleShape)
-            .clip(CircleShape).clickableBlank(role = Role.Button) {
+            .clip(CircleShape).clickableBlank(role = Role.Button, onClick = debouncedClick() {
                 onClick()
-            },
+            }),
         contentAlignment = Alignment.Center
     ) {
         Icon(

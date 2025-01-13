@@ -98,6 +98,7 @@ import org.example.project.theme.uiKit.MaxiPageContainer
 import org.example.project.theme.uiKit.MaxiSwitch
 import org.example.project.theme.uiKit.SelectSensor
 import org.example.project.utils.Constants
+import org.example.project.utils.debouncedClick
 import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -204,10 +205,12 @@ internal fun KoinComponent.MainDesktopContent(
                             Icon(
                                 painterResource(Res.drawable.settings_ic),
                                 contentDescription = null,
-                                modifier = Modifier.size(30.dp).clickableBlank {
-                                    println("Я тут")
-                                    navigator.push(WidgetScreen())
-                                },
+                                modifier = Modifier.size(30.dp).clickableBlank(
+                                    onClick = debouncedClick() {
+                                        println("Я тут")
+                                        navigator.push(WidgetScreen())
+                                    },
+                                ),
                                 tint = MaxiPulsTheme.colors.uiKit.lightTextColor
                             )
                         }

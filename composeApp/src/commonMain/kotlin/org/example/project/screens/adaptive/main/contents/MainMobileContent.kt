@@ -48,6 +48,7 @@ import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.MaxiPageContainerMobile
 import org.example.project.theme.uiKit.TopBarMobile
+import org.example.project.utils.debouncedClick
 import org.example.project.utils.safeAreaHorizontal
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -120,10 +121,11 @@ internal fun MainMobileContent(
 
             TaskItem(
                 modifier = Modifier.padding(top = 20.dp).height(80.dp),
-                taskUI = state.currentTask
-            ) {
-                state.currentTask.navigate(navigator = navigator)
-            }
+                taskUI = state.currentTask,
+                onClick = debouncedClick() {
+                    state.currentTask.navigate(navigator = navigator)
+                }
+            )
 
             Spacer(Modifier.size(20.dp))
 
@@ -149,10 +151,12 @@ internal fun MainMobileContent(
                     )
                 }
                 items(state.task) {
-                    TaskItem(modifier = Modifier.height(80.dp), taskUI = it) {
-                        it.navigate(navigator = navigator)
-                    }
-
+                    TaskItem(
+                        modifier = Modifier.height(80.dp),
+                        taskUI = it,
+                        onClick = debouncedClick() {
+                            it.navigate(navigator = navigator)
+                        })
                 }
             }
         }

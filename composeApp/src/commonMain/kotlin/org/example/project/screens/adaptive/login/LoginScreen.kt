@@ -54,6 +54,7 @@ import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiCheckbox
 import org.example.project.theme.uiKit.MaxiPageContainer
 import org.example.project.theme.uiKit.MaxiTextField
+import org.example.project.utils.debouncedClick
 import org.example.project.utils.safeAreaHorizontal
 import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
@@ -200,7 +201,7 @@ class LoginScreen : Screen {
                 }
 
                 MaxiButton(
-                    onClick = {
+                    onClick = debouncedClick(){
                         viewModel.login()
                     },
                     shape = RoundedCornerShape(50.dp),
@@ -292,7 +293,7 @@ class LoginScreen : Screen {
                 }
 
                 MaxiButton(
-                    onClick = {
+                    onClick = debouncedClick(){
                         viewModel.login()
                     },
                     text = "Войти",
@@ -379,7 +380,7 @@ class LoginScreen : Screen {
                 }
 
                 MaxiButton(
-                    onClick = {
+                    onClick = debouncedClick(){
                         viewModel.login()
                     },
                     text = "Войти",

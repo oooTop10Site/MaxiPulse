@@ -47,6 +47,7 @@ import org.example.project.domain.model.scaleBorg.ScaleBorg
 import org.example.project.ext.clickableBlank
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiRadioButton
+import org.example.project.utils.debouncedClick
 
 class BorgScaleScreen : Screen {
 
@@ -118,7 +119,9 @@ class BorgScaleScreen : Screen {
 
 @Composable
 fun MobileBackIcon(modifier: Modifier = Modifier, onClick: () -> Unit) {
-    IconButton(onClick = { onClick() }, modifier = modifier) {
+    IconButton(onClick = debouncedClick() {
+        onClick()
+    }, modifier = modifier) {
         Icon(
             painter = painterResource(Res.drawable.back_mobile_ic),
             modifier = Modifier.size(24.dp),
