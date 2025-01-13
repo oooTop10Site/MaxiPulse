@@ -27,7 +27,7 @@ data class SensorUI(
     }
 }
 
-enum class SensorStatus {
+enum class SensorStatus: JavaSerializable {
     Disable,
     Active,
     Unknown

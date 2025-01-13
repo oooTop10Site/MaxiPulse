@@ -1,5 +1,6 @@
 package org.example.project.domain.model.training
 
+import cafe.adriel.voyager.core.lifecycle.JavaSerializable
 import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.utils.orEmpty
 import kotlin.collections.orEmpty
@@ -7,7 +8,7 @@ import kotlin.collections.orEmpty
 data class TrainingUI(
     val sensorUI: SensorUI,
     val duration: Long,
-) {
+): JavaSerializable {
     companion object {
         val Default = TrainingUI(
             sensorUI = SensorUI.Empty,

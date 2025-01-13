@@ -113,9 +113,9 @@ internal fun KoinComponent.MainDesktopContent(
     state: MainState,
     testUI: TestUI?
 ) {
-    val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
+
     if (state.alertDialog is MainAlertDialog.SelectSensor) {
-        scanBluetoothSensorsManager.scanSensors() {
+        viewModel.scanBluetoothSensorsManager.scanSensors() {
             println("device - $it")
             viewModel.addSensor(it)
         }

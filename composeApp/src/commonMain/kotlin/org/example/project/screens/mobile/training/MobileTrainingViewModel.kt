@@ -9,6 +9,17 @@ internal class MobileTrainingViewModel :
     BaseScreenModel<MobileTrainingState, MobileTrainingEvent>(MobileTrainingState.InitState) {
 
     fun changeIsStart() = intent {
+        if(!state.isStart) {
+            reduce {
+                state.copy(
+                    currentTraining = state.currentTraining.copy(
+                        sensorUI = state.currentTraining.sensorUI.copy(
+                            heartRate = emptyList()
+                        )
+                    )
+                )
+            }
+        }
         reduce {
             state.copy(
                 isStart = !state.isStart

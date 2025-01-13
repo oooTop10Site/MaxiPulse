@@ -8,6 +8,7 @@ import org.example.project.domain.model.test.TestUI
 import org.example.project.domain.repository.GamerRepository
 import org.example.project.ext.toSensorUI
 import org.example.project.platform.BaseScreenModel
+import org.example.project.platform.ScanBluetoothSensorsManager
 import org.koin.core.component.inject
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.simple.blockingIntent
@@ -16,7 +17,7 @@ import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 
 internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.InitState) {
-
+    val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
     val observerManager: MessageObserverManager by inject()
     val sportsmanRepository: GamerRepository by inject()
 
@@ -63,6 +64,9 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
     }
 
     fun changeAlertDialog(alertDialog: MainAlertDialog?) = intent {
+        if(alertDialog !is MainAlertDialog.SelectSensor) {
+            scanBluetoothSensorsManager.stopScan {  }
+        }
         reduce {
             state.copy(
                 alertDialog = alertDialog,

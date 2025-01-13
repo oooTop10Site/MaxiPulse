@@ -104,10 +104,9 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import org.example.project.utils.debouncedClick
 
 class MobileTrainingScreen : Screen, KoinComponent {
-    private val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
-
     @Composable
     override fun Content() {
+        val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
 //        LifecycleEventEffect(event = Lifecycle.Event.ON_DESTROY) {
 //            scanBluetoothSensorsManager.stopScan()
 //        }
@@ -224,6 +223,7 @@ class MobileTrainingScreen : Screen, KoinComponent {
         onDismiss: () -> Unit,
         success: (SensorUI) -> Unit
     ) {
+        val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
         val devices = remember { mutableStateListOf<SensorUI>() }
         var state by remember { mutableStateOf(SelectSensorAlertDialogStep.SelectTypeSensor) }
         scanBluetoothSensorsManager.scanSensors() {

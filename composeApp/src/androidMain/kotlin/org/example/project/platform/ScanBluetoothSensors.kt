@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import cafe.adriel.voyager.core.lifecycle.JavaSerializable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -232,4 +233,3 @@ fun decodeSensorData(dataList: List<Int>, sensorUI: SensorUI): SensorUI {
         rr = rr
     )
 }
-
