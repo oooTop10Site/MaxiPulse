@@ -78,6 +78,7 @@ import org.example.project.ext.clickableBlank
 import org.example.project.ext.formatSeconds
 import org.example.project.ext.granted
 import org.example.project.ext.max
+import org.example.project.ext.roundToIntOrNull
 import org.example.project.platform.ScanBluetoothSensorsManager
 import org.example.project.platform.permission.model.Permission
 import org.example.project.platform.permission.service.PermissionsService
@@ -122,7 +123,11 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
             viewModel.loadSportsman(sportsmans)
             viewModel.container.sideEffectFlow.collect {
                 when (it) {
-                    is TrainingEvent.StopTraining -> navigator.push(TrainingResultScreen(it.sportsmans))
+
+                    is TrainingEvent.StopTraining -> {
+                        viewModel.scanBluetoothSensorsManager.stopScan {  }
+                        navigator.replace(TrainingResultScreen(it.sportsmans))
+                    }
                 }
             }
         }
@@ -142,6 +147,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
                     Spacer(Modifier.size(20.dp))
                     Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
                         BackIcon(modifier = Modifier.size(40.dp).align(Alignment.CenterStart)) {
+                            viewModel.scanBluetoothSensorsManager.stopScan {  }
                             navigator.pop()
                         }
 
@@ -623,7 +629,7 @@ private fun ChssSportsmanItem(
                 Text(
                     text = "${
                         ((sportsmanUI.sensor?.heartRate.orEmpty().map { it.value }.max(0)
-                            .toFloat() / hmax) * 100).roundToInt()
+                            .toFloat() / hmax) * 100).roundToIntOrNull().orEmpty()
                     }%",
                     style = MaxiPulsTheme.typography.semiBold.copy(
                         fontSize = 20.sp,

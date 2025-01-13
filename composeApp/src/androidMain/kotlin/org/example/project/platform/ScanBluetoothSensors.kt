@@ -127,6 +127,7 @@ internal actual class ScanBluetoothSensorsManager :
                                         status = SensorStatus.Active
                                     )
                                     try {
+                                        println("rssi - $rssi")
                                         val decodedData = decodeSensorData(
                                             manufacturerBytes.map { it.toInt() },
                                             sensorUI = sensor
@@ -198,6 +199,8 @@ internal actual class ScanBluetoothSensorsManager :
 
     @SuppressLint("MissingPermission")
     actual fun stopScan(doAfter: () -> Unit) {
+        println("СТОПИМ")
+        webSocket.closeSocket(code = 1000, reason = "message")
         scanCallback?.let {
             println("STOP SCAN")
             bluetoothLeScanner.stopScan(it)

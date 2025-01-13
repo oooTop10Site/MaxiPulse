@@ -24,7 +24,9 @@ import androidx.compose.ui.unit.sp
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.chss_max
 import maxipuls.composeapp.generated.resources.chss_min
+import org.example.project.ext.roundToIntOrNull
 import org.example.project.theme.MaxiPulsTheme
+import org.example.project.utils.orEmpty
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.abs
 import kotlin.math.max
@@ -144,7 +146,7 @@ fun ThresholdEditor(modifier: Modifier) {
                                     ).alpha(0.75f)
                             ) {
                                 Text(
-                                    text = (delta.toFloat() * thresholds[i].first / 100).roundToInt()
+                                    text = (delta.toFloat() * thresholds[i].first / 100).roundToIntOrNull().orEmpty()
                                         .toString(),
                                     modifier = Modifier.padding(8.dp),
                                     style = MaxiPulsTheme.typography.bold.copy(

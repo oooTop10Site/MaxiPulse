@@ -1,6 +1,7 @@
 package org.example.project.ext
 
 import androidx.compose.ui.graphics.Color
+import kotlin.math.roundToInt
 
 fun Int.toAnalizeColor(): Color {
     return when (this) {
@@ -17,6 +18,22 @@ fun List<Int>.max(default: Int): Int {
         this.max()
     } catch (e: Exception) {
         default
+    }
+}
+
+fun <T, R : Comparable<R>> Iterable<T>.maxOf(default: R?, selector: (T) -> R): R? {
+    return try {
+        this.maxOf(selector = selector)
+    } catch (e: Exception) {
+        default
+    }
+}
+
+fun Float.roundToIntOrNull(): Int? {
+    return try {
+        this.roundToInt()
+    } catch (e: Exception) {
+        null
     }
 }
 

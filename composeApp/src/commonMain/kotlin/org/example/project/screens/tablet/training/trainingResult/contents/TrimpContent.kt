@@ -29,12 +29,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import maxipuls.composeapp.generated.resources.Res
+import maxipuls.composeapp.generated.resources.duration
 import maxipuls.composeapp.generated.resources.equal
 import maxipuls.composeapp.generated.resources.fio
 import maxipuls.composeapp.generated.resources.search
 import maxipuls.composeapp.generated.resources.training
 import maxipuls.composeapp.generated.resources.trimp
 import org.example.project.domain.model.sportsman.SportsmanTrainingResultUI
+import org.example.project.ext.maxOf
+import org.example.project.ext.secondsToUI
 import org.example.project.screens.tablet.training.trainingResult.RegularResultBox
 import org.example.project.screens.tablet.training.trainingResult.TitleResultBox
 import org.example.project.screens.tablet.training.trainingResult.TrainingResultState
@@ -43,6 +46,7 @@ import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.theme.uiKit.TopBarTitle
 import org.example.project.utils.Constants
+import org.example.project.utils.orEmpty
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -59,7 +63,10 @@ internal fun ColumnScope.TrimpContent(
             showCurrentTime = true
         )
         Text(
-            text = "Продолжительность: 00:34:02",
+            text = "${stringResource(Res.string.duration)}: ${
+                state.sportsmans.maxOf(default = 0) { it.timeTrainingSeconds }.orEmpty()
+                    .secondsToUI()
+            }",
             style = MaxiPulsTheme.typography.regular.copy(
                 color = MaxiPulsTheme.colors.uiKit.textColor,
                 fontSize = 14.sp,

@@ -33,6 +33,7 @@ import org.example.project.ext.getEvenlyDistributedMills
 import org.example.project.ext.secondsToUI
 import org.example.project.ext.toTimeUI
 import org.example.project.theme.MaxiPulsTheme
+import org.example.project.utils.orEmpty
 
 @Composable
 fun HeartRateGraph(
@@ -151,10 +152,18 @@ fun HeartRateGraph(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                heartRateData.getEvenlyDistributedMills(5).forEach {
+                val mills = heartRateData.getEvenlyDistributedMills(5)
+                mills.forEach {
                     println("HEARTRATE - $it")
-                    println("HEARTRATESECONDS - ${(it/1000).secondsToUI()}")
-                    Text(text = (it/1000).secondsToUI(), style = textStyle)
+                    println(
+                        "HEARTRATESECONDS - ${
+                            ((it - mills.firstOrNull().orEmpty()) / 1000).secondsToUI()
+                        }"
+                    )
+                    Text(
+                        text = ((it - mills.firstOrNull().orEmpty()) / 1000).secondsToUI(),
+                        style = textStyle
+                    )
                 }
             }
         }

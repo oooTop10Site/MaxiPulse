@@ -84,7 +84,12 @@ internal class TrainingViewModel :
         } else {
             reduce {
                 state.copy(
-                    sportsmans = state.sportsmans.map { it.copy(isTraining = true) },
+                    sportsmans = state.sportsmans.map {
+                        it.copy(
+                            isTraining = true,
+                            sensor = it.sensor?.copy(heartRate = emptyList())
+                        )
+                    },
                     isStart = true
                 )
             }

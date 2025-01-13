@@ -41,6 +41,7 @@ import maxipuls.composeapp.generated.resources.profile
 import maxipuls.composeapp.generated.resources.training
 import maxipuls.composeapp.generated.resources.trimp
 import org.example.project.domain.model.sportsman.SportsmanTrainingResultUI
+import org.example.project.ext.roundToIntOrNull
 import org.example.project.ext.secondsToUI
 import org.example.project.ext.toTimeUI
 import org.example.project.screens.tablet.training.trainingResult.TrainingResultState
@@ -49,6 +50,7 @@ import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.HeartRateGraph
 import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.TopBarTitle
+import org.example.project.utils.orEmpty
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.roundToInt
@@ -230,7 +232,7 @@ internal fun SportsmanTraininResultContent(
                                     .align(Alignment.CenterStart)
                             )
                             Text(
-                                text = "${(division * 100).roundToInt()}%",
+                                text = "${(division * 100).roundToIntOrNull().orEmpty()}%",
                                 style = MaxiPulsTheme.typography.regular.copy(
                                     fontSize = 14.sp,
                                     lineHeight = 14.sp,
