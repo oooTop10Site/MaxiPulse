@@ -118,11 +118,7 @@ class LoginScreen : Screen {
         val state = viewModel.stateFlow.collectAsState()
         MaxiPageContainer {
             when (screenSize.widthSizeClass) {
-                WindowWidthSizeClass.Compact -> {
-                    MobileContent(viewModel, state, textOfPersonalData)
-                }
-
-                WindowWidthSizeClass.Medium -> {
+                WindowWidthSizeClass.Compact, WindowWidthSizeClass.Medium -> {
                     TabletContent(viewModel, state, textOfPersonalData)
                 }
 
@@ -132,98 +128,6 @@ class LoginScreen : Screen {
             }
         }
     }
-
-    @Composable
-    private fun MobileContent(
-        viewModel: LoginViewModel,
-        state: State<LoginState>,
-        textOfPersonalData: AnnotatedString
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Image(
-                bitmap = imageResource(resource = Res.drawable.background_auth),
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth()
-            )
-            Column(
-                modifier = Modifier.fillMaxSize().padding(horizontal = safeAreaHorizontal()),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Image(
-                    painter = painterResource(resource = Res.drawable.logo_minipulse),
-                    contentDescription = null,
-                    contentScale = ContentScale.FillWidth
-                )
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
-                ) {
-                    LoginTextField(value = state.value.login) {
-                        viewModel.changeLogin(it)
-                    }
-
-                    PasswordTextField(
-                        value = state.value.password,
-                        isShowPassword = state.value.isShowPassword,
-                        changePasswordVisible = {
-                            viewModel.changeShowPassword()
-                        },
-                        change = {
-                            viewModel.changePassword(it)
-                        },
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth().clickableBlank {
-                            viewModel.changeRememberMe()
-                        },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        MaxiCheckbox(
-                            checked = state.value.rememberMe,
-                            onCheckedChange = {
-                                viewModel.changeRememberMe()
-                            },
-                            modifier = Modifier.size(24.dp)
-                        )
-
-                        Text(
-                            text = "Запомнить меня?",
-                            modifier = Modifier.padding(start = 20.dp),
-                            style = MaxiPulsTheme.typography.regular.copy(
-                                fontSize = 16.sp,
-                                lineHeight = 16.sp,
-                            )
-                        )
-                    }
-                }
-
-                MaxiButton(
-                    onClick = debouncedClick(){
-                        viewModel.login()
-                    },
-                    shape = RoundedCornerShape(50.dp),
-                    text = "Войти",
-                    modifier = Modifier.fillMaxWidth().height(40.dp),
-                    buttonActions = ButtonActions.Unlimit
-                )
-
-                Text(
-                    text = textOfPersonalData,
-                    modifier = Modifier,
-                    textAlign = TextAlign.Center,
-                    style = MaxiPulsTheme.typography.bold.copy(
-                        color = MaxiPulsTheme.colors.uiKit.white,
-                        fontSize = 16.sp,
-                        lineHeight = 16.sp
-                    )
-                )
-            }
-        }
-    }
-
     @Composable
     private fun TabletContent(
         viewModel: LoginViewModel,

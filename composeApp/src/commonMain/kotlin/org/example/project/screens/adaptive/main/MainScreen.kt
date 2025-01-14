@@ -10,7 +10,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import org.example.project.domain.model.test.TestUI
 import org.example.project.platformContent.main.MainContent
 import org.example.project.screens.adaptive.main.contents.MainDesktopContent
-import org.example.project.screens.adaptive.main.contents.MainMobileContent
 import org.example.project.screens.adaptive.root.ScreenSize
 import org.koin.core.component.KoinComponent
 

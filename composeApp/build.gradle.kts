@@ -31,18 +31,6 @@ kotlin {
 
     jvm("desktop")
 
-
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "ComposeApp"
-            isStatic = true
-        }
-    }
-
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "composeApp"
@@ -73,9 +61,6 @@ kotlin {
             implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
             implementation("com.squareup.okhttp3:okhttp:4.11.0")
             implementation(libs.ktor.client.okhttp)
-        }
-        iosMain.dependencies {
-            implementation(compose.material)
         }
         commonMain.dependencies {
 //            implementation(libs.libres.compose)
@@ -198,9 +183,6 @@ dependencies {
     val ktorfitVersion = libs.versions.ktorfit.asProvider().get()
     add("kspCommonMainMetadata", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
     add("kspAndroid", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
-    add("kspIosX64", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
-    add("kspIosArm64", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
-    add("kspIosSimulatorArm64", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfitVersion")
 }
 
 compose.desktop {

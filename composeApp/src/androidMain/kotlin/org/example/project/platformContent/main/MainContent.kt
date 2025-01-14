@@ -7,7 +7,6 @@ import org.example.project.domain.model.test.TestUI
 import org.example.project.screens.adaptive.main.MainState
 import org.example.project.screens.adaptive.main.MainViewModel
 import org.example.project.screens.adaptive.main.contents.MainDesktopContent
-import org.example.project.screens.adaptive.main.contents.MainMobileContent
 import org.example.project.screens.adaptive.root.ScreenSize
 import org.koin.core.component.KoinComponent
 
@@ -18,16 +17,6 @@ internal actual fun KoinComponent.MainContent(
     testUI: TestUI?
 ) {
     val screenSize = ScreenSize.currentOrThrow
-    when (screenSize.widthSizeClass) {
-        WindowWidthSizeClass.Medium -> {
-            MainDesktopContent(viewModel, state, testUI)
-        }
-        WindowWidthSizeClass.Expanded -> {
-            MainDesktopContent(viewModel, state, testUI)
-        }
-        WindowWidthSizeClass.Compact -> {
-            MainMobileContent(viewModel, state, testUI)
-        }
-        else -> {}
-    }
+    MainDesktopContent(viewModel, state, testUI)
+
 }

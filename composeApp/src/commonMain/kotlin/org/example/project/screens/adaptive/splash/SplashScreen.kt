@@ -39,9 +39,12 @@ class SplashScreen : Screen, KoinComponent {
         val rootNavigator = RootNavigator.currentOrThrow
         LaunchedEffect(viewModel) {
             launch {
-                viewModel.container.sideEffectFlow.collect{
-                    when(it) {
-                        SplashScreenEvent.Failure -> {rootNavigator.replaceAll(LoginScreen())}
+                viewModel.container.sideEffectFlow.collect {
+                    when (it) {
+                        SplashScreenEvent.Failure -> {
+                            rootNavigator.replaceAll(LoginScreen())
+                        }
+
                         SplashScreenEvent.Success -> {
                             delay(500L)
                             rootNavigator.replaceAll(MainTabScreen())
@@ -54,39 +57,11 @@ class SplashScreen : Screen, KoinComponent {
             modifier = Modifier.fillMaxSize().padding(horizontal = 50.dp),
             contentAlignment = Alignment.Center
         ) {
-            when(windowSizeClass.widthSizeClass) {
-                WindowWidthSizeClass.Compact -> {
-                    Image(
-                        painter = painterResource(resource = Res.drawable.logo_minipulse),
-                        contentDescription = null,
-                        contentScale = ContentScale.FillWidth
-                    )
-                }
-
-                WindowWidthSizeClass.Medium -> {
-                    Image(
-                        painter = painterResource(resource = Res.drawable.logo),
-                        contentDescription = null,
-                        contentScale = ContentScale.FillWidth
-                    )
-                }
-
-                WindowWidthSizeClass.Expanded -> {
-                    Image(
-                        painter = painterResource(resource = Res.drawable.logo),
-                        contentDescription = null,
-                        contentScale = ContentScale.FillWidth
-                    )
-                }
-
-                else -> {
-                    Image(
-                        painter = painterResource(resource = Res.drawable.logo),
-                        contentDescription = null,
-                        contentScale = ContentScale.FillWidth
-                    )
-                }
-            }
+            Image(
+                painter = painterResource(resource = Res.drawable.logo),
+                contentDescription = null,
+                contentScale = ContentScale.FillWidth
+            )
         }
     }
 }
