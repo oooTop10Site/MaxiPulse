@@ -476,7 +476,6 @@ private fun SportsmanContent(
                     }
                     if (sportsmanUI.isTraining) {
                         MaxiButton(
-                            buttonActions = ButtonActions.Unlimit,
                             modifier = Modifier.weight(1f).height(89.dp),
                             text = stringResource(Res.string.ending_training),
                             buttonTextStyle = ButtonTextStyle.Bold,

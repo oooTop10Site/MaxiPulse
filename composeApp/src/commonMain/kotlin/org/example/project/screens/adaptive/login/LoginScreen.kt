@@ -202,7 +202,6 @@ class LoginScreen : Screen {
                     },
                     text = "Войти",
                     modifier = Modifier.height(54.dp),
-                    buttonActions = ButtonActions.Unlimit
                 )
 
                 Text(
@@ -289,7 +288,6 @@ class LoginScreen : Screen {
                     },
                     text = "Войти",
                     modifier = Modifier.height(54.dp),
-                    buttonActions = ButtonActions.Unlimit
                 )
 
                 Text(

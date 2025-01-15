@@ -181,8 +181,7 @@ internal actual fun KoinComponent.MainContent(
                     }, shape = RoundedCornerShape(0.dp),
                     text = stringResource(
                         if (testUI == null) Res.string.start_tarining else Res.string.start_test
-                    ), modifier = Modifier.fillMaxWidth().height((94 / buttonDivision).dp),
-                    buttonActions = ButtonActions.Unlimit,
+                    ), modifier = Modifier.fillMaxWidth().height((88 / buttonDivision).dp),
                     enabled = (state.alertDialog == null && state.selectSportsmans.isNotEmpty()) || !state.isStartTraining
                 )
             },
@@ -412,7 +411,27 @@ internal actual fun KoinComponent.MainContent(
             }
 
             is MainAlertDialog.SelectSensor -> {
-                SelectSensor(viewModel, state = state, alertData)
+                SelectSensor(
+                    onDismiss = {
+                        viewModel.changeAlertDialog(null)
+                    },
+                    observeSensor = {
+                        viewModel.addSensor(it)
+                    },
+                    sportsmanId = alertData.sportsman.id,
+                    sensor = alertData.sportsman.sensor,
+                    sensors = state.sensors,
+                    sensorAlreadyExit = {
+                        it in state.sportsmans.filter { it != alertData.sportsman }
+                            .map { it.sensor }
+                    },
+                    accept = { sensor, sportsmanId ->
+                        viewModel.changeSensorValidation(
+                            sensor,
+                            sportsmanId
+                        )
+                    }
+                )
             }
 
             is MainAlertDialog.SensorAlreadyAssigned -> {

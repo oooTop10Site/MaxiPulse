@@ -99,6 +99,7 @@ import maxipuls.composeapp.generated.resources.stage_sport_ready
 import maxipuls.composeapp.generated.resources.turn_on_personal_sensor
 import maxipuls.composeapp.generated.resources.weight
 import org.example.project.domain.model.ButtonActions
+import org.example.project.domain.model.MainAlertDialog.SelectSensor
 import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.gameType.GameTypeUI
 import org.example.project.domain.model.rank.RankUI
@@ -121,6 +122,7 @@ import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.theme.uiKit.MaxiTextFieldMenu
 import org.example.project.theme.uiKit.MaxiTextFieldResMenu
+import org.example.project.theme.uiKit.SelectSensor
 import org.example.project.theme.uiKit.ThresholdEditor
 import org.example.project.theme.uiKit.simpleVerticalScrollbar
 import org.example.project.utils.Constants
@@ -128,8 +130,9 @@ import org.example.project.utils.previousOrPresentSelectableDates
 import org.example.project.utils.toStringWithCondition
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.core.component.KoinComponent
 
-class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
+class SportsmanEditScreen(private val gamerId: String? = null) : Screen, KoinComponent {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -426,9 +429,11 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                     )
                                 }
                                 MaxiButton(
-                                    onClick = {},
+                                    onClick = {
+                                        viewModel.changeSensorAlertDialog()
+                                    },
                                     buttonTextStyle = ButtonTextStyle.Medium,
-                                    text = stringResource(Res.string.turn_on_personal_sensor),
+                                    text = if (state.sensorUI == null) stringResource(Res.string.turn_on_personal_sensor) else "${state.sensorUI?.sensorId.orEmpty()} ${state.sensorUI?.deviceName.orEmpty()}",
                                     modifier = Modifier.height(65.dp).widthIn(max = 320.dp),
                                     shape = RoundedCornerShape(15.dp)
                                 )
@@ -624,7 +629,6 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                             //todo
                                         },
                                         text = stringResource(Res.string.counting),
-                                        buttonActions = ButtonActions.Unlimit,
                                         modifier = Modifier.height(Constants.TextFieldHeight),
                                         buttonTextStyle = ButtonTextStyle.Medium
                                     )
@@ -739,7 +743,6 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         containerColor = MaxiPulsTheme.colors.uiKit.grey400,
                                         contentColor = MaxiPulsTheme.colors.uiKit.textColor
                                     ),
-                                    buttonActions = ButtonActions.Unlimit,
                                     modifier = Modifier.height(54.dp)
                                 )
                                 Spacer(Modifier.size(20.dp))
@@ -749,7 +752,6 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                                         viewModel.save()
                                     },
                                     text = stringResource(Res.string.save),
-                                    buttonActions = ButtonActions.Unlimit,
                                     modifier = Modifier.height(54.dp).weight(1f)
                                 )
                             }
@@ -863,6 +865,27 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen {
                             Spacer(Modifier.size(60.dp))
                         }
                     },
+                )
+            }
+            if (state.sensorAlertDialog) {
+                SelectSensor(
+                    onDismiss = {
+                        viewModel.changeSensorAlertDialog()
+                    },
+                    observeSensor = {
+                        viewModel.changeSensorAlertDialog()
+                    },
+                    sportsmanId = state.sportsmanUI.id,
+                    sensor = state.sensorUI,
+                    sensors = state.sensors,
+                    sensorAlreadyExit = {
+                        false
+                    },
+                    accept = { sensor, sportsmanId ->
+                        viewModel.changeSensor(
+                            sensor,
+                        )
+                    }
                 )
             }
         }

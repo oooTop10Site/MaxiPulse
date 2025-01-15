@@ -20,6 +20,7 @@ import maxipuls.composeapp.generated.resources.success_save
 import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.gameType.GameTypeUI
 import org.example.project.domain.model.rank.RankUI
+import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.domain.model.trainingStage.TrainingStageUI
 import org.example.project.domain.repository.GroupRepository
 import org.example.project.ext.calculateAge
@@ -49,6 +50,34 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
                     }
                 }
             )
+        }
+    }
+
+
+    fun changeSensorAlertDialog() = intent {
+        reduce {
+            state.copy(
+                sensorAlertDialog = !state.sensorAlertDialog,
+            )
+        }
+    }
+
+    fun changeSensor(it: SensorUI) = intent {
+        reduce {
+            state.copy(
+                sensorAlertDialog = false,
+                sensorUI = it
+            )
+        }
+    }
+
+    fun addSensor(sensor: SensorUI) = intent {
+        if (sensor.sensorId !in state.sensors.orEmpty().map { it.sensorId }) {
+            reduce {
+                state.copy(
+                    sensors = state.sensors.orEmpty() + sensor
+                )
+            }
         }
     }
 

@@ -42,7 +42,6 @@ fun MaxiButton(
     interactionSource: MutableInteractionSource? = null,
     text: String,
     buttonTextStyle: ButtonTextStyle = ButtonTextStyle.Bold,
-    buttonActions: ButtonActions = ButtonActions.Unlimit
 ) {
     val scope = rememberCoroutineScope()
     val styleText = when (buttonTextStyle) {
@@ -118,14 +117,7 @@ fun MaxiButton(
     }
     Button(
         {
-            if (buttonActions == ButtonActions.Unlimit) {
-                onClick()
-            } else {
-                scope.launch() {
-                    onClick()
-                    delay(200L)
-                }
-            }
+            onClick()
         },
         modifier,
         enabled,
@@ -160,7 +152,6 @@ fun MaxiButton(
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
     buttonTextStyle: ButtonTextStyle = ButtonTextStyle.Bold,
-    buttonActions: ButtonActions = ButtonActions.Unlimit,
     content: @Composable () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -237,14 +228,8 @@ fun MaxiButton(
     }
     Button(
         {
-            if (buttonActions == ButtonActions.Unlimit) {
-                onClick()
-            } else {
-                scope.launch() {
-                    onClick()
-                    delay(200L)
-                }
-            }
+            onClick()
+
         },
         modifier,
         enabled,

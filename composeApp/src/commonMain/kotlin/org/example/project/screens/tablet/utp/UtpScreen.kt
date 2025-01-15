@@ -350,7 +350,6 @@ class UtpScreen : Screen {
                         Res.string.start_tarining
                     ),
                     modifier = Modifier.fillMaxWidth().height((84.0/buttonDivision).dp),
-                    buttonActions = ButtonActions.Unlimit,
                 )
             }
         }

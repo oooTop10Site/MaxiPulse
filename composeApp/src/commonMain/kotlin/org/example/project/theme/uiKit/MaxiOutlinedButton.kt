@@ -31,14 +31,14 @@ fun MaxiOutlinedButton(
         contentColor = MaxiPulsTheme.colors.uiKit.primary,
     ),
     elevation: ButtonElevation? = null,
-    border: BorderStroke? = ButtonDefaults.outlinedButtonBorder(false),
+    border: BorderStroke? = BorderStroke(1.dp, color = MaxiPulsTheme.colors.uiKit.primary),
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     interactionSource: MutableInteractionSource? = null,
     text: String,
 ) {
     OutlinedButton(
         onClick,
-        modifier.border(width = 1.dp, color = MaxiPulsTheme.colors.uiKit.primary, shape = shape),
+        modifier,
         enabled,
         shape,
         colors,

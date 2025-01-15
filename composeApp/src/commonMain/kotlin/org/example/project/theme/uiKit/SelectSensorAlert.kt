@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,21 +34,35 @@ import maxipuls.composeapp.generated.resources.choose_sensor
 import maxipuls.composeapp.generated.resources.error_ic
 import maxipuls.composeapp.generated.resources.ok
 import org.example.project.domain.model.MainAlertDialog
+import org.example.project.domain.model.sportsman.SensorUI
+import org.example.project.domain.model.sportsman.SportsmanSensorUI
 import org.example.project.ext.clickableBlank
+import org.example.project.platform.ScanBluetoothSensorsManager
 import org.example.project.screens.adaptive.main.MainState
 import org.example.project.screens.adaptive.main.MainViewModel
 import org.example.project.screens.tablet.sensor.SearchAvailableDevices
 import org.example.project.theme.MaxiPulsTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 @Composable
-internal fun SelectSensor(
-    viewModel: MainViewModel,
-    state: MainState,
-    alertData: MainAlertDialog.SelectSensor
+internal fun KoinComponent.SelectSensor(
+    onDismiss: () -> Unit,
+    sensors: List<SensorUI>?,
+    observeSensor: (SensorUI) -> Unit,
+    sensorAlreadyExit: (SensorUI) -> Boolean = {false},
+    accept: (SensorUI, String) -> Unit,
+    sportsmanId: String,
+    sensor: SensorUI?,
 ) {
-    var selectSensor by remember { mutableStateOf(alertData.sportsman.sensor) }
+    val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
+    var selectSensor by remember { mutableStateOf(sensor) }
+    scanBluetoothSensorsManager.scanSensors() {
+        println("device - $it")
+        observeSensor(it)
+    }
     MaxiAlertDialog(
         modifier = Modifier.padding(horizontal = 20.dp).width(600.dp).animateContentSize(),
         title = stringResource(Res.string.choose_sensor),
@@ -62,9 +77,9 @@ internal fun SelectSensor(
         ),
         accept = {
             selectSensor?.let {
-                viewModel.changeSensorValidation(
+                accept(
                     it,
-                    alertData.sportsman.id
+                    sportsmanId
                 )
             }
         },
@@ -72,11 +87,11 @@ internal fun SelectSensor(
         cancelText = stringResource(Res.string.cancel),
         alertDialogButtons = MaxiAlertDialogButtons.CancelAccept,
         onDismiss = {
-            viewModel.changeAlertDialog(null)
+            onDismiss()
         },
         paddingAfterTitle = false,
         descriptionContent = {
-            if (state.sensors == null) {
+            if (sensors == null) {
                 Box(modifier = Modifier.heightIn(400.dp), contentAlignment = Alignment.Center) {
                     SearchAvailableDevices(modifier = Modifier.size(200.dp), false)
                 }
@@ -88,10 +103,9 @@ internal fun SelectSensor(
                     contentPadding = PaddingValues(vertical = 40.dp),
                     verticalArrangement = Arrangement.spacedBy(13.dp)
                 ) {
-                    items(state.sensors) {
-                        val alreadyExist =
-                            it in state.sportsmans.filter { it != alertData.sportsman }
-                                .map { it.sensor }
+                    items(sensors) {
+                        val alreadyExist = sensorAlreadyExit(it)
+
                         val isSelect = selectSensor == it
                         Row(
                             modifier = Modifier.fillMaxWidth().background(

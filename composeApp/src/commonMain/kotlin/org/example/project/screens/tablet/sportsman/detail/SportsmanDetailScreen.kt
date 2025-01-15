@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -59,7 +61,9 @@ import maxipuls.composeapp.generated.resources.profile
 import maxipuls.composeapp.generated.resources.save
 import maxipuls.composeapp.generated.resources.sensor
 import maxipuls.composeapp.generated.resources.sensor_ic
+import maxipuls.composeapp.generated.resources.sensor_not_choose
 import maxipuls.composeapp.generated.resources.sportsman_ic
+import maxipuls.composeapp.generated.resources.turn_on_personal_sensor
 import maxipuls.composeapp.generated.resources.weight
 import org.example.project.domain.model.ButtonActions
 import org.example.project.domain.model.sportsman.HeartBit
@@ -67,6 +71,7 @@ import org.example.project.ext.clickableBlank
 import org.example.project.screens.adaptive.root.RootNavigator
 import org.example.project.screens.tablet.sportsman.edit.SportsmanEditScreen
 import org.example.project.theme.MaxiPulsTheme
+import org.example.project.theme.uiKit.ButtonTextStyle
 import org.example.project.theme.uiKit.HeartBPMGraph
 import org.example.project.theme.uiKit.HeartRateGraph
 import org.example.project.theme.uiKit.MaxiAlertDialog
@@ -280,38 +285,22 @@ class SportsmanDetailScreen(private val gamerId: String? = null) : Screen {
                             )
 
                         }
-
+                        val colors = ButtonDefaults.buttonColors()
                         MaxiButton(
-                            modifier = Modifier.width(250.dp),
-                            shape = RoundedCornerShape(15.dp),
-                            buttonActions = ButtonActions.Unlimit,
+                            buttonTextStyle = ButtonTextStyle.Medium,
+                            text = if (state.sensorUI == null) stringResource(Res.string.sensor_not_choose) else "${state.sensorUI?.sensorId.orEmpty()}\n${state.sensorUI?.deviceName.orEmpty()}",
+                            modifier = Modifier.height(65.dp).width(250.dp),
+                            colors = if (state.sensorUI == null) ButtonDefaults.buttonColors(
+                                containerColor = colors.disabledContainerColor,
+                                contentColor = colors.disabledContentColor
+                            ) else ButtonDefaults.buttonColors(
+                                containerColor = MaxiPulsTheme.colors.uiKit.buttonContainer,
+                                contentColor = MaxiPulsTheme.colors.uiKit.buttonContent
+                            ),
+                            shape = RoundedCornerShape(50.dp),
                             onClick = {
-                                //todo чо то с датчиком
-                            }) {
-                            Column(
-                                modifier = Modifier.padding(vertical = 10.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Image(
-                                    painter = painterResource(Res.drawable.sensor_ic),
-                                    contentDescription = null,
-                                    contentScale = ContentScale.FillHeight,
-                                    colorFilter = ColorFilter.tint(color = MaxiPulsTheme.colors.uiKit.lightTextColor),
-                                    modifier = Modifier.size(height = 45.dp, width = 51.dp)
-                                )
-                                Spacer(Modifier.size(10.dp))
-                                Text(
-                                    text = stringResource(
-                                        Res.string.sensor
-                                    ),
-                                    style = MaxiPulsTheme.typography.bold.copy(
-                                        color = MaxiPulsTheme.colors.uiKit.lightTextColor,
-                                        fontSize = 20.sp,
-                                        lineHeight = 20.sp
-                                    )
-                                )
-                            }
-                        }
+                                rootNavigator.push(SportsmanEditScreen(gamerId))
+                            })
                     }
 
                     HorizontalDivider(

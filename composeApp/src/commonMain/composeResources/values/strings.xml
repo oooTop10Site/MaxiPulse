@@ -215,6 +215,7 @@
     <string name="rating">Рейтинг</string>
     <string name="appeared_new_task">Появились новые задачи</string>
     <string name="borg_scale">Шкала Борга</string>
+    <string name="sensor_not_choose">Датчик не выбран</string>
     <string name="training_info_desc1">1. Мгновенная ЧСС</string>
     <string name="training_info_desc2">2. % ЧСС мах. Рассчитывается от максимального значения ЧСС, сохраненного в профиле спортсмена</string>
     <string name="training_info_desc3">3. Пульсовая тренировочная зона, в которой спортсмен находится в каждый момент тренировки. Настройка пульсовых зон осуществляется в профиле спортсмена, который находится во вкладке Спортсмены.</string>
