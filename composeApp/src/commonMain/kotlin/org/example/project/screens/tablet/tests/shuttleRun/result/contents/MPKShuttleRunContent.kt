@@ -32,8 +32,12 @@ import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.fio
 import maxipuls.composeapp.generated.resources.mpk
 import maxipuls.composeapp.generated.resources.search
+import maxipuls.composeapp.generated.resources.shuttle_run
 import maxipuls.composeapp.generated.resources.training
 import org.example.project.domain.model.sportsman.SportsmanShuttleRunResultUI
+import org.example.project.ext.formatSeconds
+import org.example.project.ext.maxOf
+import org.example.project.ext.secondsToUI
 import org.example.project.screens.tablet.tests.shuttleRun.result.ShuttleRunResultState
 import org.example.project.screens.tablet.tests.shuttleRun.result.ShuttleRunResultViewModel
 import org.example.project.screens.tablet.training.trainingResult.RegularResultBox
@@ -43,6 +47,7 @@ import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.theme.uiKit.MaxiTextFieldMenu
 import org.example.project.theme.uiKit.TopBarTitle
 import org.example.project.utils.Constants
+import org.example.project.utils.orEmpty
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -55,12 +60,14 @@ internal fun ColumnScope.MPKShuttleRunContent(
     Column() {
         Spacer(Modifier.size(20.dp))
         TopBarTitle(
-            text = stringResource(Res.string.training),
+            text = stringResource(Res.string.shuttle_run),
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
             showCurrentTime = true
         )
         Text(
-            text = "Продолжительность: 00:34:02",
+            text = state.sportsmans.maxOf(default = 0) {
+                it.time
+            }.orEmpty().secondsToUI(),
             style = MaxiPulsTheme.typography.regular.copy(
                 color = MaxiPulsTheme.colors.uiKit.textColor,
                 fontSize = 14.sp,

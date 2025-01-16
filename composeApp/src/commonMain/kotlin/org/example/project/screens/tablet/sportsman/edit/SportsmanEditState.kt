@@ -24,6 +24,7 @@ data class SportsmanEditState(
     val sensors: List<SensorUI>?,
     val trainingStages: List<TrainingStageUI>,
     val settingChssDialog: Boolean,
+    val deleteSportsmanDialog: Boolean,
 ) {
     companion object {
         val InitState = SportsmanEditState(
@@ -42,7 +43,8 @@ data class SportsmanEditState(
             emptyList(),
             null,
             emptyList(),
-            false
+            false,
+            false,
         )
     }
 }

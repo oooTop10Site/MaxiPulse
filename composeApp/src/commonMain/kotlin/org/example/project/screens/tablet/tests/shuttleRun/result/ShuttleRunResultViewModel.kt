@@ -10,6 +10,13 @@ internal class ShuttleRunResultViewModel :
     BaseScreenModel<ShuttleRunResultState, ShuttleRunResultEvent>(
         ShuttleRunResultState.InitState
     ) {
+
+    fun loadResult(sportsmans: List<SportsmanShuttleRunResultUI>) = intent {
+        reduce {
+            state.copy(sportsmans = sportsmans)
+        }
+    }
+
     fun changeSelectSportsman(sportsmanUI: SportsmanShuttleRunResultUI) = intent {
         reduce {
             state.copy(

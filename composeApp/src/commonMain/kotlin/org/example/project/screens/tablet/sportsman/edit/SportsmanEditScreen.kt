@@ -21,6 +21,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
@@ -64,6 +66,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.add_large_ic
+import maxipuls.composeapp.generated.resources.attention
 import maxipuls.composeapp.generated.resources.back_ic
 import maxipuls.composeapp.generated.resources.biometrics_indicators
 import maxipuls.composeapp.generated.resources.by_age
@@ -78,6 +81,7 @@ import maxipuls.composeapp.generated.resources.composition_and_group
 import maxipuls.composeapp.generated.resources.couch
 import maxipuls.composeapp.generated.resources.counting
 import maxipuls.composeapp.generated.resources.date_birthday
+import maxipuls.composeapp.generated.resources.delete_sportsman_alert
 import maxipuls.composeapp.generated.resources.height
 import maxipuls.composeapp.generated.resources.imt
 import maxipuls.composeapp.generated.resources.lastname
@@ -96,6 +100,7 @@ import maxipuls.composeapp.generated.resources.sport
 import maxipuls.composeapp.generated.resources.sport_category
 import maxipuls.composeapp.generated.resources.sport_training_indicators
 import maxipuls.composeapp.generated.resources.stage_sport_ready
+import maxipuls.composeapp.generated.resources.trash
 import maxipuls.composeapp.generated.resources.turn_on_personal_sensor
 import maxipuls.composeapp.generated.resources.weight
 import org.example.project.domain.model.ButtonActions
@@ -169,6 +174,10 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen, KoinCom
                             SportsmanEditEvent.Save -> {
                                 rootNavigator.pop()
                             }
+
+                            SportsmanEditEvent.Delete -> {
+                                rootNavigator.popUntilRoot()
+                            }
                         }
                     }
                 }
@@ -209,19 +218,25 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen, KoinCom
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-
-                        Box(
-                            modifier = Modifier.size(40.dp)
-                                .background(MaxiPulsTheme.colors.uiKit.primary, shape = CircleShape)
-                                .clip(CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                painterResource(Res.drawable.pencil),
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp),
-                                tint = MaxiPulsTheme.colors.uiKit.lightTextColor
-                            )
+                        if(gamerId != null) {
+                            Box(
+                                modifier = Modifier.size(40.dp)
+                                    .background(
+                                        MaxiPulsTheme.colors.uiKit.primary,
+                                        shape = CircleShape
+                                    )
+                                    .clip(CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painterResource(Res.drawable.trash),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp).clickableBlank {
+                                        viewModel.deleteSportsmanDialog()
+                                    },
+                                    tint = MaxiPulsTheme.colors.uiKit.lightTextColor
+                                )
+                            }
                         }
                     }
 
@@ -885,6 +900,25 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen, KoinCom
                         viewModel.changeSensor(
                             sensor,
                         )
+                    }
+                )
+            }
+            if (state.deleteSportsmanDialog) {
+                MaxiAlertDialog(
+                    modifier = Modifier.width(600.dp),
+                    alertDialogButtons = MaxiAlertDialogButtons.CancelAccept,
+                    title = stringResource(Res.string.attention),
+                    description = stringResource(Res.string.delete_sportsman_alert),
+                    accept = {
+                        viewModel.deleteSportsman(gamerId)
+                    },
+                    acceptText = stringResource(Res.string.ok),
+                    cancelText = stringResource(Res.string.cancel),
+                    cancel = {
+                        viewModel.deleteSportsmanDialog()
+                    },
+                    onDismiss = {
+                        viewModel.deleteSportsmanDialog()
                     }
                 )
             }

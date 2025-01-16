@@ -42,6 +42,7 @@ import maxipuls.composeapp.generated.resources.cone_ic
 import maxipuls.composeapp.generated.resources.shuttle_run
 import maxipuls.composeapp.generated.resources.start
 import maxipuls.composeapp.generated.resources.stop
+import org.example.project.domain.model.sportsman.SportsmanSensorUI
 import org.example.project.domain.model.test.TestSportsmanUI
 import org.example.project.domain.model.test.TestStatus
 import org.example.project.ext.clickableBlank
@@ -53,7 +54,7 @@ import org.example.project.theme.uiKit.MaxiPageContainer
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-class ShuttleRunScreen : Screen {
+class ShuttleRunScreen(private val sportsmans: List<SportsmanSensorUI>) : Screen {
 
     @Composable
     override fun Content() {
@@ -62,21 +63,25 @@ class ShuttleRunScreen : Screen {
         }
         val state by viewModel.stateFlow.collectAsState()
         val navigator = LocalNavigator.currentOrThrow
+        viewModel.scanBluetoothSensorsManager.scanSensors() {
+            viewModel.newDataFromSportsman(it)
+        }
         LaunchedEffect(state.isStart) {
             launch() {
                 while (state.isStart) {
-                    delay(999L)
+                    delay(995L)
                     viewModel.incrementTime()
                 }
             }
         }
 
         LaunchedEffect(viewModel) {
+            viewModel.loadSportsman(sportsmans = sportsmans)
             launch {
                 viewModel.container.sideEffectFlow.collect {
-                    when(it) {
-                        ShuttleRunEvent.StopShuttleRun -> {
-                            navigator.replace(ShuttleRunResultScreen())
+                    when (it) {
+                        is ShuttleRunEvent.StopShuttleRun -> {
+                            navigator.replace(ShuttleRunResultScreen(it.sportsman))
                         }
                     }
                 }

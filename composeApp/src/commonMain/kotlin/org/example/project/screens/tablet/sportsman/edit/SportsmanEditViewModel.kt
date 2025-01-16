@@ -33,6 +33,15 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
     private val groupRepository: GroupRepository by inject()
     private val observerManager: MessageObserverManager by inject()
     val imagePermissionsService: PermissionsService by inject()
+
+    fun deleteSportsmanDialog() = intent {
+        reduce {
+            state.copy(
+                deleteSportsmanDialog = !state.deleteSportsmanDialog
+            )
+        }
+    }
+
     fun loadSportsman(id: String?) = intent {
         if (!id.isNullOrBlank()) {
             launchOperation(
@@ -59,6 +68,18 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
             state.copy(
                 sensorAlertDialog = !state.sensorAlertDialog,
             )
+        }
+    }
+
+    fun deleteSportsman(gamerId: String?) = intent {
+        gamerId?.let {
+            launchOperation(operation = {
+                gamerRepository.deleteGamer(gamerId)
+            }, success = {
+                deleteSportsmanDialog()
+                postSideEffectLocal(SportsmanEditEvent.Delete)
+            })
+
         }
     }
 
@@ -116,6 +137,7 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
             }
         )
     }
+
     fun loadTrainingStages(gameTypeId: String = state.sportsmanUI.gameTypeId) = intent {
         launchOperation(
             operation = {
@@ -280,7 +302,7 @@ internal class SportsmanEditViewModel : BaseScreenModel<SportsmanEditState, Spor
     }
 
     fun changeSport(gameTypeUI: GameTypeUI) = intent {
-        if(gameTypeUI.id != state.sportsmanUI.gameTypeId) {
+        if (gameTypeUI.id != state.sportsmanUI.gameTypeId) {
             println("change gameTypeUI - $gameTypeUI")
             reduce {
                 state.copy(

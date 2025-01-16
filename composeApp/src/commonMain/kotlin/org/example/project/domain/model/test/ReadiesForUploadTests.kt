@@ -1,6 +1,8 @@
 package org.example.project.domain.model.test
 
-enum class ReadiesForUploadTests {
+import cafe.adriel.voyager.core.lifecycle.JavaSerializable
+
+enum class ReadiesForUploadTests: JavaSerializable {
 
     LyingPosition,
     StandingPosition,

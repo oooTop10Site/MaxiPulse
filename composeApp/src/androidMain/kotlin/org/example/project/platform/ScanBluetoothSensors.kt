@@ -2,6 +2,7 @@ package org.example.project.platform
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
@@ -46,7 +47,8 @@ import kotlin.math.abs
 internal actual class ScanBluetoothSensorsManager :
     KoinComponent {
     val context by KoinInjector.koin.inject<Context>()
-    val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+    val bluetoothAdapter =
+        (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
     val bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
     var scanCallback: ScanCallback? = null
     val permissionService: PermissionsService by inject()
@@ -101,6 +103,8 @@ internal actual class ScanBluetoothSensorsManager :
                     stopScan { }
                     return@LaunchedEffect
                 }
+                stopScan { }
+                delay(1500L)
 //        stopScan() {
                 scanCallback = object : ScanCallback() {
                     override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -116,30 +120,29 @@ internal actual class ScanBluetoothSensorsManager :
                             for (i in 0 until data.size()) {
                                 val manufacturerId = data.keyAt(i)
                                 val manufacturerBytes = data.valueAt(i)
-                                if (manufacturerId == 159) {
-                                    // Получаем имя устройства и его идентификатор
-                                    val deviceName = result.device.name ?: "Unknown Device"
-                                    val sensorId =
-                                        result.device.address // Обычно используется MAC-адрес устройства
-                                    // Создаем объект SensorUI и передаем в callback
-                                    val sensor = SensorUI(
-                                        sensorId = sensorId,
-                                        deviceName = deviceName,
-                                        status = SensorStatus.Active
+//                                if (manufacturerId == 159) {
+                                // Получаем имя устройства и его идентификатор
+                                val deviceName = result.device.name ?: "Unknown Device"
+                                val sensorId =
+                                    result.device.address // Обычно используется MAC-адрес устройства
+                                // Создаем объект SensorUI и передаем в callback
+                                val sensor = SensorUI(
+                                    sensorId = sensorId,
+                                    deviceName = deviceName,
+                                    status = SensorStatus.Active
+                                )
+                                try {
+                                    val decodedData = decodeSensorData(
+                                        manufacturerBytes.map { it.toInt() },
+                                        sensorUI = sensor
                                     )
-                                    try {
-                                        println("rssi - $rssi")
-                                        val decodedData = decodeSensorData(
-                                            manufacturerBytes.map { it.toInt() },
-                                            sensorUI = sensor
-                                        )
-                                        onDeviceFound(decodedData)
-                                    } catch (e: Exception) {
-                                        Log.e(
-                                            "SCANDEVICE",
-                                            "Failed to decode sensor data: ${e.message}"
-                                        )
-                                    }
+                                    onDeviceFound(decodedData)
+                                } catch (e: Exception) {
+                                    Log.e(
+                                        "SCANDEVICE",
+                                        "Failed to decode sensor data: ${e.message}"
+                                    )
+//                                    }
                                 }
                             }
                         } ?: Log.w("SCANDEVICE", "No manufacturer-specific data found")
@@ -207,6 +210,7 @@ internal actual class ScanBluetoothSensorsManager :
             bluetoothLeScanner.stopScan(it)
             doAfter()
         } ?: doAfter()
+        scanCallback = null
     }
 }
 

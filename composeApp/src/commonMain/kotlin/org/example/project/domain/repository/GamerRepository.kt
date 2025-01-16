@@ -16,6 +16,7 @@ interface GamerRepository {
         gamerId: String? = null,
         sportsmanUI: SportsmanUI
     ): Either<Failure, Unit>
+    suspend fun deleteGamer(gamerId: String): Either<Failure, Unit>
 
     suspend fun getGameTypes(): Either<Failure, List<GameTypeUI>>
     suspend fun getRank(gameTypeId: String): Either<Failure, List<RankUI>>

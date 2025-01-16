@@ -130,6 +130,14 @@ class GamerRepositoryImpl(
         )
     }
 
+    override suspend fun deleteGamer(gamerId: String): Either<Failure, Unit> {
+        return apiCall(
+            call = {
+                maxiPulseApi.deleteSportsman(gamerId)
+            }
+        )
+    }
+
     override suspend fun getGameTypes(): Either<Failure, List<GameTypeUI>> {
         return apiCall(
             call = {

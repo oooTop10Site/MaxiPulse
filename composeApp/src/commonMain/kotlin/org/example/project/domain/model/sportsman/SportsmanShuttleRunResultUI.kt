@@ -1,5 +1,6 @@
 package org.example.project.domain.model.sportsman
 
+import cafe.adriel.voyager.core.lifecycle.JavaSerializable
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.average
 import maxipuls.composeapp.generated.resources.high
@@ -21,12 +22,12 @@ data class SportsmanShuttleRunResultUI(
     val mpk: Int,
     val performance: Performance,
     val time: Long //seconds
-) {
+): JavaSerializable {
     val fio: String
         get() = "$lastname $firstname $middleName"
 }
 
-enum class Performance(val text: StringResource) {
+enum class Performance(val text: StringResource): JavaSerializable {
     Min(text = Res.string.minimal),
     Max(text = Res.string.high),
     Avg(text = Res.string.average),

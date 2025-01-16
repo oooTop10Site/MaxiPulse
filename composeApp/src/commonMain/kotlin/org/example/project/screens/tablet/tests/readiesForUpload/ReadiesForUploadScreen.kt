@@ -35,12 +35,13 @@ import maxipuls.composeapp.generated.resources.`continue`
 import maxipuls.composeapp.generated.resources.readies_for_upload
 import maxipuls.composeapp.generated.resources.start
 import maxipuls.composeapp.generated.resources.stop
+import org.example.project.domain.model.sportsman.SportsmanSensorUI
 import org.example.project.ext.toText
 import org.example.project.screens.tablet.tests.readiesForUpload.result.ReadiesForUploadResultScreen
 import org.example.project.screens.tablet.tests.shuttleRun.SportsmanTestItem
 import org.example.project.theme.uiKit.MaxiButton
 
-class ReadiesForUploadScreen : Screen {
+class ReadiesForUploadScreen(private val sportsmans: List<SportsmanSensorUI>) : Screen {
 
     @Composable
     override fun Content() {
@@ -50,21 +51,26 @@ class ReadiesForUploadScreen : Screen {
         val navigator = LocalNavigator.currentOrThrow
         val state by viewModel.stateFlow.collectAsState()
 
+        viewModel.scanBluetoothSensorsManager.scanSensors {
+            viewModel.newDataFromSportsman(sensorUI = it)
+        }
+
         LaunchedEffect(state.isStart) {
             launch() {
                 while (state.isStart) {
-                    delay(999L)
+                    delay(995L)
                     viewModel.decrementTime()
                 }
             }
         }
 
         LaunchedEffect(viewModel) {
+            viewModel.loadSportmans(sportsmans)
             launch() {
                 viewModel.container.sideEffectFlow.collect {
                     when (it) {
-                        ReadiesForUploadEvent.Result -> {
-                            navigator.replace(ReadiesForUploadResultScreen())
+                        is ReadiesForUploadEvent.Result -> {
+                            navigator.replace(ReadiesForUploadResultScreen(it.sportmans))
                         }
                     }
                 }

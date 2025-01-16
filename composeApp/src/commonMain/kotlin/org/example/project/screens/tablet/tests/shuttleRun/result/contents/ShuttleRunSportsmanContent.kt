@@ -62,8 +62,11 @@ import org.jetbrains.compose.resources.stringResource
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import kotlinx.datetime.Month
+import maxipuls.composeapp.generated.resources.duration
+import org.example.project.ext.maxOf
 import org.example.project.screens.tablet.tests.shuttleRun.result.SelectableTab
 import org.example.project.theme.uiKit.BarChart
+import org.example.project.utils.orEmpty
 
 @Composable
 internal fun ColumnScope.ShuttleRunSportsmanContent(
@@ -81,7 +84,10 @@ internal fun ColumnScope.ShuttleRunSportsmanContent(
             showCurrentTime = true
         )
         Text(
-            text = "Продолжительность: 00:34:02",
+            text = "${stringResource(Res.string.duration)}: ${
+                state.sportsmans.maxOf(default = 0) { it.time }.orEmpty()
+                    .secondsToUI()
+            }",
             style = MaxiPulsTheme.typography.regular.copy(
                 color = MaxiPulsTheme.colors.uiKit.textColor,
                 fontSize = 14.sp,

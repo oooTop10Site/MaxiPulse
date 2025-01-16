@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
@@ -53,7 +54,7 @@ import org.example.project.utils.Constants
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-class ReadiesForUploadResultScreen : Screen {
+class ReadiesForUploadResultScreen(private val sportsmans: List<SportsmanTestResultUI>) : Screen {
 
     @Composable
     override fun Content() {
@@ -61,6 +62,11 @@ class ReadiesForUploadResultScreen : Screen {
         val viewModel = rememberScreenModel {
             ReadiesForUploadResultViewModel()
         }
+
+        LaunchedEffect(viewModel) {
+            viewModel.loadResult(sportmans = sportsmans)
+        }
+
         val state by viewModel.stateFlow.collectAsState()
         MaxiPageContainer(
             topBar = {

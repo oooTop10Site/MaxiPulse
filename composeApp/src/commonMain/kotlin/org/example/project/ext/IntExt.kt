@@ -21,9 +21,25 @@ fun List<Int>.max(default: Int): Int {
     }
 }
 
-fun <T, R : Comparable<R>> Iterable<T>.maxOf(default: R?, selector: (T) -> R): R? {
+fun <T, R : Comparable<R>> Iterable<T>.maxOf(default: R, selector: (T) -> R): R {
     return try {
         this.maxOf(selector = selector)
+    } catch (e: Exception) {
+        default
+    }
+}
+
+fun <T, R : Comparable<R>> Iterable<T>.minOf(default: R, selector: (T) -> R): R {
+    return try {
+        this.minOf(selector = selector)
+    } catch (e: Exception) {
+        default
+    }
+}
+
+fun Double.roundToIntOrNull(default: Int): Int {
+    return try {
+        this.roundToInt()
     } catch (e: Exception) {
         default
     }

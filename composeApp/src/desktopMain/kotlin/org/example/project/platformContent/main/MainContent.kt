@@ -139,8 +139,8 @@ internal actual fun KoinComponent.MainContent(
             launch {
                 viewModel.container.sideEffectFlow.collect {
                     when (it) {
-                        MainEvent.ShuttleRun -> rootNavigator.push(ShuttleRunScreen())
-                        MainEvent.ReadiesForUpload -> rootNavigator.push(ReadiesForUploadScreen())
+                        is MainEvent.ShuttleRun -> rootNavigator.push(ShuttleRunScreen(it.sportsmans))
+                        is MainEvent.ReadiesForUpload -> rootNavigator.push(ReadiesForUploadScreen(it.sportsmans))
                         is MainEvent.Training -> {
                             scanBluetoothSensorsManager.stopScan { }
                             rootNavigator.push(TrainingScreen(it.sportsmans))

@@ -1,5 +1,6 @@
 package org.example.project.domain.model.sportsman
 
+import cafe.adriel.voyager.core.lifecycle.JavaSerializable
 import org.example.project.utils.orEmpty
 
 data class SportsmanTrainingResultUI(
@@ -22,7 +23,7 @@ data class SportsmanTrainingResultUI(
     val zone4: Long, // seconds
     val zone5: Long, // seconds
     val heartRate: List<HeartBit>
-) {
+): JavaSerializable {
 
     val timeTrainingSeconds: Long
         get() = (if (heartRate.size >= 2) {
@@ -37,4 +38,4 @@ data class SportsmanTrainingResultUI(
 data class HeartBit(
     val mills: Long,
     val value: Int,
-)
+): JavaSerializable

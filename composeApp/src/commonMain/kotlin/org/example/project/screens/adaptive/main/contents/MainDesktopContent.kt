@@ -135,8 +135,8 @@ internal fun KoinComponent.MainDesktopContent(
             launch {
                 viewModel.container.sideEffectFlow.collect {
                     when (it) {
-                        MainEvent.ShuttleRun -> rootNavigator.push(ShuttleRunScreen())
-                        MainEvent.ReadiesForUpload -> rootNavigator.push(ReadiesForUploadScreen())
+                        is MainEvent.ShuttleRun -> rootNavigator.push(ShuttleRunScreen(it.sportsmans))
+                        is MainEvent.ReadiesForUpload -> rootNavigator.push(ReadiesForUploadScreen(it.sportsmans))
                         is MainEvent.Training -> rootNavigator.push(TrainingScreen(it.sportsmans))
                     }
                 }
@@ -165,7 +165,7 @@ internal fun KoinComponent.MainDesktopContent(
             },
             bottomBar = {
                 MaxiButton(
-                    onClick = {
+                    onClick =debouncedClick() {
                         if (!state.isStartTraining) {
                             viewModel.changeIsStartTraining()
                         } else {

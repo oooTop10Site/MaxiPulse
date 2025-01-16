@@ -1,6 +1,9 @@
 package org.example.project.domain.model.sportsman
 
 import cafe.adriel.voyager.core.lifecycle.JavaSerializable
+import org.example.project.ext.maxOf
+import org.example.project.ext.minOf
+import org.example.project.ext.roundToIntOrNull
 import org.example.project.utils.orEmpty
 import kotlin.math.roundToInt
 
@@ -65,12 +68,12 @@ data class SportsmanSensorUI(
         } else 0) / 1000
 
     val maxHeartRate: Int
-        get() = sensor?.heartRate.orEmpty().maxOf { it.value }
+        get() = sensor?.heartRate.orEmpty().maxOf(default = 0) { it.value }
 
     val minHeartRate: Int
-        get() = sensor?.heartRate.orEmpty().minOf { it.value }
+        get() = sensor?.heartRate.orEmpty().minOf(default = 0) { it.value }
 
     val avgHeartRate: Int
-        get() = sensor?.heartRate.orEmpty().map { it.value }.average().roundToInt()
+        get() = sensor?.heartRate.orEmpty().map { it.value }.average().roundToIntOrNull(default = 0)
 
 }

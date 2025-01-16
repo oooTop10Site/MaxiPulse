@@ -21,6 +21,11 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
     val observerManager: MessageObserverManager by inject()
     val sportsmanRepository: GamerRepository by inject()
 
+    override fun onDispose() {
+        super.onDispose()
+        scanBluetoothSensorsManager.stopScan { }
+    }
+
     @OptIn(OrbitExperimental::class)
     fun changeSearch(value: String) = blockingIntent {
         reduce {
@@ -64,8 +69,8 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
     }
 
     fun changeAlertDialog(alertDialog: MainAlertDialog?) = intent {
-        if(alertDialog !is MainAlertDialog.SelectSensor) {
-            scanBluetoothSensorsManager.stopScan {  }
+        if (alertDialog !is MainAlertDialog.SelectSensor) {
+            scanBluetoothSensorsManager.stopScan { }
         }
         reduce {
             state.copy(
@@ -92,16 +97,14 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
             }
             when (testUI) {
                 is TestUI.ReadiesForUpload -> {
-                    postSideEffect(MainEvent.ReadiesForUpload)
+                    postSideEffect(MainEvent.ReadiesForUpload(state.sportsmans.filter { it.id in state.selectSportsmans }))
                 }
 
                 is TestUI.ShuttleRun -> {
-                    postSideEffect(MainEvent.ShuttleRun)
+                    postSideEffect(MainEvent.ShuttleRun(state.sportsmans.filter { it.id in state.selectSportsmans }))
                 }
 
                 null -> {
-                    println("state.sportsmans - ${state.sportsmans}")
-                    println("state.selectSportsmans - ${state.selectSportsmans}")
                     postSideEffect(MainEvent.Training(sportsmans = state.sportsmans.filter { it.id in state.selectSportsmans }))
                 }
             }
