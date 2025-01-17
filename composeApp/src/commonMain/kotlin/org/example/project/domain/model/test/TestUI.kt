@@ -9,15 +9,31 @@ import maxipuls.composeapp.generated.resources.shuttle_running
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 
-sealed class TestUI(val title: StringResource, val icon: DrawableResource, val isPay: Boolean) :
+sealed class TestUI(val isPay: Boolean) :
     JavaSerializable {
     object ShuttleRun :
-        TestUI(title = Res.string.shuttle_run, icon = Res.drawable.shuttle_running, isPay = false),
+        TestUI(isPay = false),
         JavaSerializable
 
     object ReadiesForUpload :
-        TestUI(title = Res.string.readies_for_upload, icon = Res.drawable.line_up, isPay = true),
+        TestUI(isPay = true),
         JavaSerializable
+
+    val title: StringResource
+        get() {
+            return when (this) {
+                ReadiesForUpload -> Res.string.readies_for_upload
+                ShuttleRun -> Res.string.shuttle_run
+            }
+        }
+
+    val icon: DrawableResource
+        get() {
+            return when (this) {
+                ReadiesForUpload ->Res.drawable.line_up
+                ShuttleRun -> Res.drawable.shuttle_running
+            }
+        }
 
     companion object {
         val entries = listOf<TestUI>(TestUI.ShuttleRun, TestUI.ReadiesForUpload)
