@@ -1,5 +1,9 @@
 package org.example.project.screens.adaptive.main
 
+import cafe.adriel.voyager.core.model.screenModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.example.project.domain.manager.MessageObserverManager
 import org.example.project.domain.model.MainAlertDialog
 import org.example.project.domain.model.sportsman.SensorUI
@@ -9,6 +13,7 @@ import org.example.project.domain.repository.GamerRepository
 import org.example.project.ext.toSensorUI
 import org.example.project.platform.BaseScreenModel
 import org.example.project.platform.ScanBluetoothSensorsManager
+import org.example.project.utils.Constants
 import org.koin.core.component.inject
 import org.orbitmvi.orbit.annotation.OrbitExperimental
 import org.orbitmvi.orbit.syntax.simple.blockingIntent
@@ -35,15 +40,39 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
         }
     }
 
+    var job: Job? = null
+    fun search(value: String) = intent {
+        job?.cancel()
+        job = screenModelScope.launch {
+            delay(Constants.Debounce)
+            val queryWords = value.trim().lowercase().split(" ") // Разбиваем запрос на слова
+            reduce {
+                state.copy(
+                    filterSportsmans = state.sportsmans.filter { sportman ->
+                        val fio = sportman.fio.lowercase() // Приводим ФИО спортсмена к нижнему регистру
+                        queryWords.all { word -> fio.contains(word) } // Проверяем, что все слова из запроса есть в ФИО
+                    }
+                )
+            }
+        }
+    }
+
     fun loadSportsman() = intent {
+        reduce {
+            state.copy(
+                search = ""
+            )
+        }
         launchOperation(
             operation = {
                 sportsmanRepository.getGamers()
             },
             success = {
+                val sportsmans = it.map { it.toSensorUI() }
                 reduceLocal {
                     state.copy(
-                        sportsmans = it.map { it.toSensorUI() }
+                        sportsmans = sportsmans,
+                        filterSportsmans = sportsmans
                     )
                 }
             }
@@ -131,6 +160,17 @@ internal class MainViewModel : BaseScreenModel<MainState, MainEvent>(MainState.I
     fun changeSensor(sensorUI: SensorUI, sportsmanId: String) = intent {
         reduce {
             state.copy(
+                filterSportsmans = state.filterSportsmans.map {
+                    when {
+                        it.id == sportsmanId -> it.copy(
+                            sensor = sensorUI
+                        )
+
+                        sensorUI.sensorId == it.sensor?.sensorId -> it.copy(sensor = null)
+
+                        else -> it
+                    }
+                },
                 sportsmans = state.sportsmans.map {
                     when {
                         it.id == sportsmanId -> it.copy(

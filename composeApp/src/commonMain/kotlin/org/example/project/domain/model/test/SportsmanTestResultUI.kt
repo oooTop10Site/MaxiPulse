@@ -14,7 +14,12 @@ data class SportsmanTestResultUI(
     val name: String,
     val lastname: String,
     val status: TestResultStatus
-) : JavaSerializable
+) : JavaSerializable {
+
+    val fio: String
+        get() = "$lastname $name"
+
+}
 
 sealed class TestResultStatus(val icon: DrawableResource, val color: Color) : JavaSerializable {
     object Good :

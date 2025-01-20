@@ -8,19 +8,13 @@ import org.example.project.domain.model.task.MainTaskUI
 
 data class MainState(
     val sportsmans: List<SportsmanSensorUI>,
+    val filterSportsmans: List<SportsmanSensorUI>,
     val selectSportsmans: List<String>,
     val search: String,
     val isStartTraining: Boolean,
     val isActiveSensor: Boolean,
     val alertDialog: MainAlertDialog?,
     val sensors: List<SensorUI>?,
-    //mobile
-    val avatar: String,
-    val task: List<MainTaskUI>,
-    val currentTask: MainTaskUI,
-    val name: String,
-    val lastname: String,
-    val middleName: String,
 ) {
     companion object {
         val InitState = MainState(
@@ -33,19 +27,7 @@ data class MainState(
             isActiveSensor = false,
             alertDialog = null,
             sensors = null,
-            avatar = "",
-            name = "Иван",
-            lastname = "Иванов",
-            middleName = "Иванович",
-            task = listOf(
-                MainTaskUI.BorgScale,
-                MainTaskUI.Training,
-                MainTaskUI.GoodMorning,
-                MainTaskUI.GoodMorning,
-                MainTaskUI.GoodMorning,
-                MainTaskUI.GoodMorning,
-            ),
-            currentTask = MainTaskUI.GoodMorning
+            filterSportsmans = emptyList()
         )
     }
 }

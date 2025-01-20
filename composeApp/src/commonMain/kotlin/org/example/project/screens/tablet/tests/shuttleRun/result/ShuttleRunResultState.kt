@@ -8,6 +8,7 @@ import kotlin.random.Random
 data class ShuttleRunResultState(
     val sportsmans: List<SportsmanShuttleRunResultUI>,
     val selectSportsman: SportsmanShuttleRunResultUI?,
+    val filterSportsmans: List<SportsmanShuttleRunResultUI>,
     val tabs: List<ShuttleRunResultTab>,
     val currentTab: ShuttleRunResultTab?,
     val search: String,
@@ -25,7 +26,8 @@ data class ShuttleRunResultState(
             selectSportsman = null,
             tabs = ShuttleRunResultTab.entries,
             currentTab = ShuttleRunResultTab.OverallResult,
-            isDialog = false
+            isDialog = false,
+            filterSportsmans = emptyList()
         )
     }
 }

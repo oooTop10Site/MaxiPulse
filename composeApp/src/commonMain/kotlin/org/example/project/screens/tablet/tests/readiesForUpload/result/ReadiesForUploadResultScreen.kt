@@ -169,7 +169,7 @@ class ReadiesForUploadResultScreen(private val sportsmans: List<SportsmanTestRes
                 contentPadding = PaddingValues(20.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                items(state.users) {
+                items(state.filterSportsmans) {
                     SportsmanTestResultItem(modifier = Modifier.height(190.dp), it) {
 
                     }

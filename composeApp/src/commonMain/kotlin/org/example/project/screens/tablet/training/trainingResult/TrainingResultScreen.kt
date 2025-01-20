@@ -199,7 +199,7 @@ class TrainingResultScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
                         contentPadding = PaddingValues(20.dp),
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
-                        items(state.sportsmans) {
+                        items(state.filterSportmans) {
                             SportsmanResultCard(
                                 modifier = Modifier.fillMaxWidth(),
                                 number = it.number,

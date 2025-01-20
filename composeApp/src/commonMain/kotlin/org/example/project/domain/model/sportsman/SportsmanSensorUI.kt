@@ -23,6 +23,9 @@ data class SportsmanSensorUI(
     val isTraining: Boolean = false,
 ) : JavaSerializable {
 
+    val fio: String
+        get() = "$lastname $name $middleName"
+
     val zone1Range: List<Int> = IntRange(0, 70).toList()
     val zone2Range: List<Int> = IntRange(71, 90).toList()
     val zone3Range: List<Int> = IntRange(91, 110).toList()

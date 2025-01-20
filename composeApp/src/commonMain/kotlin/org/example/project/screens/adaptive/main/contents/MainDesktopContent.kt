@@ -263,6 +263,7 @@ internal fun KoinComponent.MainDesktopContent(
                                 value = state.search,
                                 onValueChange = {
                                     viewModel.changeSearch(it)
+                                    viewModel.search(it)
                                 },
                                 placeholder = stringResource(Res.string.search),
                                 modifier = Modifier.height(Constants.TextFieldHeight)
@@ -294,7 +295,7 @@ internal fun KoinComponent.MainDesktopContent(
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                     contentPadding = PaddingValues(20.dp)
                 ) {
-                    items(state.sportsmans.chunked(chunkSize)) { chunk ->
+                    items(state.filterSportsmans.chunked(chunkSize)) { chunk ->
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,

@@ -64,7 +64,7 @@ internal fun ColumnScope.TrimpContent(
         )
         Text(
             text = "${stringResource(Res.string.duration)}: ${
-                state.sportsmans.maxOf(default = 0) { it.timeTrainingSeconds }.orEmpty()
+                state.filterSportmans.maxOf(default = 0) { it.timeTrainingSeconds }.orEmpty()
                     .secondsToUI()
             }",
             style = MaxiPulsTheme.typography.regular.copy(
@@ -82,6 +82,7 @@ internal fun ColumnScope.TrimpContent(
             value = state.search,
             onValueChange = {
                 viewModel.changeSearch(it)
+                viewModel.search(it)
             },
             placeholder = stringResource(Res.string.search),
             modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)
@@ -132,10 +133,10 @@ internal fun ColumnScope.TrimpContent(
             color = MaxiPulsTheme.colors.uiKit.divider
         )
         LazyColumn(Modifier.weight(1f).fillMaxWidth()) {
-            items(state.sportsmans) {
+            items(state.filterSportmans) {
                 CellItem(
                     sportsmanTrainingResultUI = it,
-                    maxTrimp = state.sportsmans.maxOf { it.trimp })
+                    maxTrimp = state.filterSportmans.maxOf { it.trimp })
                 HorizontalDivider(
                     modifier = Modifier.fillMaxWidth(),
                     color = MaxiPulsTheme.colors.uiKit.divider

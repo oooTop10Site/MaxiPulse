@@ -8,6 +8,7 @@ import kotlin.random.Random
 data class TrainingResultState(
     val sportsmans: List<SportsmanTrainingResultUI>,
     val selectSportsman: SportsmanTrainingResultUI?,
+    val filterSportmans: List<SportsmanTrainingResultUI>,
     val tabs: List<TrainingResultTab>,
     val currentTab: TrainingResultTab?,
     val search: String,
@@ -16,6 +17,7 @@ data class TrainingResultState(
         val InitState = TrainingResultState(
             emptyList(),
             selectSportsman = null,
+            emptyList(),
             tabs = TrainingResultTab.entries,
             currentTab = TrainingResultTab.Sheet,
             search = ""

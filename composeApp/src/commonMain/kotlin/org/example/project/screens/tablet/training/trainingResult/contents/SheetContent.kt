@@ -66,7 +66,7 @@ internal fun ColumnScope.SheetContent(
         )
         Text(
             text = "${stringResource(Res.string.duration)}: ${
-                state.sportsmans.maxOf(default = 0) { it.timeTrainingSeconds }.orEmpty()
+                state.filterSportmans.maxOf(default = 0) { it.timeTrainingSeconds }.orEmpty()
                     .secondsToUI()
             }",            style = MaxiPulsTheme.typography.regular.copy(
                 color = MaxiPulsTheme.colors.uiKit.textColor,
@@ -83,6 +83,7 @@ internal fun ColumnScope.SheetContent(
             value = state.search,
             onValueChange = {
                 viewModel.changeSearch(it)
+                viewModel.search(it)
             },
             placeholder = stringResource(Res.string.search),
             modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)
@@ -224,7 +225,7 @@ internal fun ColumnScope.SheetContent(
         color = MaxiPulsTheme.colors.uiKit.divider
     )
     LazyColumn(modifier = Modifier.weight(1f)) {
-        items(state.sportsmans) {
+        items(state.filterSportmans) {
             CellItem(sportsmanTrainingResultUI = it)
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth(),

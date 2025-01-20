@@ -9,4 +9,5 @@ object Constants {
     val TextFieldHeight = 44.dp
     const val MAX_TRAINING_INTENSITY = 200
     const val IsDataSocketFromSensor = false
+    const val Debounce = 300L
 }

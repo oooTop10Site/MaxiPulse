@@ -88,6 +88,7 @@ internal fun ColumnScope.MPKShuttleRunContent(
                 value = state.search,
                 onValueChange = {
                     viewModel.changeSearch(it)
+                    viewModel.search(it)
                 },
                 placeholder = stringResource(Res.string.search),
                 modifier = Modifier
@@ -142,7 +143,7 @@ internal fun ColumnScope.MPKShuttleRunContent(
             color = MaxiPulsTheme.colors.uiKit.divider
         )
         LazyColumn(Modifier.weight(1f).fillMaxWidth()) {
-            items(state.sportsmans) {
+            items(state.filterSportsmans) {
                 CellItem(
                     sportsmanUI = it,
                     maxMpk = state.sportsmans.maxOf { it.mpk })

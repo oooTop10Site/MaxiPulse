@@ -148,6 +148,7 @@ class ShuttleRunResultScreen(private val sportsmans: List<SportsmanShuttleRunRes
                                 value = state.search,
                                 onValueChange = {
                                     viewModel.changeSearch(it)
+                                    viewModel.search(it)
                                 },
                                 placeholder = stringResource(Res.string.search),
                                 modifier = Modifier
@@ -225,7 +226,7 @@ class ShuttleRunResultScreen(private val sportsmans: List<SportsmanShuttleRunRes
                         contentPadding = PaddingValues(20.dp),
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
-                        items(state.sportsmans) {
+                        items(state.filterSportsmans) {
                             SportsmanResultCard(
                                 modifier = Modifier.fillMaxWidth(),
                                 number = it.number,
