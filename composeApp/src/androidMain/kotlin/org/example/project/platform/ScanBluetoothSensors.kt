@@ -26,10 +26,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
+import maxipuls.composeapp.generated.resources.Res
+import maxipuls.composeapp.generated.resources.turn_on_bluetooth
+import maxipuls.composeapp.generated.resources.turn_on_gps
 import org.example.project.data.mapper.toSensorUI
 import org.example.project.data.model.sensor.SensorResponse
 import org.example.project.di.KoinInjector
 import org.example.project.domain.manager.AuthManager
+import org.example.project.domain.manager.MessageObserverManager
 import org.example.project.domain.model.sportsman.HeartBit
 import org.example.project.domain.model.sportsman.SensorStatus
 import org.example.project.domain.model.sportsman.SensorUI
@@ -37,6 +41,7 @@ import org.example.project.ext.granted
 import org.example.project.platform.permission.model.Permission
 import org.example.project.platform.permission.service.PermissionsService
 import org.example.project.utils.Constants
+import org.jetbrains.compose.resources.stringResource
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.nio.ByteBuffer
@@ -53,6 +58,7 @@ internal actual class ScanBluetoothSensorsManager :
     var scanCallback: ScanCallback? = null
     val permissionService: PermissionsService by inject()
     val authManager: AuthManager by inject()
+    val observerManager: MessageObserverManager by inject()
     private val webSocket = PlatformSocket(Constants.BASE_SOCKET_URL, authManager.token.orEmpty())
 
     @Composable
@@ -78,6 +84,8 @@ internal actual class ScanBluetoothSensorsManager :
         println("ЗАШЛИ В САМУ ФУНКЦИЮ")
         var sensorShow by remember { mutableStateOf(false) }
         var sensorPermission by remember { mutableStateOf(false) }
+        val turnOnGps = stringResource(Res.string.turn_on_gps)
+        val turnOnBluetooth = stringResource(Res.string.turn_on_bluetooth)
         permissionService.checkPermissionFlow(Permission.BLUETOOTH_CONNECT)
             .collectAsState(permissionService.checkPermission(Permission.BLUETOOTH_CONNECT))
             .granted {
@@ -94,6 +102,16 @@ internal actual class ScanBluetoothSensorsManager :
                 sensorPermission = true
                 permissionService.providePermission(Permission.BLUETOOTH_CONNECT)
             }
+
+            launch {
+                locationStatusFlow().collect {
+                    if (!it) {
+                        observerManager.putMessage(turnOnGps)
+                        onCatch(Throwable())
+                        return@collect
+                    }
+                }
+            }
         }
 
         println("SensorShowVAR - $sensorShow")
@@ -101,6 +119,9 @@ internal actual class ScanBluetoothSensorsManager :
             if (sensorShow) {
                 if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
                     stopScan { }
+                    observerManager.putMessage(turnOnBluetooth)
+                    onCatch(Throwable())
+                    sensorShow = false
                     return@LaunchedEffect
                 }
                 stopScan { }

@@ -215,6 +215,8 @@
     <string name="rating">Рейтинг</string>
     <string name="appeared_new_task">Появились новые задачи</string>
     <string name="borg_scale">Шкала Борга</string>
+    <string name="turn_on_gps">Включите местоположение</string>
+    <string name="turn_on_bluetooth">Включите bluetooth</string>
     <string name="delete_sportsman_alert">Вы уверены, что хотите удалить\nспортсмена? Отменить это действие\nневозможно.</string>
     <string name="sensor_not_choose">Датчик не выбран</string>
     <string name="training_info_desc1">1. Мгновенная ЧСС</string>

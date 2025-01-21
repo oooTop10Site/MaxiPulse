@@ -52,14 +52,14 @@ internal fun KoinComponent.SelectSensor(
     onDismiss: () -> Unit,
     sensors: List<SensorUI>?,
     observeSensor: (SensorUI) -> Unit,
-    sensorAlreadyExit: (SensorUI) -> Boolean = {false},
+    sensorAlreadyExit: (SensorUI) -> Boolean = { false },
     accept: (SensorUI, String) -> Unit,
     sportsmanId: String,
     sensor: SensorUI?,
 ) {
     val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
     var selectSensor by remember { mutableStateOf(sensor) }
-    scanBluetoothSensorsManager.scanSensors() {
+    scanBluetoothSensorsManager.scanSensors(onCatch = { onDismiss() }) {
         println("device - $it")
         observeSensor(it)
     }
