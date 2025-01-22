@@ -8,6 +8,7 @@ import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -174,7 +175,13 @@ internal actual class ScanBluetoothSensorsManager :
                         // Обработка ошибок сканирования (если нужно)
                     }
                 }
-                bluetoothLeScanner.startScan(scanCallback)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    bluetoothLeScanner.startScan(null, ScanSettings.Builder()
+                        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY) // Или другой режим
+                        .setLegacy(false) // Использовать BLE 5.x
+                        .setPhy(ScanSettings.PHY_LE_ALL_SUPPORTED) // Coded PHY для дальнего действия
+                        .build(),scanCallback)
+                }
 //        }
             }
         }
