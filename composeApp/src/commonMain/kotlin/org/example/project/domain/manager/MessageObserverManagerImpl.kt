@@ -12,7 +12,8 @@ import kotlinx.coroutines.launch
 class MessageObserverManagerImpl : MessageObserverManager {
     override val message: Channel<String> = Channel(Channel.BUFFERED)
     override val openMobileMenu: Channel<Unit> = Channel(Channel.BUFFERED)
-
+    private val _lastApiCall = MutableStateFlow<(() -> Unit)?>(null)
+    override val lastApiCall: StateFlow<(() -> Unit)?> = _lastApiCall.asStateFlow()
 
     private val coroutineScope =
         CoroutineScope(Dispatchers.Main) // Use Dispatchers.Main for UI updates
@@ -35,5 +36,9 @@ class MessageObserverManagerImpl : MessageObserverManager {
         coroutineScope.launch {
             openMobileMenu.send(Unit)
         }
+    }
+
+    override fun setLastApiCall(lastApiCall: () -> Unit) {
+        _lastApiCall.value = lastApiCall
     }
 }
