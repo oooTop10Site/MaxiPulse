@@ -22,7 +22,7 @@ import kotlin.getValue
 fun MaxiSnackbarHost(
     hostState: SnackbarHostState,
     modifier: Modifier = Modifier
-) { //todo вообще бы тут делать authManager.exit()
+) {
     val rootNavigator = RootNavigator.currentOrThrow
     val authManager = AuthManagerExT()
     val swipeState = rememberSwipeToDismissBoxState(confirmValueChange = {
@@ -32,6 +32,9 @@ fun MaxiSnackbarHost(
         true
     })
     LaunchedEffect(hostState.currentSnackbarData?.visuals?.message) {
+        if(!hostState.currentSnackbarData?.visuals?.message.isNullOrBlank()) {
+            swipeState.reset()
+        }
         if (hostState.currentSnackbarData?.visuals?.message.orEmpty().contains("Unauthenticated")) {
             authManager.exitFromAcc()
             rootNavigator.replaceAll(LoginScreen())

@@ -23,6 +23,7 @@ import cafe.adriel.voyager.core.lifecycle.JavaSerializable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
@@ -103,7 +104,7 @@ internal actual class ScanBluetoothSensorsManager :
                 sensorPermission = true
                 permissionService.providePermission(Permission.BLUETOOTH_CONNECT)
             }
-
+            delay(1500L)
             launch {
                 locationStatusFlow().collect {
                     if (!it) {
@@ -118,6 +119,13 @@ internal actual class ScanBluetoothSensorsManager :
         println("SensorShowVAR - $sensorShow")
         LaunchedEffect(sensorShow) {
             if (sensorShow) {
+                if (locationStatusFlow().firstOrNull() != true) {
+                    stopScan { }
+                    observerManager.putMessage(turnOnGps)
+                    onCatch(Throwable())
+                    sensorShow = false
+                    return@LaunchedEffect
+                }
                 if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
                     stopScan { }
                     observerManager.putMessage(turnOnBluetooth)
@@ -142,7 +150,7 @@ internal actual class ScanBluetoothSensorsManager :
                             for (i in 0 until data.size()) {
                                 val manufacturerId = data.keyAt(i)
                                 val manufacturerBytes = data.valueAt(i)
-//                                if (manufacturerId == 159) {
+                                if (manufacturerId == 159) {
                                 // Получаем имя устройства и его идентификатор
                                 val deviceName = result.device.name ?: "Unknown Device"
                                 val sensorId =
@@ -164,7 +172,7 @@ internal actual class ScanBluetoothSensorsManager :
                                         "SCANDEVICE",
                                         "Failed to decode sensor data: ${e.message}"
                                     )
-//                                    }
+                                    }
                                 }
                             }
                         } ?: Log.w("SCANDEVICE", "No manufacturer-specific data found")
@@ -235,7 +243,10 @@ internal actual class ScanBluetoothSensorsManager :
         webSocket.closeSocket(code = 1000, reason = "message")
         scanCallback?.let {
             println("STOP SCAN")
-            bluetoothLeScanner.stopScan(it)
+            try {
+                bluetoothLeScanner.stopScan(it)
+            } catch (e: Exception) {
+            }
             doAfter()
         } ?: doAfter()
         scanCallback = null
