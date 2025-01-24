@@ -150,7 +150,7 @@ internal actual class ScanBluetoothSensorsManager :
                             for (i in 0 until data.size()) {
                                 val manufacturerId = data.keyAt(i)
                                 val manufacturerBytes = data.valueAt(i)
-                                if (manufacturerId == 159) {
+//                                if (manufacturerId == 159) {
                                 // Получаем имя устройства и его идентификатор
                                 val deviceName = result.device.name ?: "Unknown Device"
                                 val sensorId =
@@ -173,7 +173,7 @@ internal actual class ScanBluetoothSensorsManager :
                                         "Failed to decode sensor data: ${e.message}"
                                     )
                                     }
-                                }
+//                                }
                             }
                         } ?: Log.w("SCANDEVICE", "No manufacturer-specific data found")
                     }

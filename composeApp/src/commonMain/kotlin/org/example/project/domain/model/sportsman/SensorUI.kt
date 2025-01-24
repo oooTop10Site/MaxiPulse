@@ -1,6 +1,17 @@
 package org.example.project.domain.model.sportsman
 
 import cafe.adriel.voyager.core.lifecycle.JavaSerializable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import org.example.project.utils.orEmpty
 
 data class SensorUI(
     val companyId: Int = 0,
@@ -12,7 +23,7 @@ data class SensorUI(
     val sensorId: String,
     val deviceName: String,
     val status: SensorStatus,
-): JavaSerializable {
+) : JavaSerializable {
     companion object {
         val Empty = SensorUI(
             0,
@@ -23,11 +34,14 @@ data class SensorUI(
             0,
             "",
             "",
-            SensorStatus.Disable)
+            SensorStatus.Disable
+        )
     }
+
+
 }
 
-enum class SensorStatus: JavaSerializable {
+enum class SensorStatus : JavaSerializable {
     Disable,
     Active,
     Unknown

@@ -16,15 +16,8 @@ internal class TrainingViewModel :
     val permissionService: PermissionsService by inject()
     val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
     fun newDataFromSportsman(sensorUI: SensorUI, sportsmans: List<SportsmanSensorUI>) = intent {
-        println("---------------")
-        println("зашли в newDataFromSportsman")
-        println("state.sportsmans  - ${state.sportsmans}")
-        println("${state.sportsmans.size} пидорасов")
         val newSportsmans = state.sportsmans.map { sportsman ->
-            println("sportsman.sensor?.sensorId - ${sportsman.sensor?.sensorId}")
-            println("sensorUI.sensorId  - ${sensorUI.sensorId}")
             if (sportsman.sensor?.sensorId == sensorUI.sensorId && sportsman.isTraining) {
-                println("Нашли нащего спорстмена")
                 sportsman.copy(
                     sensor = sensorUI.copy(
                         heartRate = sportsman.sensor.heartRate + sensorUI.heartRate
@@ -32,7 +25,6 @@ internal class TrainingViewModel :
                 )
             } else sportsman
         }
-        println("newSportsmans - $newSportsmans")
         reduce {
             state.copy(
                 sportsmans = newSportsmans

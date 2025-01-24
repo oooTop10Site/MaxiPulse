@@ -21,8 +21,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
@@ -194,7 +196,7 @@ private fun LargeLeftMenu(
                 modifier = Modifier.padding(horizontal = 10.dp)
             )
             Column(
-                modifier = Modifier.padding(horizontal = 33.dp).weight(1f),
+                modifier = Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 33.dp).weight(1f),
 //                contentPadding = PaddingValues(vertical = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -235,7 +237,7 @@ private fun LargeLeftMenu(
                         }
                     }
                 }
-                Spacer(Modifier.weight(1f))
+                Spacer(Modifier.size(60.dp))
                 Column(
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                 ) {

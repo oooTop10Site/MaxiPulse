@@ -1,10 +1,19 @@
 package org.example.project.domain.model.sportsman
 
+import androidx.compose.runtime.MutableState
 import cafe.adriel.voyager.core.lifecycle.JavaSerializable
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.datetime.Clock
 import org.example.project.ext.maxOf
 import org.example.project.ext.minOf
 import org.example.project.ext.roundToIntOrNull
 import org.example.project.utils.orEmpty
+import kotlin.coroutines.suspendCoroutine
 import kotlin.math.roundToInt
 
 data class SportsmanSensorUI(
@@ -22,6 +31,26 @@ data class SportsmanSensorUI(
     val heartRateMin: Int = 0,
     val isTraining: Boolean = false,
 ) : JavaSerializable {
+
+    companion object {
+        fun available(sportsmanSensorUI: MutableState<SportsmanSensorUI>): Flow<Boolean> = callbackFlow {
+            var isPlay = true
+            coroutineScope {
+                while (isPlay) {
+                    delay(2000L)
+                    val newAvailable = sportsmanSensorUI.value.available
+                    println("newAvailableGlobal - $newAvailable")
+                    send(newAvailable)
+                }
+            }
+
+            awaitClose {
+                isPlay = false
+                println("AWAIT EPTA CLOSE ")
+                this.cancel()
+            }
+        }
+    }
 
     val fio: String
         get() = "$lastname $name $middleName"
@@ -78,5 +107,18 @@ data class SportsmanSensorUI(
 
     val avgHeartRate: Int
         get() = sensor?.heartRate.orEmpty().map { it.value }.average().roundToIntOrNull(default = 0)
+
+
+    val available: Boolean
+        get() {
+            val currentTime = Clock.System.now()
+                .toEpochMilliseconds()
+            println("currentTime - $currentTime")
+            println("heartRate.lastOrNull()?.mills.orEmpty() - ${this.sensor?.heartRate?.lastOrNull()?.mills.orEmpty()}")
+            println("minus - ${currentTime - this.sensor?.heartRate?.lastOrNull()?.mills.orEmpty()}")
+
+            return (currentTime - this.sensor?.heartRate?.lastOrNull()?.mills.orEmpty()) <= 5000
+        }
+
 
 }

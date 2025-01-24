@@ -34,6 +34,7 @@ import org.example.project.theme.uiKit.MaxiPageContainer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
@@ -46,11 +47,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.add_ic
 import maxipuls.composeapp.generated.resources.age
 import maxipuls.composeapp.generated.resources.age_text
+import maxipuls.composeapp.generated.resources.attension
 import maxipuls.composeapp.generated.resources.chss
 import maxipuls.composeapp.generated.resources.chss_max
 import maxipuls.composeapp.generated.resources.ending_training
@@ -126,7 +129,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
                 when (it) {
 
                     is TrainingEvent.StopTraining -> {
-                        viewModel.scanBluetoothSensorsManager.stopScan {  }
+                        viewModel.scanBluetoothSensorsManager.stopScan { }
                         navigator.replace(TrainingResultScreen(it.sportsmans))
                     }
                 }
@@ -148,7 +151,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
                     Spacer(Modifier.size(20.dp))
                     Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
                         BackIcon(modifier = Modifier.size(40.dp).align(Alignment.CenterStart)) {
-                            viewModel.scanBluetoothSensorsManager.stopScan {  }
+                            viewModel.scanBluetoothSensorsManager.stopScan { }
                             navigator.pop()
                         }
 
@@ -576,6 +579,26 @@ private fun ChssSportsmanItem(
     sportsmanUI: SportsmanSensorUI,
     onClick: () -> Unit,
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    var sensorAvailable: Boolean? by remember { mutableStateOf(null) }
+    var sportsmanMutable = remember { mutableStateOf(sportsmanUI) }
+    LaunchedEffect(sportsmanUI) {
+        sportsmanMutable.value = sportsmanUI
+    }
+
+    LaunchedEffect(sportsmanMutable) {
+        if (sensorAvailable == null) {
+            launch {
+                SportsmanSensorUI.available(sportsmanMutable).collect {
+                    println("fromCHSS - $it")
+
+                    sensorAvailable = it
+                }
+            }
+        }
+    }
+
+
     val hmax = 230
     val hmin = 0
     Box(
@@ -589,17 +612,16 @@ private fun ChssSportsmanItem(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(Modifier.size(10.dp))
-            Column(
+            Box(
                 modifier = Modifier.height(59.dp).padding(horizontal = 20.dp).fillMaxWidth()
                     .background(
                         color = MaxiPulsTheme.colors.uiKit.white,
                         shape = RoundedCornerShape(100.dp)
                     ).clip(RoundedCornerShape(100.dp)),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.value.orEmpty().toString()
+                    text = sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.value.orEmpty()
+                        .toString()
                         .orEmpty(),
                     style = MaxiPulsTheme.typography.bold.copy(
                         fontSize = 32.sp,
@@ -607,8 +629,17 @@ private fun ChssSportsmanItem(
                         color = Color(0xFF3B6ECF)
                     ),
                     maxLines = 1,
-                    modifier = Modifier
+                    modifier = Modifier.align(Alignment.Center)
                 )
+                if (!(sensorAvailable?: sportsmanUI.available)) {
+                    Icon(
+                        painter = painterResource(Res.drawable.attension),
+                        tint = MaxiPulsTheme.colors.uiKit.primary,
+                        modifier = Modifier.align(Alignment.CenterEnd).padding(5.dp).size(24.dp),
+                        contentDescription = null,
+                    )
+                }
+
             }
             Spacer(Modifier.weight(1f))
             Row(
@@ -693,6 +724,22 @@ private fun TrimpSportsmanItem(
 ) {
     val hmax = sportsmanUI.heartRateMax
     val hmin = sportsmanUI.heartRateMin
+    var sensorAvailable: Boolean? by remember { mutableStateOf(null) }
+    var sportsmanMutable = remember { mutableStateOf(sportsmanUI) }
+    LaunchedEffect(sportsmanUI) {
+        sportsmanMutable.value = sportsmanUI
+    }
+
+    LaunchedEffect(sportsmanMutable) {
+        if (sensorAvailable == null) {
+            launch {
+                SportsmanSensorUI.available(sportsmanMutable).collect {
+                    println("fromTRIMP - $it")
+                    sensorAvailable = it
+                }
+            }
+        }
+    }
     Box(
         modifier.background(
             color = Color(0xFF3B6ECF),
@@ -704,36 +751,46 @@ private fun TrimpSportsmanItem(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(Modifier.size(10.dp))
-            Column(
-                modifier = Modifier.padding(horizontal = 11.dp).height(47.dp).fillMaxWidth()
-                    .background(
-                        color = MaxiPulsTheme.colors.uiKit.white,
-                        shape = RoundedCornerShape(25.dp)
-                    ).clip(RoundedCornerShape(25.dp)),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = sportsmanUI.lastname,
-                    style = MaxiPulsTheme.typography.semiBold.copy(
-                        fontSize = 16.sp,
-                        lineHeight = 16.sp,
-                        color = MaxiPulsTheme.colors.uiKit.textColor
-                    ),
-                    maxLines = 1,
-                    modifier = Modifier
-                )
-                Spacer(Modifier.size(4.dp))
-                Text(
-                    text = sportsmanUI.name,
-                    style = MaxiPulsTheme.typography.semiBold.copy(
-                        fontSize = 16.sp,
-                        lineHeight = 16.sp,
-                        color = MaxiPulsTheme.colors.uiKit.textColor
-                    ),
-                    maxLines = 1,
-                    modifier = Modifier
-                )
+            Box(modifier = Modifier.padding(horizontal = 11.dp).fillMaxWidth()) {
+                Column(
+                    modifier = Modifier.height(47.dp).fillMaxWidth()
+                        .background(
+                            color = MaxiPulsTheme.colors.uiKit.white,
+                            shape = RoundedCornerShape(25.dp)
+                        ).clip(RoundedCornerShape(25.dp)),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = sportsmanUI.lastname,
+                        style = MaxiPulsTheme.typography.semiBold.copy(
+                            fontSize = 16.sp,
+                            lineHeight = 16.sp,
+                            color = MaxiPulsTheme.colors.uiKit.textColor
+                        ),
+                        maxLines = 1,
+                        modifier = Modifier
+                    )
+                    Spacer(Modifier.size(4.dp))
+                    Text(
+                        text = sportsmanUI.name,
+                        style = MaxiPulsTheme.typography.semiBold.copy(
+                            fontSize = 16.sp,
+                            lineHeight = 16.sp,
+                            color = MaxiPulsTheme.colors.uiKit.textColor
+                        ),
+                        maxLines = 1,
+                        modifier = Modifier
+                    )
+                }
+                if (!(sensorAvailable?: sportsmanUI.available)) {
+                    Icon(
+                        painter = painterResource(Res.drawable.attension),
+                        tint = MaxiPulsTheme.colors.uiKit.primary,
+                        modifier = Modifier.align(Alignment.CenterEnd).padding(5.dp).size(24.dp),
+                        contentDescription = null,
+                    )
+                }
             }
             Spacer(Modifier.weight(1f))
             Row(
@@ -750,6 +807,11 @@ private fun TrimpSportsmanItem(
                     ),
                     maxLines = 1,
                     textAlign = TextAlign.Center,
+                )
+                println(
+                    "sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull() - ${
+                        sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()
+                    }"
                 )
                 Text(
                     text = sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.value.orEmpty()
