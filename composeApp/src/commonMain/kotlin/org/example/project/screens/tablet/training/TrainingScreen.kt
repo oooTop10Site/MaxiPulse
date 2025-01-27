@@ -120,7 +120,6 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
         val state by viewModel.stateFlow.collectAsState()
         val navigator = RootNavigator.currentOrThrow
         viewModel.scanBluetoothSensorsManager.scanSensors() {
-            println("DEVICE - $it")
             viewModel.newDataFromSportsman(it, sportsmans)
         }
         LaunchedEffect(viewModel) {
@@ -374,6 +373,12 @@ private fun SportsmanContent(
     dismiss: () -> Unit,
     endTraining: () -> Unit
 ) {
+
+    var currentSportsmanUI by remember { mutableStateOf(sportsmanUI) }
+
+    LaunchedEffect(sportsmanUI) {
+        currentSportsmanUI = sportsmanUI
+    }
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row() {
@@ -386,7 +391,7 @@ private fun SportsmanContent(
                     Box(
                         modifier = Modifier.size(225.dp),
                     ) {
-                        if (sportsmanUI.avatar.isBlank()) {
+                        if (currentSportsmanUI.avatar.isBlank()) {
                             Box(
                                 modifier = Modifier.fillMaxSize().background(
                                     MaxiPulsTheme.colors.uiKit.sportsmanAvatarBackground,
@@ -407,7 +412,7 @@ private fun SportsmanContent(
                             MaxiImage(
                                 modifier = Modifier.fillMaxSize().align(Alignment.Center)
                                     .clip(CircleShape),
-                                url = sportsmanUI.avatar,
+                                url = currentSportsmanUI.avatar,
                                 contentScale = ContentScale.Crop
                             )
                         }
@@ -419,7 +424,7 @@ private fun SportsmanContent(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = sportsmanUI.number.toString(),
+                                text = currentSportsmanUI.number.toString(),
                                 style = MaxiPulsTheme.typography.semiBold.copy(
                                     color = MaxiPulsTheme.colors.uiKit.lightTextColor,
                                     fontSize = 24.sp,
@@ -434,9 +439,9 @@ private fun SportsmanContent(
 
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "${sportsmanUI.lastname}\n${
-                                sportsmanUI.name
-                            } ${sportsmanUI.middleName}",
+                            text = "${currentSportsmanUI.lastname}\n${
+                                currentSportsmanUI.name
+                            } ${currentSportsmanUI.middleName}",
                             style = MaxiPulsTheme.typography.medium.copy(
                                 color = MaxiPulsTheme.colors.uiKit.textColor,
                                 fontSize = 20.sp,
@@ -451,7 +456,7 @@ private fun SportsmanContent(
                                 text = "${stringResource(Res.string.age)}: ${
                                     stringResource(
                                         Res.string.age_text,
-                                        sportsmanUI.age
+                                        currentSportsmanUI.age
                                     )
                                 }",
                                 style = MaxiPulsTheme.typography.regular.copy(
@@ -466,7 +471,7 @@ private fun SportsmanContent(
                         Spacer(modifier = Modifier.size((20).dp))
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "${stringResource(Res.string.chss_max)}: ${sportsmanUI.heartRateMax}",
+                                text = "${stringResource(Res.string.chss_max)}: ${currentSportsmanUI.heartRateMax}",
                                 style = MaxiPulsTheme.typography.regular.copy(
                                     color = MaxiPulsTheme.colors.uiKit.textColor,
                                     fontSize = 16.sp,
@@ -477,7 +482,7 @@ private fun SportsmanContent(
                             )
                         }
                     }
-                    if (sportsmanUI.isTraining) {
+                    if (currentSportsmanUI.isTraining) {
                         MaxiButton(
                             modifier = Modifier.weight(1f).height(89.dp),
                             text = stringResource(Res.string.ending_training),
@@ -562,7 +567,7 @@ private fun SportsmanContent(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
                 color = MaxiPulsTheme.colors.uiKit.divider
             )
-
+            println("sportsmanUI.sensor?.heartRate.orEmpty() - ${sportsmanUI.sensor?.heartRate.orEmpty()}")
             HeartRateGraph(
                 modifier = Modifier.weight(1f),
                 heartRateData = sportsmanUI.sensor?.heartRate.orEmpty()
@@ -631,7 +636,7 @@ private fun ChssSportsmanItem(
                     maxLines = 1,
                     modifier = Modifier.align(Alignment.Center)
                 )
-                if (!(sensorAvailable?: sportsmanUI.available)) {
+                if (!(sensorAvailable ?: sportsmanUI.available)) {
                     Icon(
                         painter = painterResource(Res.drawable.attension),
                         tint = MaxiPulsTheme.colors.uiKit.primary,
@@ -659,7 +664,8 @@ private fun ChssSportsmanItem(
                 )
                 Text(
                     text = "${
-                        ((sportsmanUI.sensor?.heartRate.orEmpty().map { it.value }.max(0)
+                        ((sportsmanUI.sensor?.heartRate.orEmpty().map { it.value }.lastOrNull()
+                            .orEmpty()
                             .toFloat() / hmax) * 100).roundToIntOrNull().orEmpty()
                     }%",
                     style = MaxiPulsTheme.typography.semiBold.copy(
@@ -783,7 +789,7 @@ private fun TrimpSportsmanItem(
                         modifier = Modifier
                     )
                 }
-                if (!(sensorAvailable?: sportsmanUI.available)) {
+                if (!(sensorAvailable ?: sportsmanUI.available)) {
                     Icon(
                         painter = painterResource(Res.drawable.attension),
                         tint = MaxiPulsTheme.colors.uiKit.primary,

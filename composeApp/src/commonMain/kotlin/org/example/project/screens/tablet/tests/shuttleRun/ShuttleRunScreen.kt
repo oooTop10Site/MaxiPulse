@@ -24,6 +24,9 @@ import androidx.compose.runtime.collectAsState
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +41,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.arrow_right
+import maxipuls.composeapp.generated.resources.attension
 import maxipuls.composeapp.generated.resources.cone_ic
 import maxipuls.composeapp.generated.resources.shuttle_run
 import maxipuls.composeapp.generated.resources.start
@@ -206,6 +210,23 @@ fun SportsmanTestItem(
     sportsmanUI: TestSportsmanUI,
     onClick: () -> Unit
 ) {
+    var sensorAvailable: Boolean? by remember { mutableStateOf(null) }
+    var sportsmanMutable = remember { mutableStateOf(sportsmanUI.sportsmanSensorUI) }
+    LaunchedEffect(sportsmanUI) {
+        sportsmanMutable.value = sportsmanUI.sportsmanSensorUI
+    }
+
+    LaunchedEffect(sportsmanMutable) {
+        if (sensorAvailable == null) {
+            launch {
+                SportsmanSensorUI.available(sportsmanMutable).collect {
+                    println("fromCHSS - $it")
+
+                    sensorAvailable = it
+                }
+            }
+        }
+    }
     Column(
         modifier = modifier.background(
             color = sportsmanUI.status.color,
@@ -225,43 +246,54 @@ fun SportsmanTestItem(
             modifier = Modifier.padding(top = 7.dp, start = 3.dp, end = 3.dp)
         )
         Spacer(Modifier.weight(1f))
-        Column(
-            modifier = Modifier.width(94.dp)
-                .background(
-                    color = MaxiPulsTheme.colors.uiKit.white.copy(alpha = 0.25f),
-                    shape = RoundedCornerShape(25.dp)
-                ).clip(RoundedCornerShape(25.dp)),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = sportsmanUI.chss.toString(),
-                style = MaxiPulsTheme.typography.semiBold.copy(
-                    fontSize = 32.sp,
-                    lineHeight = 32.sp,
-                    color = MaxiPulsTheme.colors.uiKit.lightTextColor
-                ),
-                maxLines = 1,
-                modifier = Modifier
-            )
+        Box(modifier = Modifier.width(94.dp)) {
+            Column(
+                modifier = Modifier.align(Alignment.Center).fillMaxWidth()
+                    .background(
+                        color = MaxiPulsTheme.colors.uiKit.white.copy(alpha = 0.25f),
+                        shape = RoundedCornerShape(25.dp)
+                    ).clip(RoundedCornerShape(25.dp)),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = sportsmanUI.chss.toString(),
+                    style = MaxiPulsTheme.typography.semiBold.copy(
+                        fontSize = 32.sp,
+                        lineHeight = 32.sp,
+                        color = MaxiPulsTheme.colors.uiKit.lightTextColor
+                    ),
+                    maxLines = 1,
+                    modifier = Modifier
+                )
 
-            when (val status = sportsmanUI.status) {
-                is TestStatus.Chill -> {
-                    Spacer(Modifier.size(10.dp))
-                    Text(
-                        text = status.timer.formatSeconds(),
-                        style = MaxiPulsTheme.typography.semiBold.copy(
-                            color = MaxiPulsTheme.colors.uiKit.lightTextColor,
-                            fontSize = 20.sp,
-                            lineHeight = 20.sp
-                        ),
-                        modifier = Modifier,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(Modifier.size(5.dp))
+                when (val status = sportsmanUI.status) {
+                    is TestStatus.Chill -> {
+                        Spacer(Modifier.size(10.dp))
+                        Text(
+                            text = status.timer.formatSeconds(),
+                            style = MaxiPulsTheme.typography.semiBold.copy(
+                                color = MaxiPulsTheme.colors.uiKit.lightTextColor,
+                                fontSize = 20.sp,
+                                lineHeight = 20.sp
+                            ),
+                            modifier = Modifier,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(Modifier.size(5.dp))
+                    }
+
+                    else -> {}
                 }
+            }
 
-                else -> {}
+            if (!(sensorAvailable ?: sportsmanUI.sportsmanSensorUI.available)) {
+                Icon(
+                    painter = painterResource(Res.drawable.attension),
+                    tint = MaxiPulsTheme.colors.uiKit.primary,
+                    modifier = Modifier.align(Alignment.CenterEnd).padding(5.dp).size(24.dp),
+                    contentDescription = null,
+                )
             }
         }
         Spacer(Modifier.weight(1f))

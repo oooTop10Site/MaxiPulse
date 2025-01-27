@@ -50,6 +50,7 @@ import org.example.project.theme.uiKit.TopBarTitle
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.style.TextAlign
 import cafe.adriel.voyager.navigator.LocalNavigator

@@ -58,6 +58,8 @@ fun HeartRateGraph(
         Color(0xFFFFA93A), // Оранжевая
         Color(0xFFDF0B40)  // Красная
     )
+    println("heartRateData - $heartRateData")
+    println("heartRateData.size - ${heartRateData.size}")
 
     val textMeasurer = rememberTextMeasurer()
     Column(

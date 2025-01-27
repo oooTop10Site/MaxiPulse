@@ -150,7 +150,7 @@ internal actual class ScanBluetoothSensorsManager :
                             for (i in 0 until data.size()) {
                                 val manufacturerId = data.keyAt(i)
                                 val manufacturerBytes = data.valueAt(i)
-//                                if (manufacturerId == 159) {
+                                if (manufacturerId == 159) {
                                 // Получаем имя устройства и его идентификатор
                                 val deviceName = result.device.name ?: "Unknown Device"
                                 val sensorId =
@@ -173,7 +173,7 @@ internal actual class ScanBluetoothSensorsManager :
                                         "Failed to decode sensor data: ${e.message}"
                                     )
                                     }
-//                                }
+                                }
                             }
                         } ?: Log.w("SCANDEVICE", "No manufacturer-specific data found")
                     }
@@ -261,7 +261,7 @@ fun decodeSensorData(dataList: List<Int>, sensorUI: SensorUI): SensorUI {
     val battery = buffer.get(byteArray.size - 14).toInt()
     val runningCounter = buffer.getInt(byteArray.size - 12).toUInt()
     val value1Acc = buffer.getFloat(byteArray.size - 8)
-    val heartRate = buffer.get(byteArray.size - 4).toInt()
+    val heartRate = buffer.get(byteArray.size - 4).toInt() and 0xFF
     val rr = buffer.getShort(byteArray.size - 2).toInt()
 
     return sensorUI.copy(
