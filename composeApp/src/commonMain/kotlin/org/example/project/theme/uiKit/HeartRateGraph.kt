@@ -1,7 +1,9 @@
 package org.example.project.theme.uiKit
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -10,9 +12,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,10 +32,12 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import org.example.project.domain.model.sportsman.HeartBit
 import org.example.project.ext.getEvenlyDistributedMills
@@ -34,6 +45,8 @@ import org.example.project.ext.secondsToUI
 import org.example.project.ext.toTimeUI
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.utils.orEmpty
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 
 @Composable
 fun HeartRateGraph(
@@ -42,6 +55,7 @@ fun HeartRateGraph(
     showY: Boolean = true,
     showTime: Boolean = false
 ) {
+    val state = rememberLazyListState()
     val maxValue = 230f
     val zones = listOf(
         0f to 70f,        // Голубая зона
@@ -50,7 +64,7 @@ fun HeartRateGraph(
         110f to 130f,      // Оранжевая зона
         130f to maxValue   // Красная зона
     )
-//todo
+
     val zoneColors = listOf(
         Color(0xFFAEC6F3), // Голубая
         Color(0xFF3B6ECF), // Синяя
@@ -58,15 +72,17 @@ fun HeartRateGraph(
         Color(0xFFFFA93A), // Оранжевая
         Color(0xFFDF0B40)  // Красная
     )
-    println("heartRateData - $heartRateData")
-    println("heartRateData.size - ${heartRateData.size}")
 
     val textMeasurer = rememberTextMeasurer()
+    val pointWidth = 3.dp // Ширина одной полоски
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
             val textStyle = MaxiPulsTheme.typography.bold.copy(
                 fontSize = 14.sp,
                 color = MaxiPulsTheme.colors.uiKit.textColor,
@@ -93,51 +109,77 @@ fun HeartRateGraph(
                     }
                 }
             }
-            Canvas(modifier = Modifier.weight(1f).fillMaxHeight().clip(RoundedCornerShape(25.dp))) {
-                val graphWidth = size.width
-                val graphHeight = size.height
-                val zoneHeight = graphHeight / zones.size
-
-                // Отрисовка зон
-                zones.forEachIndexed { index, (_, endHR) ->
-                    val topY = graphHeight - (index + 1) * zoneHeight
-                    drawRect(
-                        color = zoneColors[index],
-                        topLeft = Offset(0f, topY),
-                        size = Size(graphWidth, zoneHeight)
-                    )
-                }
-
-                // Отрисовка линии графика
-                val pointGap = graphWidth / (heartRateData.size - 1)
-                val path = Path()
-
-                heartRateData.forEachIndexed { index, value ->
-                    // Определяем y-координату точки
-                    val y = zones.foldIndexed(0f) { i, acc, (startHR, endHR) ->
-                        if (value.value.toFloat() in startHR..endHR) {
-                            val zoneStartY = graphHeight - (i + 1) * zoneHeight
-                            val zoneEndY = graphHeight - i * zoneHeight
-                            val zoneRange = endHR - startHR
-                            val normalizedY = ((value.value - startHR) / zoneRange) * zoneHeight
-                            zoneEndY - normalizedY
-                        } else acc
+            BoxWithConstraints(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                var width by remember { mutableStateOf(maxWidth) }
+                LaunchedEffect(heartRateData) {
+                    println("hear - ${heartRateData.size}")
+                    println("--------------")
+                    width = (maxWidth - pointWidth * heartRateData.size).let {
+                        if (it <= 0.dp) {
+                            0.dp
+                        } else it
                     }
-
-                    val x = index * pointGap
-
-                    // Добавляем линию графика
-                    if (index == 0) path.moveTo(x, y) else path.lineTo(x, y)
                 }
+                LazyRow(
+                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(25.dp)),
+                    reverseLayout = true,
+                    state = state
+                ) {
+                    item {
+                        Canvas(
+                            modifier = Modifier
+                                .width(if(width == 0.dp) pointWidth * heartRateData.size else maxWidth) // Ширина графика
+                                .fillMaxHeight()
+                        ) {
+                            val graphWidth = size.width
+                            val graphHeight = size.height
+                            val zoneHeight = graphHeight / zones.size
 
-                // Отрисовка линии
-                drawPath(
-                    path = path,
-                    color = Color.White,
-                    style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
-                )
+                            // Отрисовка зон
+                            zones.forEachIndexed { index, (_, endHR) ->
+                                val topY = graphHeight - (index + 1) * zoneHeight
+                                drawRect(
+                                    color = zoneColors[index],
+                                    topLeft = Offset(0f, topY),
+                                    size = Size(graphWidth, zoneHeight)
+                                )
+                            }
+
+                            // Отрисовка линии графика
+                            val pointGap = pointWidth.toPx() // Расстояние между точками
+                            val path = Path()
+
+                            heartRateData.forEachIndexed { index, value ->
+                                // Определяем y-координату точки
+                                val y = zones.foldIndexed(0f) { i, acc, (startHR, endHR) ->
+                                    if (value.value.toFloat() in startHR..endHR) {
+                                        val zoneStartY = graphHeight - (i + 1) * zoneHeight
+                                        val zoneEndY = graphHeight - i * zoneHeight
+                                        val zoneRange = endHR - startHR
+                                        val normalizedY =
+                                            ((value.value - startHR) / zoneRange) * zoneHeight
+                                        zoneEndY - normalizedY
+                                    } else acc
+                                }
+
+                                val x = index * pointGap
+
+                                // Добавляем линию графика
+                                if (index == 0) path.moveTo(x, y) else path.lineTo(x, y)
+                            }
+
+                            // Отрисовка линии
+                            drawPath(
+                                path = path,
+                                color = Color.White,
+                                style = Stroke(width = 4.dp.toPx(), cap = StrokeCap.Round)
+                            )
+                        }
+                    }
+                }
             }
         }
+
         if (showTime) {
             val textStyle = MaxiPulsTheme.typography.regular.copy(
                 fontSize = 14.sp,
@@ -156,12 +198,6 @@ fun HeartRateGraph(
             ) {
                 val mills = heartRateData.getEvenlyDistributedMills(5)
                 mills.forEach {
-                    println("HEARTRATE - $it")
-                    println(
-                        "HEARTRATESECONDS - ${
-                            ((it - mills.firstOrNull().orEmpty()) / 1000).secondsToUI()
-                        }"
-                    )
                     Text(
                         text = ((it - mills.firstOrNull().orEmpty()) / 1000).secondsToUI(),
                         style = textStyle
@@ -171,4 +207,3 @@ fun HeartRateGraph(
         }
     }
 }
-

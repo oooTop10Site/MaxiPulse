@@ -291,7 +291,7 @@ fun SportsmanTestItem(
                 Icon(
                     painter = painterResource(Res.drawable.attension),
                     tint = MaxiPulsTheme.colors.uiKit.primary,
-                    modifier = Modifier.align(Alignment.CenterEnd).padding(5.dp).size(24.dp),
+                    modifier = Modifier.align(Alignment.Center).padding(5.dp).size(24.dp),
                     contentDescription = null,
                 )
             }
