@@ -116,82 +116,120 @@ internal actual class ScanBluetoothSensorsManager :
             }
         }
 
+        LaunchedEffect(Unit) {
+            var tempBluetoothAdapter = bluetoothAdapter
+            var tempBluetoothAdapterEnabled = bluetoothAdapter.isEnabled
+            while (true) {
+                delay(1000L)
+                println()
+                if (!(bluetoothAdapter == null || !bluetoothAdapter.isEnabled) &&
+                    locationStatusFlow().firstOrNull() == true &&
+                    (tempBluetoothAdapter != bluetoothAdapter || tempBluetoothAdapterEnabled != bluetoothAdapter.isEnabled)) {
+                    println("Я БЛЯ ТУТ НАХ ЛОВИ")
+                    createCallBack(onDeviceFound, onCatch, turnOnBluetooth, turnOnGps) {
+                        sensorShow = it
+                    }
+                }
+                if(tempBluetoothAdapterEnabled && !bluetoothAdapter.isEnabled) {
+                    observerManager.putMessage(turnOnBluetooth)
+                }
+                tempBluetoothAdapter = bluetoothAdapter
+                tempBluetoothAdapterEnabled = bluetoothAdapter.isEnabled
+            }
+        }
+
         println("SensorShowVAR - $sensorShow")
         LaunchedEffect(sensorShow) {
             if (sensorShow) {
-                if (locationStatusFlow().firstOrNull() != true) {
-                    stopScan { }
-                    observerManager.putMessage(turnOnGps)
-                    onCatch(Throwable())
-                    sensorShow = false
-                    return@LaunchedEffect
-                }
-                if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
-                    stopScan { }
-                    observerManager.putMessage(turnOnBluetooth)
-                    onCatch(Throwable())
-                    sensorShow = false
-                    return@LaunchedEffect
-                }
-                stopScan { }
-                delay(1500L)
+
 //        stopScan() {
-                scanCallback = object : ScanCallback() {
-                    override fun onScanResult(callbackType: Int, result: ScanResult) {
-                        Log.d("SCANDEVICE", "-------------------")
-
-                        super.onScanResult(callbackType, result)
-                        val scanRecord = result.scanRecord
-                        val rssi = result.rssi
-
-                        val manufacturerSpecificData = scanRecord?.manufacturerSpecificData
-
-                        manufacturerSpecificData?.let { data ->
-                            for (i in 0 until data.size()) {
-                                val manufacturerId = data.keyAt(i)
-                                val manufacturerBytes = data.valueAt(i)
-                                if (manufacturerId == 159) {
-                                // Получаем имя устройства и его идентификатор
-                                val deviceName = result.device.name ?: "Unknown Device"
-                                val sensorId =
-                                    result.device.address // Обычно используется MAC-адрес устройства
-                                // Создаем объект SensorUI и передаем в callback
-                                val sensor = SensorUI(
-                                    sensorId = sensorId,
-                                    deviceName = deviceName,
-                                    status = SensorStatus.Active
-                                )
-                                try {
-                                    val decodedData = decodeSensorData(
-                                        manufacturerBytes.map { it.toInt() },
-                                        sensorUI = sensor
-                                    )
-                                    onDeviceFound(decodedData)
-                                } catch (e: Exception) {
-                                    Log.e(
-                                        "SCANDEVICE",
-                                        "Failed to decode sensor data: ${e.message}"
-                                    )
-                                    }
-                                }
-                            }
-                        } ?: Log.w("SCANDEVICE", "No manufacturer-specific data found")
-                    }
-
-                    override fun onScanFailed(errorCode: Int) {
-                        super.onScanFailed(errorCode)
-                        // Обработка ошибок сканирования (если нужно)
-                    }
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    bluetoothLeScanner.startScan(null, ScanSettings.Builder()
-                        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY) // Или другой режим
-                        .setLegacy(false) // Использовать BLE 5.x
-                        .setPhy(ScanSettings.PHY_LE_ALL_SUPPORTED) // Coded PHY для дальнего действия
-                        .build(),scanCallback)
+                createCallBack(onDeviceFound, onCatch, turnOnBluetooth, turnOnGps) {
+                    sensorShow = it
                 }
 //        }
             }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    suspend fun createCallBack(
+        onDeviceFound: (SensorUI) -> Unit,
+        onCatch: (Throwable) -> Unit,
+        turnOnBluetooth: String,
+        turnOnGps: String,
+        changeSensorShow: (Boolean) -> Unit
+    ) {
+        if (locationStatusFlow().firstOrNull() != true) {
+            stopScan { }
+            observerManager.putMessage(turnOnGps)
+            onCatch(Throwable())
+            changeSensorShow(false)
+            return
+        }
+        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled) {
+            stopScan { }
+            observerManager.putMessage(turnOnBluetooth)
+            onCatch(Throwable())
+            changeSensorShow(false)
+            return
+        }
+        stopScan { }
+        delay(1500L)
+        scanCallback = object : ScanCallback() {
+            @SuppressLint("MissingPermission")
+            override fun onScanResult(callbackType: Int, result: ScanResult) {
+                Log.d("SCANDEVICE", "-------------------")
+                super.onScanResult(callbackType, result)
+                val scanRecord = result.scanRecord
+                val rssi = result.rssi
+
+                val manufacturerSpecificData = scanRecord?.manufacturerSpecificData
+
+                manufacturerSpecificData?.let { data ->
+                    for (i in 0 until data.size()) {
+                        val manufacturerId = data.keyAt(i)
+                        val manufacturerBytes = data.valueAt(i)
+                        if (manufacturerId == 159) {
+                            // Получаем имя устройства и его идентификатор
+                            val deviceName = result.device.name ?: "Unknown Device"
+                            val sensorId =
+                                result.device.address // Обычно используется MAC-адрес устройства
+                            // Создаем объект SensorUI и передаем в callback
+                            val sensor = SensorUI(
+                                sensorId = sensorId,
+                                deviceName = deviceName,
+                                status = SensorStatus.Active
+                            )
+                            try {
+                                val decodedData = decodeSensorData(
+                                    manufacturerBytes.map { it.toInt() },
+                                    sensorUI = sensor
+                                )
+                                onDeviceFound(decodedData)
+                            } catch (e: Exception) {
+                                Log.e(
+                                    "SCANDEVICE",
+                                    "Failed to decode sensor data: ${e.message}"
+                                )
+                            }
+                        }
+                    }
+                } ?: Log.w("SCANDEVICE", "No manufacturer-specific data found")
+            }
+
+            override fun onScanFailed(errorCode: Int) {
+                super.onScanFailed(errorCode)
+                // Обработка ошибок сканирования (если нужно)
+            }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            bluetoothLeScanner.startScan(
+                null, ScanSettings.Builder()
+                    .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY) // Или другой режим
+                    .setLegacy(false) // Использовать BLE 5.x
+                    .setPhy(ScanSettings.PHY_LE_ALL_SUPPORTED) // Coded PHY для дальнего действия
+                    .build(), scanCallback
+            )
         }
     }
 
