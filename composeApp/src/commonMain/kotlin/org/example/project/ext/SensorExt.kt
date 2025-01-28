@@ -6,8 +6,10 @@ import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.active
 import maxipuls.composeapp.generated.resources.disable
 import maxipuls.composeapp.generated.resources.empty_string
+import org.example.project.domain.model.sensor.SensorPreviewUI
 import org.example.project.domain.model.sportsman.SensorStatus
 import org.example.project.domain.model.sportsman.SensorStatus.*
+import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.theme.MaxiPulsTheme
 import org.jetbrains.compose.resources.stringResource
 
@@ -28,5 +30,14 @@ fun SensorStatus.toText(): String {
             Active -> Res.string.active
             Unknown -> Res.string.empty_string
         }
+    )
+}
+
+fun SensorUI.toSensorPreviewUI(): SensorPreviewUI {
+    return SensorPreviewUI(
+        id = sensorId,
+        name = deviceName,
+        mac = sensorId,
+        status = status
     )
 }

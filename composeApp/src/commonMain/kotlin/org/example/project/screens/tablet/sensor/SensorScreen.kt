@@ -41,6 +41,9 @@ import maxipuls.composeapp.generated.resources.sensor
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiPageContainer
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.style.TextAlign
@@ -59,8 +62,11 @@ import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.toColor
 import org.example.project.ext.toText
+import org.example.project.platform.ScanBluetoothSensorsManager
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.core.component.inject
+import kotlin.getValue
 
 class SensorScreen : Screen {
 
@@ -69,10 +75,13 @@ class SensorScreen : Screen {
         val viewModel = rememberScreenModel {
             SensorViewModel()
         }
+        viewModel.scanBluetoothSensorsManager.scanSensors(onCatch = {  }) {
+            println("device - $it")
+            viewModel.addRemoteSensor(it)
+        }
         val state by viewModel.stateFlow.collectAsState()
 
         LaunchedEffect(viewModel) {
-            viewModel.connectSocket()
             viewModel.loadSensors()
         }
         MaxiPageContainer(topBar = {
