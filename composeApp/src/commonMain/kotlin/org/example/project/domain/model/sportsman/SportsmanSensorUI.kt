@@ -12,6 +12,7 @@ import kotlinx.datetime.Clock
 import org.example.project.ext.maxOf
 import org.example.project.ext.minOf
 import org.example.project.ext.roundToIntOrNull
+import org.example.project.utils.Constants
 import org.example.project.utils.orEmpty
 import kotlin.coroutines.suspendCoroutine
 import kotlin.math.roundToInt
@@ -55,11 +56,11 @@ data class SportsmanSensorUI(
     val fio: String
         get() = "$lastname $name $middleName"
 
-    val zone1Range: List<Int> = IntRange(0, 70).toList()
-    val zone2Range: List<Int> = IntRange(71, 90).toList()
-    val zone3Range: List<Int> = IntRange(91, 110).toList()
-    val zone4Range: List<Int> = IntRange(111, 130).toList()
-    val zone5Range: List<Int> = IntRange(131, 230).toList()
+    val zone1Range: List<Int> = Constants.zone1Range
+    val zone2Range: List<Int> = Constants.zone2Range
+    val zone3Range: List<Int> = Constants.zone3Range
+    val zone4Range: List<Int> = Constants.zone4Range
+    val zone5Range: List<Int> = Constants.zone5Range
 
     private fun calculateTimeInZone(range: List<Int>): Long {
         val heartRates = sensor?.heartRate.orEmpty()

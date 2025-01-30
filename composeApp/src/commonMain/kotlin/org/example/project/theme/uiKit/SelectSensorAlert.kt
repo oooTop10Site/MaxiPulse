@@ -19,15 +19,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.cancel
 import maxipuls.composeapp.generated.resources.choose_sensor
@@ -50,7 +53,6 @@ import org.koin.core.component.inject
 @Composable
 internal fun KoinComponent.SelectSensor(
     onDismiss: () -> Unit,
-    sensors: List<SensorUI>?,
     observeSensor: (SensorUI) -> Unit,
     sensorAlreadyExit: (SensorUI) -> Boolean = { false },
     accept: (SensorUI, String) -> Unit,
@@ -58,9 +60,14 @@ internal fun KoinComponent.SelectSensor(
     sensor: SensorUI?,
 ) {
     val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
+    var devices: SnapshotStateList<SensorUI> = remember { mutableStateListOf<SensorUI>() }
+
     var selectSensor by remember { mutableStateOf(sensor) }
     scanBluetoothSensorsManager.scanSensors(onCatch = { onDismiss() }) {
         println("device - $it")
+        if(it.sensorId !in devices.map { it.sensorId }) {
+            devices.add(it)
+        }
         observeSensor(it)
     }
     MaxiAlertDialog(
@@ -91,7 +98,7 @@ internal fun KoinComponent.SelectSensor(
         },
         paddingAfterTitle = false,
         descriptionContent = {
-            if (sensors == null) {
+            if (devices.isEmpty()) {
                 Box(modifier = Modifier.heightIn(400.dp), contentAlignment = Alignment.Center) {
                     SearchAvailableDevices(modifier = Modifier.size(200.dp), false)
                 }
@@ -103,7 +110,7 @@ internal fun KoinComponent.SelectSensor(
                     contentPadding = PaddingValues(vertical = 40.dp),
                     verticalArrangement = Arrangement.spacedBy(13.dp)
                 ) {
-                    items(sensors) {
+                    items(devices) {
                         val alreadyExist = sensorAlreadyExit(it)
 
                         val isSelect = selectSensor == it

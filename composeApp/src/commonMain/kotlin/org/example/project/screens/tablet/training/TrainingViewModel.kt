@@ -28,7 +28,7 @@ internal class TrainingViewModel :
         reduce {
             state.copy(
                 sportsmans = newSportsmans,
-//                selectSportsman = newSportsmans.find { it.id == state.selectSportsman?.id }
+                selectSportsman = newSportsmans.find { it.id == state.selectSportsman?.id }
             )
         }
     }

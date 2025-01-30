@@ -47,6 +47,7 @@ import org.example.project.theme.MaxiPulsTheme
 import org.example.project.utils.orEmpty
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import org.example.project.utils.Constants
 
 @Composable
 fun HeartRateGraph(
@@ -58,19 +59,19 @@ fun HeartRateGraph(
     val state = rememberLazyListState()
     val maxValue = 230f
     val zones = listOf(
-        0f to 70f,        // Голубая зона
-        70f to 90f,      // Синяя зона
-        90f to 110f,      // Зеленая зона
-        110f to 130f,      // Оранжевая зона
-        130f to maxValue   // Красная зона
+        Constants.zone1Start.toFloat() to Constants.zone1End.toFloat(),        // Голубая зона
+        Constants.zone2Start.toFloat() to Constants.zone2End.toFloat(),    // Синяя зона
+        Constants.zone3Start.toFloat() to Constants.zone3End.toFloat(),       // Зеленая зона
+        Constants.zone4Start.toFloat() to Constants.zone4End.toFloat(),      // Оранжевая зона
+        Constants.zone5Start.toFloat() to Constants.zone5End.toFloat(),    // Красная зона
     )
 
     val zoneColors = listOf(
-        Color(0xFFAEC6F3), // Голубая
-        Color(0xFF3B6ECF), // Синяя
-        Color(0xFF96D34B), // Зеленая
-        Color(0xFFFFA93A), // Оранжевая
-        Color(0xFFDF0B40)  // Красная
+        MaxiPulsTheme.colors.uiKit.zone1, // Голубая
+        MaxiPulsTheme.colors.uiKit.zone2, // Синяя
+        MaxiPulsTheme.colors.uiKit.zone3, // Зеленая
+        MaxiPulsTheme.colors.uiKit.zone4, // Оранжевая
+        MaxiPulsTheme.colors.uiKit.zone5, // Красная
     )
 
     val textMeasurer = rememberTextMeasurer()
@@ -128,7 +129,7 @@ fun HeartRateGraph(
                     item {
                         Canvas(
                             modifier = Modifier
-                                .width(if(width == 0.dp) pointWidth * heartRateData.size else maxWidth) // Ширина графика
+                                .width(if (width == 0.dp) pointWidth * heartRateData.size else maxWidth) // Ширина графика
                                 .fillMaxHeight()
                         ) {
                             val graphWidth = size.width

@@ -892,7 +892,6 @@ class SportsmanEditScreen(private val gamerId: String? = null) : Screen, KoinCom
                     },
                     sportsmanId = state.sportsmanUI.id,
                     sensor = state.sensorUI,
-                    sensors = state.sensors,
                     sensorAlreadyExit = {
                         false
                     },

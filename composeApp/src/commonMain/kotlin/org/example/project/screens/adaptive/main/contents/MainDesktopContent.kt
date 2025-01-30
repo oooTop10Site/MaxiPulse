@@ -415,7 +415,6 @@ internal fun KoinComponent.MainDesktopContent(
                     },
                     sportsmanId = alertData.sportsman.id,
                     sensor = alertData.sportsman.sensor,
-                    sensors = state.sensors,
                     sensorAlreadyExit = {
                         it in state.sportsmans.filter { it != alertData.sportsman }
                             .map { it.sensor }

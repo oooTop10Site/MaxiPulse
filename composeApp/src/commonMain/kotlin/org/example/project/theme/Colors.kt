@@ -39,7 +39,13 @@ class UIKitColors(
     val white: Color,
     val white500: Color,
 
-    val shimmerColor: List<Color>
+    val shimmerColor: List<Color>,
+
+    val zone1: Color,
+    val zone2: Color,
+    val zone3: Color,
+    val zone4: Color,
+    val zone5: Color,
 )
 
 fun uiKitColors() = UIKitColors(
@@ -83,7 +89,12 @@ fun uiKitColors() = UIKitColors(
         Color(0xFFB8B5B5),
         Color(0xFF8F8B8B),
         Color(0xFFB8B5B5)
-    )
+    ),
+    zone1 = Color(0xFFAEC6F3), // Голубая
+    zone2 = Color(0xFF3B6ECF), // Синяя
+    zone3 = Color(0xFF96D34B), // Зеленая
+    zone4 = Color(0xFFFFA93A), // Оранжевая
+    zone5 = Color(0xFFDF0B40)  // Красная
 
 )
 
