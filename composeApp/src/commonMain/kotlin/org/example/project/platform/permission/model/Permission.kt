@@ -14,5 +14,5 @@ enum class Permission {
     MANAGE_EXTERNAL_STORAGE,
     READ_CONTACTS,
     SEND_SMS,
-    LOCATION
+    LOCATION,
 }

@@ -25,8 +25,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalNavigationDrawer
@@ -36,6 +40,7 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -65,9 +70,14 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import maxipuls.composeapp.generated.resources.ok
 import org.example.project.domain.manager.MessageObserverManager
 import org.example.project.ext.getPointsOfTab
+import org.example.project.ext.granted
 import org.example.project.platform.PointerEvent
+import org.example.project.platform.SpeechToTextRecognizer
+import org.example.project.platform.permission.model.Permission
+import org.example.project.platform.permission.service.PermissionsService
 import org.example.project.platform.pointerEvent
 import org.example.project.screens.adaptive.mainTab.tabs.CompositionsTab
 import org.example.project.screens.adaptive.mainTab.tabs.DairyTab
@@ -82,7 +92,11 @@ import org.example.project.screens.adaptive.mainTab.tabs.TestTab
 import org.example.project.screens.adaptive.mainTab.tabs.UTPTab
 import org.example.project.screens.adaptive.root.RootNavigator
 import org.example.project.screens.adaptive.root.ScreenSize
+import org.example.project.theme.uiKit.MaxiAlertDialog
+import org.example.project.theme.uiKit.MaxiAlertDialogButtons
+import org.example.project.utils.debouncedClick
 import org.example.project.utils.safeAreaHorizontal
+import org.jetbrains.compose.resources.stringResource
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -92,6 +106,26 @@ class MainTabScreen(private val tab: Tab = MainTab()) : Screen, KoinComponent {
         val screenSize = ScreenSize.currentOrThrow
         val navigator = LocalNavigator.currentOrThrow
         var isOpen = remember { mutableStateOf(false) }
+        var isRecording by remember { mutableStateOf(false) }
+        var recognizedText by remember { mutableStateOf("") }
+        val speechRecognizer: SpeechToTextRecognizer by inject()
+        val audioPermissionsService: PermissionsService by inject()
+        var audioPermission by remember { mutableStateOf(false) }
+        val scope = rememberCoroutineScope()
+        audioPermissionsService.checkPermissionFlow(Permission.RECORD_AUDIO)
+            .collectAsState(audioPermissionsService.checkPermission(Permission.RECORD_AUDIO))
+            .granted {
+                audioPermission = true
+            }
+        LaunchedEffect(Unit) {
+            speechRecognizer.setOnResultListener { text ->
+                recognizedText = text
+            }
+            speechRecognizer.setOnPartialResultListener { text ->
+                recognizedText = text
+            }
+        }
+
         MaxiPageContainer(
             modifier = Modifier.fillMaxSize().background(MaxiPulsTheme.colors.uiKit.background)
         ) {
@@ -112,8 +146,60 @@ class MainTabScreen(private val tab: Tab = MainTab()) : Screen, KoinComponent {
                 }
 
             }
+            if (!isRecording) {
+                FloatingActionButton(
+                    modifier = Modifier.padding(20.dp).align(Alignment.BottomEnd),
+                    onClick = debouncedClick() {
+                        if (isRecording) {
+                            speechRecognizer.stopListening()
+                        } else {
+                            scope.launch {
+                                if (audioPermissionsService.checkPermission(Permission.RECORD_AUDIO)
+                                        .granted()
+                                ) {
+                                    speechRecognizer.startListening()
+                                    isRecording = !isRecording
+                                } else {
+                                    audioPermissionsService.providePermission(Permission.RECORD_AUDIO)
+                                }
+
+                            }
+                        }
+
+                    }
+                ) {
+                    Icon(
+                        imageVector = if (isRecording) Icons.Default.Close else Icons.Default.Search,
+                        contentDescription = if (isRecording) "Stop" else "Mic"
+                    )
+                }
+            }
+            if (isRecording) {
+                MaxiAlertDialog(
+                    alertDialogButtons = MaxiAlertDialogButtons.Accept,
+                    modifier = Modifier.width(300.dp).animateContentSize(),
+                    paddingAfterTitle = false,
+                    title = null,
+                    acceptText = stringResource(Res.string.ok),
+                    accept = {
+                        isRecording = !isRecording
+                        speechRecognizer.stopListening()
+                    },
+                    cancelText = null,
+                    cancel = {
+                        isRecording = !isRecording
+                        speechRecognizer.stopListening()
+                    },
+                    description = if (isRecording && recognizedText.isEmpty()) "Говорите..." else recognizedText,
+                    onDismiss = {
+                        isRecording = !isRecording
+                        speechRecognizer.stopListening()
+                    })
+            }
         }
+
     }
+
 }
 
 @Composable
@@ -196,7 +282,8 @@ private fun LargeLeftMenu(
                 modifier = Modifier.padding(horizontal = 10.dp)
             )
             Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 33.dp).weight(1f),
+                modifier = Modifier.verticalScroll(rememberScrollState())
+                    .padding(horizontal = 33.dp).weight(1f),
 //                contentPadding = PaddingValues(vertical = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
