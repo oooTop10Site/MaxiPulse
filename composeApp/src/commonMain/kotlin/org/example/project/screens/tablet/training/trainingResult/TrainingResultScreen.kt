@@ -18,8 +18,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -52,6 +54,7 @@ import maxipuls.composeapp.generated.resources.share
 import maxipuls.composeapp.generated.resources.zip
 import org.example.project.domain.model.TrainingResultTab.*
 import org.example.project.domain.model.sportsman.SportsmanSensorUI
+import org.example.project.domain.model.training.TrainingStageChssUI
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.adaptive.root.RootNavigator
 import org.example.project.screens.adaptive.root.ScreenSize
@@ -66,7 +69,10 @@ import org.example.project.utils.Constants
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-class TrainingResultScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
+class TrainingResultScreen(
+    val sportsmans: List<SportsmanSensorUI>,
+    val stages: List<TrainingStageChssUI>
+) : Screen {
     @Composable
     override fun Content() {
         val navigator = RootNavigator.currentOrThrow
@@ -75,6 +81,7 @@ class TrainingResultScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
         }
         LaunchedEffect(viewModel) {
             viewModel.loadSportsman(sportsmans)
+            viewModel.loadStage(sportsmans, stages)
         }
         val state by viewModel.stateFlow.collectAsState()
         MaxiPageContainer() {
@@ -133,13 +140,16 @@ class TrainingResultScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
                             }
                         }
                         Column(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             state.tabs.forEach {
                                 SelectableTab(
                                     modifier = Modifier.height(37.dp).fillMaxWidth(),
-                                    stringResource(it.text),
+                                    if (it is Stage) stringResource(
+                                        it.text,
+                                        it.title
+                                    ) else stringResource(it.text),
                                     isSelect = state.currentTab == it
                                 ) {
                                     viewModel.changeTab(it)
@@ -221,17 +231,21 @@ class TrainingResultScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
                     color = MaxiPulsTheme.colors.uiKit.divider
                 )
                 Column(modifier = Modifier.weight(1f)) {
-                    when (state.currentTab) {
-                        Sheet -> {
-                            SheetContent(state, viewModel)
+                    when (val stage = state.currentTab) {
+                        is Sheet -> {
+                            SheetContent(state.search, state.filterSportmans, viewModel)
                         }
 
-                        Trimp -> {
+                        is Trimp -> {
                             TrimpContent(state, viewModel)
                         }
 
-                        HeartRate -> {
+                        is HeartRate -> {
                             HeartRateContent(state, viewModel)
+                        }
+
+                        is Stage -> {
+                            SheetContent(state.search, stage.data, viewModel)
                         }
 
                         else -> {

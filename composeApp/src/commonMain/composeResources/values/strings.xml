@@ -133,6 +133,7 @@
     <string name="zone4">Зона 4</string>
     <string name="zone5">Зона 5</string>
     <string name="zone_number">Зона %1$d</string>
+    <string name="stage_with_title">Этап - %1$s</string>
     <string name="avg">СРЕД</string>
     <string name="min">МИН</string>
     <string name="max">ПИК</string>

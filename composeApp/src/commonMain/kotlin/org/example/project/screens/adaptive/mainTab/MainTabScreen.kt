@@ -106,25 +106,7 @@ class MainTabScreen(private val tab: Tab = MainTab()) : Screen, KoinComponent {
         val screenSize = ScreenSize.currentOrThrow
         val navigator = LocalNavigator.currentOrThrow
         var isOpen = remember { mutableStateOf(false) }
-        var isRecording by remember { mutableStateOf(false) }
-        var recognizedText by remember { mutableStateOf("") }
-        val speechRecognizer: SpeechToTextRecognizer by inject()
-        val audioPermissionsService: PermissionsService by inject()
-        var audioPermission by remember { mutableStateOf(false) }
-        val scope = rememberCoroutineScope()
-        audioPermissionsService.checkPermissionFlow(Permission.RECORD_AUDIO)
-            .collectAsState(audioPermissionsService.checkPermission(Permission.RECORD_AUDIO))
-            .granted {
-                audioPermission = true
-            }
-        LaunchedEffect(Unit) {
-            speechRecognizer.setOnResultListener { text ->
-                recognizedText = text
-            }
-            speechRecognizer.setOnPartialResultListener { text ->
-                recognizedText = text
-            }
-        }
+
 
         MaxiPageContainer(
             modifier = Modifier.fillMaxSize().background(MaxiPulsTheme.colors.uiKit.background)
@@ -145,56 +127,6 @@ class MainTabScreen(private val tab: Tab = MainTab()) : Screen, KoinComponent {
                     }
                 }
 
-            }
-            if (!isRecording) {
-                FloatingActionButton(
-                    modifier = Modifier.padding(20.dp).align(Alignment.BottomEnd),
-                    onClick = debouncedClick() {
-                        if (isRecording) {
-                            speechRecognizer.stopListening()
-                        } else {
-                            scope.launch {
-                                if (audioPermissionsService.checkPermission(Permission.RECORD_AUDIO)
-                                        .granted()
-                                ) {
-                                    speechRecognizer.startListening()
-                                    isRecording = !isRecording
-                                } else {
-                                    audioPermissionsService.providePermission(Permission.RECORD_AUDIO)
-                                }
-
-                            }
-                        }
-
-                    }
-                ) {
-                    Icon(
-                        imageVector = if (isRecording) Icons.Default.Close else Icons.Default.Search,
-                        contentDescription = if (isRecording) "Stop" else "Mic"
-                    )
-                }
-            }
-            if (isRecording) {
-                MaxiAlertDialog(
-                    alertDialogButtons = MaxiAlertDialogButtons.Accept,
-                    modifier = Modifier.width(300.dp).animateContentSize(),
-                    paddingAfterTitle = false,
-                    title = null,
-                    acceptText = stringResource(Res.string.ok),
-                    accept = {
-                        isRecording = !isRecording
-                        speechRecognizer.stopListening()
-                    },
-                    cancelText = null,
-                    cancel = {
-                        isRecording = !isRecording
-                        speechRecognizer.stopListening()
-                    },
-                    description = if (isRecording && recognizedText.isEmpty()) "Говорите..." else recognizedText,
-                    onDismiss = {
-                        isRecording = !isRecording
-                        speechRecognizer.stopListening()
-                    })
             }
         }
 

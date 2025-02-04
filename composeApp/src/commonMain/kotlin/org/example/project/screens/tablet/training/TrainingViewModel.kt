@@ -3,6 +3,7 @@ package org.example.project.screens.tablet.training
 import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.domain.model.sportsman.SportsmanSensorUI
 import org.example.project.domain.model.sportsman.TrainingSportsmanUI
+import org.example.project.domain.model.training.TrainingStageChssUI
 import org.example.project.platform.BaseScreenModel
 import org.example.project.platform.ScanBluetoothSensorsManager
 import org.example.project.platform.permission.service.PermissionsService
@@ -33,6 +34,22 @@ internal class TrainingViewModel :
         }
     }
 
+    fun trainingStages(input: String) = intent {
+        println(input)
+        println(
+            "TrainingStageChssUI.parseTrainingStages(input) - ${
+                TrainingStageChssUI.parseTrainingStages(
+                    input
+                )
+            }}"
+        )
+        reduce {
+            state.copy(
+                stages = TrainingStageChssUI.parseTrainingStages(input)
+            )
+        }
+    }
+
     fun changeIsTrimp() = intent {
         reduce {
             state.copy(
@@ -58,9 +75,28 @@ internal class TrainingViewModel :
     }
 
     fun incrementTime() = intent {
+        val newTime = state.durationSeconds + 1
         reduce {
             state.copy(
-                durationSeconds = state.durationSeconds + 1
+                durationSeconds = newTime,
+                currentStage = state.stages.let { stages ->
+                    var temp: TrainingStageChssUI? = null
+                    for (index in 0..stages.lastIndex) {
+                        println("------------------------")
+                        println(stages.subList(0, index + 1))
+                        if (stages.subList(0, index + 1).sumOf { it.time * 60 } > newTime) {
+                            temp = stages.getOrNull(index)
+                            try {
+                                if (stages.subList(0, index + 2).sumOf { it.time } * 60 > newTime) {
+                                    return@let temp
+                                }
+                            } catch (e: Exception) {
+                                println("message error - ${e.message}")
+                            }
+                        } else continue
+                    }
+                    temp
+                }
             )
         }
     }
@@ -73,7 +109,7 @@ internal class TrainingViewModel :
                     isStart = false
                 )
             }
-            postSideEffect(TrainingEvent.StopTraining(state.sportsmans))
+            postSideEffect(TrainingEvent.StopTraining(state.sportsmans, state.stages))
         } else {
             reduce {
                 state.copy(

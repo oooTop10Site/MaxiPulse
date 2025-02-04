@@ -1,5 +1,6 @@
 package org.example.project.screens.tablet.training
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -47,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.add_ic
@@ -74,15 +78,12 @@ import maxipuls.composeapp.generated.resources.zone2
 import maxipuls.composeapp.generated.resources.zone3
 import maxipuls.composeapp.generated.resources.zone4
 import maxipuls.composeapp.generated.resources.zone5
-import org.example.project.domain.model.ButtonActions
 import org.example.project.domain.model.sportsman.SportsmanSensorUI
-import org.example.project.domain.model.sportsman.TrainingSportsmanUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.formatSeconds
 import org.example.project.ext.granted
-import org.example.project.ext.max
 import org.example.project.ext.roundToIntOrNull
-import org.example.project.platform.ScanBluetoothSensorsManager
+import org.example.project.platform.SpeechToTextRecognizer
 import org.example.project.platform.permission.model.Permission
 import org.example.project.platform.permission.service.PermissionsService
 import org.example.project.screens.adaptive.root.RootNavigator
@@ -100,23 +101,36 @@ import org.example.project.utils.debouncedClick
 import org.example.project.utils.orEmpty
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.getValue
-import kotlin.math.roundToInt
 
-class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
+class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen, KoinComponent {
 
     @Composable
     override fun Content() {
         val viewModel = rememberScreenModel {
             TrainingViewModel()
         }
+        var showRecord by remember { mutableStateOf(false) }
+        var isRecording by remember { mutableStateOf(false) }
+        var recognizedText by remember { mutableStateOf("") }
+        val speechRecognizer: SpeechToTextRecognizer by inject()
+        val audioPermissionsService: PermissionsService by inject()
+        var audioPermission by remember { mutableStateOf(false) }
         DisposableEffect(Unit) {
             onDispose {
                 viewModel.scanBluetoothSensorsManager.stopScan() {}
             }
         }
-
+        LaunchedEffect(Unit) {
+            speechRecognizer.setOnResultListener { text ->
+                recognizedText = text
+            }
+            speechRecognizer.setOnPartialResultListener { text ->
+                recognizedText = text
+            }
+        }
         val state by viewModel.stateFlow.collectAsState()
         val navigator = RootNavigator.currentOrThrow
         viewModel.scanBluetoothSensorsManager.scanSensors() {
@@ -129,7 +143,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
 
                     is TrainingEvent.StopTraining -> {
                         viewModel.scanBluetoothSensorsManager.stopScan { }
-                        navigator.replace(TrainingResultScreen(it.sportsmans))
+                        navigator.replace(TrainingResultScreen(it.sportsmans, it.stages))
                     }
                 }
             }
@@ -226,6 +240,32 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
 
                         }
                     }
+                    state.currentStage?.let {
+                        Spacer(Modifier.size(20.dp))
+                        Row(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(30.dp)
+                        ) {
+
+                            Text(
+                                text = "${it.title} (${it.time} мин)",
+                                style = MaxiPulsTheme.typography.medium.copy(
+                                    fontSize = 16.sp,
+                                    color = MaxiPulsTheme.colors.uiKit.textColor
+                                ),
+                                )
+
+                            Text(
+                                text = "ЧСС ${it.chss}",
+                                style = MaxiPulsTheme.typography.medium.copy(
+                                    fontSize = 16.sp,
+                                    color = MaxiPulsTheme.colors.uiKit.textColor
+                                ),
+
+                                )
+                        }
+                    }
                     Spacer(Modifier.size(20.dp))
                     Text(
                         text = state.durationSeconds.formatSeconds(),
@@ -277,6 +317,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
             MaxiButton(
                 modifier = Modifier.padding(bottom = 20.dp).size(width = 200.dp, height = 50.dp)
                     .align(Alignment.BottomCenter),
+                enabled = state.stages.isNotEmpty(),
                 onClick = debouncedClick() {
                     viewModel.changeIsStart()
                 },
@@ -284,6 +325,111 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen {
                     Res.string.stop
                 )
             )
+            val scope = rememberCoroutineScope()
+            audioPermissionsService.checkPermissionFlow(Permission.RECORD_AUDIO)
+                .collectAsState(audioPermissionsService.checkPermission(Permission.RECORD_AUDIO))
+                .granted {
+                    audioPermission = true
+                }
+            if (!showRecord && !state.isStart) {
+                FloatingActionButton(
+                    modifier = Modifier.padding(20.dp).align(Alignment.BottomEnd),
+                    onClick = debouncedClick() {
+                        recognizedText = ""
+                        if (audioPermission) {
+                            showRecord = !showRecord
+                        } else {
+                            scope.launch {
+                                if (audioPermissionsService.checkPermission(Permission.RECORD_AUDIO)
+                                        .granted()
+                                ) {
+                                    speechRecognizer.startListening()
+                                    audioPermission = true
+                                } else {
+                                    audioPermissionsService.providePermission(Permission.RECORD_AUDIO)
+                                }
+
+                            }
+                        }
+
+                    }
+                ) {
+                    Icon(
+                        imageVector = if (showRecord) Icons.Default.Close else Icons.Default.Search,
+                        contentDescription = if (showRecord) "Stop" else "Mic"
+                    )
+                }
+            }
+            if (showRecord) {
+                MaxiAlertDialog(
+                    alertDialogButtons = if (isRecording) MaxiAlertDialogButtons.Accept else null,
+                    modifier = Modifier.width(300.dp).animateContentSize(),
+                    paddingAfterTitle = false,
+                    title = null,
+                    acceptText = stringResource(Res.string.ok),
+                    accept = {
+                        isRecording = !isRecording
+                        showRecord = !showRecord
+                        speechRecognizer.stopListening()
+                        viewModel.trainingStages(recognizedText)
+                    },
+                    cancelText = null,
+                    cancel = {
+                        isRecording = !isRecording
+                        showRecord = !showRecord
+                        speechRecognizer.stopListening()
+                    },
+                    descriptionContent = {
+                        Column(modifier = Modifier) {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = "Пример ввода: Кол во этапов - {количество}(3), \n" +
+                                        "Первый этап - {значение}(разминка), чсс {значение}(160), время{значение}(20 мин)\n" +
+                                        "Второй этап - {значение}(основной), чсс {значение}(190), время{значение}(45 мин)\n" +
+                                        "Третий этап - {значение}(заключительный), чсс {значение}(140), время{значение}(20 мин)",
+                                style = MaxiPulsTheme.typography.regular.copy(
+                                    color = MaxiPulsTheme.colors.uiKit.textColor,
+                                    fontSize = 13.sp,
+                                    lineHeight = 13.sp,
+                                )
+                            )
+
+                            Spacer(Modifier.size(40.dp))
+                            if (isRecording) {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = if (recognizedText.isBlank()) "Говорите..." else recognizedText,
+                                    style = MaxiPulsTheme.typography.medium.copy(
+                                        color = MaxiPulsTheme.colors.uiKit.textColor,
+                                        fontSize = 16.sp,
+                                        lineHeight = 16.sp,
+                                    ),
+                                    textAlign = if (recognizedText.isBlank()) TextAlign.Center else TextAlign.Start
+                                )
+                            } else {
+                                FloatingActionButton(
+                                    modifier = Modifier.padding(vertical = 20.dp)
+                                        .align(Alignment.CenterHorizontally),
+                                    onClick = debouncedClick() {
+                                        isRecording = !isRecording
+                                        speechRecognizer.startListening()
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Search,
+                                        contentDescription = if (showRecord) "Stop" else "Mic"
+                                    )
+                                }
+                            }
+                            Spacer(Modifier.size(40.dp))
+                        }
+                    },
+                    onDismiss = {
+                        isRecording = !isRecording
+                        showRecord = !showRecord
+                        speechRecognizer.stopListening()
+                    })
+            }
         }
 
         if (state.isAlertDialog) {

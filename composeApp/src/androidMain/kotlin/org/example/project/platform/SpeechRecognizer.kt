@@ -24,6 +24,8 @@ actual class SpeechToTextRecognizer : KoinComponent {
                 RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
             )
+            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true) // Включаем промежуточные результаты
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ru-RU") // Указываем язык
         }
         speechRecognizer.startListening(intent)
     }
@@ -32,8 +34,8 @@ actual class SpeechToTextRecognizer : KoinComponent {
         speechRecognizer.stopListening()
     }
 
-   actual  fun setOnPartialResultListener(listener: (String) -> Unit) {
-       onPartialResultListener = listener
+    actual fun setOnPartialResultListener(listener: (String) -> Unit) {
+        onPartialResultListener = listener
     }
 
     actual fun setOnResultListener(listener: (String) -> Unit) {
@@ -49,7 +51,9 @@ actual class SpeechToTextRecognizer : KoinComponent {
             }
 
             override fun onPartialResults(partialResults: Bundle?) {
-                val matches = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+                println("onPartialResults - $partialResults")
+                val matches =
+                    partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 println("matchesPART - $matches")
                 if (!matches.isNullOrEmpty()) {
                     onPartialResultListener?.invoke(matches[0]) // Промежуточный результат
