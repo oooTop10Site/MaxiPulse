@@ -11,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -56,6 +57,8 @@ import maxipuls.composeapp.generated.resources.close_solid_ic
 import maxipuls.composeapp.generated.resources.indicator_ic
 import maxipuls.composeapp.generated.resources.saved_devices
 import maxipuls.composeapp.generated.resources.search_available_devices
+import maxipuls.composeapp.generated.resources.sensor_not_choose
+import maxipuls.composeapp.generated.resources.sensor_not_found
 import org.example.project.domain.model.sensor.SensorPreviewUI
 import org.example.project.domain.model.sportsman.SensorStatus
 import org.example.project.domain.model.sportsman.SensorUI
@@ -75,7 +78,7 @@ class SensorScreen : Screen {
         val viewModel = rememberScreenModel {
             SensorViewModel()
         }
-        viewModel.scanBluetoothSensorsManager.scanSensors(onCatch = {  }) {
+        viewModel.scanBluetoothSensorsManager.scanSensors(onCatch = { }) {
             println("device - $it")
             viewModel.addRemoteSensor(it)
         }
@@ -206,37 +209,28 @@ class SensorScreen : Screen {
     }
 }
 
-
 @Composable
-internal fun SensorPreviewCard(
+internal fun ColumnScope.SensorPreviewContent(
     modifier: Modifier = Modifier,
-    sensorUI: SensorPreviewUI,
+    sensorUI: SensorPreviewUI?,
     icon: @Composable (() -> Unit)? = null,
     onClick: () -> Unit,
 ) {
-    Column(
-        modifier.background(
-            color = MaxiPulsTheme.colors.uiKit.card,
-            shape = RoundedCornerShape(20.dp)
-        ).clip(RoundedCornerShape(20.dp)).clickableBlank() {
-            onClick()
-        }.animateContentSize()
-    ) {
+    Column(modifier.clickableBlank() {
+        onClick()
+    }) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 15.dp)
+            modifier = Modifier
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier.weight(1f).padding(end = 7.dp)
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                if (sensorUI?.mac.orEmpty().isBlank()) {
                     Text(
-                        sensorUI.mac,
+                        stringResource(Res.string.sensor_not_choose),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaxiPulsTheme.typography.semiBold.copy(
@@ -246,39 +240,81 @@ internal fun SensorPreviewCard(
                         ),
                         modifier = Modifier.weight(1f, false)
                     )
-
-                    VerticalDivider(
-                        modifier = Modifier.height(20.dp),
-                        color = MaxiPulsTheme.colors.uiKit.divider
-                    )
-                    Text(
-                        sensorUI.name,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaxiPulsTheme.typography.semiBold.copy(
-                            fontSize = 16.sp,
-                            lineHeight = 16.sp,
-                            color = MaxiPulsTheme.colors.uiKit.textColor
+                } else {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            sensorUI?.mac.orEmpty(),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaxiPulsTheme.typography.semiBold.copy(
+                                fontSize = 16.sp,
+                                lineHeight = 16.sp,
+                                color = MaxiPulsTheme.colors.uiKit.textColor
+                            ),
+                            modifier = Modifier.weight(1f, false)
                         )
-                    )
 
-                }
-                if (sensorUI.status != SensorStatus.Unknown) {
-                    Text(
-                        sensorUI.status.toText(),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaxiPulsTheme.typography.semiBold.copy(
-                            fontSize = 16.sp,
-                            lineHeight = 16.sp,
-                            color = sensorUI.status.toColor()
+                        VerticalDivider(
+                            modifier = Modifier.height(20.dp),
+                            color = MaxiPulsTheme.colors.uiKit.divider
                         )
-                    )
+                        Text(
+                            sensorUI?.name.orEmpty(),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaxiPulsTheme.typography.semiBold.copy(
+                                fontSize = 16.sp,
+                                lineHeight = 16.sp,
+                                color = MaxiPulsTheme.colors.uiKit.textColor
+                            )
+                        )
+
+                    }
+
+                    if (sensorUI?.status != SensorStatus.Unknown) {
+                        Text(
+                            sensorUI?.status?.toText().orEmpty(),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaxiPulsTheme.typography.semiBold.copy(
+                                fontSize = 16.sp,
+                                lineHeight = 16.sp,
+                                color = sensorUI?.status?.toColor()
+                                    ?: androidx.compose.ui.graphics.Color.Black
+                            )
+                        )
+                    }
                 }
             }
 
             icon?.invoke()
         }
+    }
+}
+
+
+@Composable
+internal fun SensorPreviewCard(
+    modifier: Modifier = Modifier,
+    sensorUI: SensorPreviewUI?,
+    icon: @Composable (() -> Unit)? = null,
+    onClick: () -> Unit,
+) {
+    Column(
+        modifier.background(
+            color = MaxiPulsTheme.colors.uiKit.card,
+            shape = RoundedCornerShape(20.dp)
+        ).clip(RoundedCornerShape(20.dp)).animateContentSize()
+    ) {
+        SensorPreviewContent(
+            Modifier.padding(horizontal = 20.dp, vertical = 15.dp).fillMaxSize(),
+            sensorUI,
+            icon,
+            onClick
+        )
     }
 }
 

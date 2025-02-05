@@ -2,7 +2,6 @@ package org.example.project.screens.tablet.training
 
 import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.domain.model.sportsman.SportsmanSensorUI
-import org.example.project.domain.model.sportsman.TrainingSportsmanUI
 import org.example.project.domain.model.training.TrainingStageChssUI
 import org.example.project.platform.BaseScreenModel
 import org.example.project.platform.ScanBluetoothSensorsManager
@@ -30,6 +29,34 @@ internal class TrainingViewModel :
             state.copy(
                 sportsmans = newSportsmans,
                 selectSportsman = newSportsmans.find { it.id == state.selectSportsman?.id }
+            )
+        }
+    }
+
+    fun addSensorInList(sensorUI: SensorUI) = intent {
+        reduce {
+            state.copy(
+                sensors = if (sensorUI.sensorId !in state.sensors.map { it.sensorId }) state.sensors + sensorUI else state.sensors
+            )
+        }
+    }
+
+    fun updateSensor(sensorUI: SensorUI) = intent {
+        val newSensor = sensorUI.copy(
+            heartRate = state.selectSportsman?.sensor?.heartRate.orEmpty()
+        )
+        reduce {
+            state.copy(
+                sportsmans = state.sportsmans.map {
+                    if (it.id == state.selectSportsman?.id) {
+                        it.copy(
+                            sensor = newSensor
+                        )
+                    } else it
+                },
+                selectSportsman = state.selectSportsman?.copy(
+                    sensor = newSensor
+                )
             )
         }
     }

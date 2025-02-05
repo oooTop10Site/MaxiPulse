@@ -1,10 +1,15 @@
 package org.example.project.screens.tablet.training
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,17 +18,20 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -43,6 +51,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -50,6 +59,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -60,6 +71,7 @@ import maxipuls.composeapp.generated.resources.age_text
 import maxipuls.composeapp.generated.resources.attension
 import maxipuls.composeapp.generated.resources.chss
 import maxipuls.composeapp.generated.resources.chss_max
+import maxipuls.composeapp.generated.resources.drop_ic
 import maxipuls.composeapp.generated.resources.ending_training
 import maxipuls.composeapp.generated.resources.info_ic
 import maxipuls.composeapp.generated.resources.mic
@@ -79,15 +91,19 @@ import maxipuls.composeapp.generated.resources.zone2
 import maxipuls.composeapp.generated.resources.zone3
 import maxipuls.composeapp.generated.resources.zone4
 import maxipuls.composeapp.generated.resources.zone5
+import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.domain.model.sportsman.SportsmanSensorUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.formatSeconds
 import org.example.project.ext.granted
 import org.example.project.ext.roundToIntOrNull
+import org.example.project.ext.toSensorPreviewUI
 import org.example.project.platform.SpeechToTextRecognizer
 import org.example.project.platform.permission.model.Permission
 import org.example.project.platform.permission.service.PermissionsService
 import org.example.project.screens.adaptive.root.RootNavigator
+import org.example.project.screens.tablet.sensor.SensorPreviewCard
+import org.example.project.screens.tablet.sensor.SensorPreviewContent
 import org.example.project.screens.tablet.training.trainingResult.TrainingResultScreen
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.BackIcon
@@ -135,6 +151,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen, KoinComp
         val state by viewModel.stateFlow.collectAsState()
         val navigator = RootNavigator.currentOrThrow
         viewModel.scanBluetoothSensorsManager.scanSensors() {
+            viewModel.addSensorInList(it)
             viewModel.newDataFromSportsman(it, sportsmans)
         }
         LaunchedEffect(viewModel) {
@@ -503,7 +520,11 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen, KoinComp
                             viewModel.changeSelectSportsman(null)
                         },
                         sportsmanUI = it,
-                        endTraining = { viewModel.stopTrainingSportsman(state.selectSportsman?.id.orEmpty()) })
+                        endTraining = { viewModel.stopTrainingSportsman(state.selectSportsman?.id.orEmpty()) },
+                        changeSensor = { sensor ->
+                            viewModel.updateSensor(sensor)
+                        }, sensors = state.sensors
+                    )
                 },
                 accept = {
                     viewModel.changeSelectSportsman(null)
@@ -521,6 +542,8 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen, KoinComp
 private fun SportsmanContent(
     modifier: Modifier = Modifier,
     sportsmanUI: SportsmanSensorUI,
+    changeSensor: (SensorUI) -> Unit,
+    sensors: List<SensorUI>,
     dismiss: () -> Unit,
     endTraining: () -> Unit
 ) {
@@ -537,7 +560,7 @@ private fun SportsmanContent(
                 Spacer(Modifier.size(20.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.height(225.dp).weight(1f)
                 ) {
                     Box(
                         modifier = Modifier.size(225.dp),
@@ -633,15 +656,30 @@ private fun SportsmanContent(
                             )
                         }
                     }
-                    if (currentSportsmanUI.isTraining) {
-                        MaxiButton(
-                            modifier = Modifier.weight(1f).height(89.dp),
-                            text = stringResource(Res.string.ending_training),
-                            buttonTextStyle = ButtonTextStyle.Bold,
-                            onClick = {
-                                endTraining()
-                                dismiss()
-                            }
+                    Column(
+                        modifier = Modifier.weight(1f).wrapContentHeight(),
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        if (currentSportsmanUI.isTraining) {
+                            MaxiButton(
+                                modifier = Modifier.fillMaxWidth().height(69.dp),
+                                text = stringResource(Res.string.ending_training),
+                                buttonTextStyle = ButtonTextStyle.Bold,
+                                onClick = {
+                                    endTraining()
+                                    dismiss()
+                                }
+                            )
+                        }
+                        Spacer(Modifier.weight(1f))
+
+                        SelectableSensor(
+                            currentValue = currentSportsmanUI.sensor,
+                            onChangeWorkScope = {
+                                changeSensor(it)
+                            },
+                            items = sensors,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
 //
@@ -726,7 +764,129 @@ private fun SportsmanContent(
 
         }
     }
+}
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectableSensor(
+    currentValue: SensorUI?,
+    onChangeWorkScope: (SensorUI) -> Unit = {},
+    items: List<SensorUI>,
+    modifier: Modifier = Modifier,
+) {
+    var isExpand by remember { mutableStateOf(false) }
+    var width by remember { mutableStateOf(0.dp) }
+    val bottomPadding by animateDpAsState(
+        targetValue = if (isExpand) 0.dp else 20.dp,
+        animationSpec = tween(durationMillis = 150) // Длительность анимации в миллисекундах
+    )
+    BoxWithConstraints(
+        modifier = modifier.background(
+            color = MaxiPulsTheme.colors.uiKit.card,
+            shape = if (isExpand) RoundedCornerShape(
+                topStart = 20.dp,
+                topEnd = 20.dp,
+                bottomStart = bottomPadding,
+                bottomEnd = bottomPadding
+            ) else RoundedCornerShape(20.dp)
+        )
+    ) {
+        width = maxWidth
+        Column(
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Spacer(Modifier.size(20.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    SensorPreviewContent(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(top = 15.dp, bottom = 10.dp),
+                        sensorUI = currentValue?.toSensorPreviewUI(),
+                    ) {
+                        isExpand = !isExpand
+                    }
+                }
+
+                val rotationAngle by animateFloatAsState(
+                    targetValue = if (isExpand) 180f else 0f,
+                    animationSpec = tween(durationMillis = 300) // Длительность анимации в миллисекундах
+                )
+                Spacer(Modifier.size(20.dp))
+
+                Icon(
+                    painter = painterResource(Res.drawable.drop_ic),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(20.dp)
+                        .rotate(rotationAngle).clickableBlank {
+                            isExpand = !isExpand
+                        },
+                    tint = MaxiPulsTheme.colors.uiKit.textColor
+                )
+                Spacer(Modifier.size(20.dp))
+            }
+            Box(modifier = Modifier.width(width).offset(x = 0.dp, y = (-1).dp)) {
+                if (isExpand) {
+                    Popup(
+                        onDismissRequest = {
+                            isExpand = !isExpand
+                        },
+                        properties = PopupProperties(focusable = true)
+                    ) {
+                        Column(
+                            modifier = Modifier.width(width)
+                                .heightIn(max = 163.dp)
+                                .clip(
+                                    RoundedCornerShape(
+                                        topEnd = 0.dp,
+                                        topStart = 0.dp,
+                                        bottomEnd = 20.dp, bottomStart = 20.dp,
+                                    )
+                                )
+                                .background(
+                                    color = MaxiPulsTheme.colors.uiKit.card,
+                                    shape = RoundedCornerShape(
+                                        topEnd = 0.dp,
+                                        topStart = 0.dp,
+                                        bottomEnd = 20.dp, bottomStart = 20.dp,
+                                    )
+                                )
+                                .animateContentSize(),
+                        ) {
+                            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                                items.filter { it.sensorId != currentValue?.sensorId }
+                                    .forEachIndexed { index, item ->
+
+                                        HorizontalDivider(
+                                            modifier = Modifier.fillMaxWidth()
+                                                .padding(horizontal = 20.dp),
+                                            color = MaxiPulsTheme.colors.uiKit.textFieldStroke
+                                        )
+
+                                        SensorPreviewContent(
+                                            modifier = Modifier.padding(
+                                                start = 20.dp,
+                                                end = 60.dp,
+                                                top = 10.dp,
+                                                bottom = 10.dp
+                                            ).fillMaxWidth(),
+                                            sensorUI = item.toSensorPreviewUI(),
+                                        ) {
+                                            onChangeWorkScope(item)
+                                            isExpand = !isExpand
+                                        }
+
+                                    }
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
