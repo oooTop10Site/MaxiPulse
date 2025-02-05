@@ -62,6 +62,7 @@ import maxipuls.composeapp.generated.resources.chss
 import maxipuls.composeapp.generated.resources.chss_max
 import maxipuls.composeapp.generated.resources.ending_training
 import maxipuls.composeapp.generated.resources.info_ic
+import maxipuls.composeapp.generated.resources.mic
 import maxipuls.composeapp.generated.resources.ok
 import maxipuls.composeapp.generated.resources.profile
 import maxipuls.composeapp.generated.resources.start
@@ -254,7 +255,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen, KoinComp
                                     fontSize = 16.sp,
                                     color = MaxiPulsTheme.colors.uiKit.textColor
                                 ),
-                                )
+                            )
 
                             Text(
                                 text = "ЧСС ${it.chss}",
@@ -333,6 +334,8 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen, KoinComp
                 }
             if (!showRecord && !state.isStart) {
                 FloatingActionButton(
+                    containerColor = MaxiPulsTheme.colors.uiKit.primary,
+                    contentColor = MaxiPulsTheme.colors.uiKit.white,
                     modifier = Modifier.padding(20.dp).align(Alignment.BottomEnd),
                     onClick = debouncedClick() {
                         recognizedText = ""
@@ -355,7 +358,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen, KoinComp
                     }
                 ) {
                     Icon(
-                        imageVector = if (showRecord) Icons.Default.Close else Icons.Default.Search,
+                        painter = painterResource(Res.drawable.mic),
                         contentDescription = if (showRecord) "Stop" else "Mic"
                     )
                 }
@@ -390,7 +393,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen, KoinComp
                                 style = MaxiPulsTheme.typography.regular.copy(
                                     color = MaxiPulsTheme.colors.uiKit.textColor,
                                     fontSize = 13.sp,
-                                    lineHeight = 13.sp,
+                                    lineHeight = 16.sp,
                                 )
                             )
 
@@ -402,12 +405,14 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen, KoinComp
                                     style = MaxiPulsTheme.typography.medium.copy(
                                         color = MaxiPulsTheme.colors.uiKit.textColor,
                                         fontSize = 16.sp,
-                                        lineHeight = 16.sp,
+                                        lineHeight = 18.sp,
                                     ),
                                     textAlign = if (recognizedText.isBlank()) TextAlign.Center else TextAlign.Start
                                 )
                             } else {
                                 FloatingActionButton(
+                                    containerColor = MaxiPulsTheme.colors.uiKit.primary,
+                                    contentColor = MaxiPulsTheme.colors.uiKit.white,
                                     modifier = Modifier.padding(vertical = 20.dp)
                                         .align(Alignment.CenterHorizontally),
                                     onClick = debouncedClick() {
@@ -416,7 +421,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen, KoinComp
                                     }
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.Search,
+                                        painter = painterResource(Res.drawable.mic),
                                         contentDescription = if (showRecord) "Stop" else "Mic"
                                     )
                                 }
