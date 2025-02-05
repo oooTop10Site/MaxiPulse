@@ -9,7 +9,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -19,28 +18,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -64,41 +51,18 @@ import org.example.project.ext.clickableBlank
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiPageContainer
 import org.jetbrains.compose.resources.painterResource
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
-import maxipuls.composeapp.generated.resources.ok
-import org.example.project.domain.manager.MessageObserverManager
-import org.example.project.ext.getPointsOfTab
-import org.example.project.ext.granted
 import org.example.project.platform.PointerEvent
-import org.example.project.platform.SpeechToTextRecognizer
-import org.example.project.platform.permission.model.Permission
-import org.example.project.platform.permission.service.PermissionsService
 import org.example.project.platform.pointerEvent
 import org.example.project.screens.adaptive.mainTab.tabs.CompositionsTab
-import org.example.project.screens.adaptive.mainTab.tabs.DairyTab
-import org.example.project.screens.adaptive.mainTab.tabs.DistanceTraining
-import org.example.project.screens.adaptive.mainTab.tabs.LoadAnalizeTab
 import org.example.project.screens.adaptive.mainTab.tabs.LogTab
 import org.example.project.screens.adaptive.mainTab.tabs.MainTab
 import org.example.project.screens.adaptive.mainTab.tabs.SensorTab
 import org.example.project.screens.adaptive.mainTab.tabs.SettingsTab
 import org.example.project.screens.adaptive.mainTab.tabs.SportsmanTab
 import org.example.project.screens.adaptive.mainTab.tabs.TestTab
-import org.example.project.screens.adaptive.mainTab.tabs.UTPTab
-import org.example.project.screens.adaptive.root.RootNavigator
+import org.example.project.screens.adaptive.mainTab.tabs.OptionTab
 import org.example.project.screens.adaptive.root.ScreenSize
-import org.example.project.theme.uiKit.MaxiAlertDialog
-import org.example.project.theme.uiKit.MaxiAlertDialogButtons
-import org.example.project.utils.debouncedClick
-import org.example.project.utils.safeAreaHorizontal
-import org.jetbrains.compose.resources.stringResource
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
 class MainTabScreen(private val tab: Tab = MainTab()) : Screen, KoinComponent {
     @Composable
@@ -140,7 +104,7 @@ private fun LargeLeftMenu(
     tabNavigator: TabNavigator,
     navigator1: TabNavigator
 ) {
-    val tabsFirst = listOf(MainTab(), TestTab, LogTab, UTPTab)
+    val tabsFirst = listOf(MainTab(), TestTab, LogTab, OptionTab)
     val tabsSecond = listOf(CompositionsTab, SportsmanTab, SensorTab, SettingsTab)
     Row(
         modifier = Modifier

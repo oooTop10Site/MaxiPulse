@@ -209,8 +209,8 @@
     <string name="groups">Группы</string>
     <string name="next">Далее</string>
     <string name="duration">Продолжительность</string>
-
-
+    <string name="questionnaire">Анкетирование</string>
+    <string name="extended_testing">Расширенное тестирование</string>
     <string name="training_info">Персональная карточка спортсмена содержит следующую\nинформацию:</string>
     <string name="send">Отправить</string>
     <string name="rating">Рейтинг</string>

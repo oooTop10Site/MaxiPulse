@@ -403,10 +403,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen, KoinComp
                         Column(modifier = Modifier) {
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
-                                text = "Пример ввода: Кол во этапов - {количество}(3), \n" +
-                                        "Первый этап - {значение}(разминка), чсс {значение}(160), время{значение}(20 мин)\n" +
-                                        "Второй этап - {значение}(основной), чсс {значение}(190), время{значение}(45 мин)\n" +
-                                        "Третий этап - {значение}(заключительный), чсс {значение}(140), время{значение}(20 мин)",
+                                text = "Пример ввода: Тренировка состоит из 3 частей,\nПервая - продолжительность 10 минут  ЧСС пик 165.\nВторая - продолжительность 20 минут  ЧСС пик 192.\nТретья - продолжительность 30 минут  ЧСС пик 202. ",
                                 style = MaxiPulsTheme.typography.regular.copy(
                                     color = MaxiPulsTheme.colors.uiKit.textColor,
                                     fontSize = 13.sp,

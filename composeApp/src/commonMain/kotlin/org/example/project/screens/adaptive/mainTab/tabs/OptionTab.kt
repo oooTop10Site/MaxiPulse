@@ -7,12 +7,12 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.options
 import maxipuls.composeapp.generated.resources.rectangle_list
-import maxipuls.composeapp.generated.resources.utp
+import org.example.project.screens.tablet.options.OptionsScreen
 import org.example.project.screens.tablet.utp.UtpScreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-object UTPTab : Tab {
+object OptionTab : Tab {
     override val options: TabOptions
         @Composable
         get() = TabOptions(
