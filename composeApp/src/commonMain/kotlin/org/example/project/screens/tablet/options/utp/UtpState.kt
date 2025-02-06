@@ -1,4 +1,4 @@
-package org.example.project.screens.tablet.utp
+package org.example.project.screens.tablet.options.utp
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DayOfWeek

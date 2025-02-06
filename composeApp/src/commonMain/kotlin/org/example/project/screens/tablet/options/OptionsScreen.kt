@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -32,24 +34,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import maxipuls.composeapp.generated.resources.Res
-import maxipuls.composeapp.generated.resources.choose_type_activity
+import maxipuls.composeapp.generated.resources.choose_option
+import maxipuls.composeapp.generated.resources.next
+import maxipuls.composeapp.generated.resources.options
+import maxipuls.composeapp.generated.resources.planned_utp
+import maxipuls.composeapp.generated.resources.planned_utp_desc
+import maxipuls.composeapp.generated.resources.psycho_diagnostic
+import maxipuls.composeapp.generated.resources.psycho_diagnostic_desc
 import maxipuls.composeapp.generated.resources.search
-import maxipuls.composeapp.generated.resources.start_test
 import maxipuls.composeapp.generated.resources.test_background
-import maxipuls.composeapp.generated.resources.test_desc
-import maxipuls.composeapp.generated.resources.tests
-import org.example.project.screens.adaptive.mainTab.tabs.MainTab
+import org.example.project.domain.model.option.Option.*
+import org.example.project.screens.adaptive.root.RootNavigator
+import org.example.project.screens.tablet.options.Questionnaire.QuestionnaireResultScreen
 import org.example.project.screens.tablet.tests.TestItem
-import org.example.project.screens.tablet.tests.TestsViewModel
+import org.example.project.screens.tablet.options.utp.UtpScreen
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.theme.uiKit.MaxiPageContainer
 import org.example.project.utils.Constants
+import org.example.project.utils.debouncedClick
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -60,8 +67,7 @@ class OptionsScreen : Screen {
         val viewModel = rememberScreenModel {
             OptionsViewModel()
         }
-        val rootNavigator = LocalNavigator.currentOrThrow
-        val tabNavigator = LocalTabNavigator.current
+        val rootNavigator = RootNavigator.currentOrThrow
         val state by viewModel.stateFlow.collectAsState()
 
         MaxiPageContainer(
@@ -80,7 +86,7 @@ class OptionsScreen : Screen {
                 if (state.selectOption == null) {
                     Box(modifier = Modifier.weight(1f).fillMaxHeight().padding(20.dp)) {
                         Text(
-                            text = stringResource(Res.string.tests),
+                            text = stringResource(Res.string.options),
                             style = MaxiPulsTheme.typography.bold.copy(
                                 fontSize = 20.sp,
                                 color = MaxiPulsTheme.colors.uiKit.textColor
@@ -90,7 +96,7 @@ class OptionsScreen : Screen {
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = stringResource(Res.string.choose_type_activity),
+                            text = stringResource(Res.string.choose_option),
                             style = MaxiPulsTheme.typography.bold.copy(
                                 fontSize = 40.sp,
                                 lineHeight = 40.sp,
@@ -104,34 +110,48 @@ class OptionsScreen : Screen {
                     }
                 } else {
                     Column(
-                        modifier = Modifier.weight(1f).fillMaxHeight().padding(20.dp),
+                        modifier = Modifier.weight(1f).padding(horizontal = 20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = stringResource(Res.string.tests),
-                            style = MaxiPulsTheme.typography.bold.copy(
-                                fontSize = 20.sp,
-                                color = MaxiPulsTheme.colors.uiKit.textColor
-                            ),
-                        )
+                        Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+                            Spacer(Modifier.size(20.dp))
+                            when (state.selectOption) {
+                                UTP -> {
+                                    DefaultContentSample(
+                                        title = Res.string.planned_utp,
+                                        desc = Res.string.planned_utp_desc
+                                    )
+                                }
+
+                                Questionnaire -> DefaultContentSample(
+                                    title = Res.string.psycho_diagnostic,
+                                    desc = Res.string.psycho_diagnostic_desc
+                                )
+
+                                ExtendedTesting -> DefaultContentSample(
+                                    title = Res.string.planned_utp,
+                                    desc = Res.string.planned_utp_desc
+                                )
+
+                                null -> {}
+                            }
+                            Spacer(Modifier.size(20.dp))
+                        }
+
+                        MaxiButton(onClick = debouncedClick {
+                            rootNavigator.push(
+                                when (state.selectOption) {
+                                    UTP -> UtpScreen()
+
+                                    Questionnaire -> QuestionnaireResultScreen()
+
+                                    ExtendedTesting -> UtpScreen()
+
+                                    null -> UtpScreen()
+                                }
+                            )
+                        }, text = stringResource(Res.string.next), modifier = Modifier.height(44.dp,).fillMaxWidth())
                         Spacer(Modifier.size(20.dp))
-                        Text(
-                            text = stringResource(Res.string.test_desc),
-                            style = MaxiPulsTheme.typography.regular.copy(
-                                fontSize = 16.sp,
-                                lineHeight = 16.sp,
-                                color = MaxiPulsTheme.colors.uiKit.textColor
-                            ),
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Spacer(Modifier.weight(1f))
-                        MaxiButton(
-                            onClick = {
-                            },
-                            enabled = state.selectOption != null,
-                            text = stringResource(Res.string.start_test),
-                            modifier = Modifier.fillMaxWidth().height(44.dp)
-                        )
                     }
                 }
                 VerticalDivider(
@@ -178,6 +198,33 @@ class OptionsScreen : Screen {
                 }
             }
 
+        }
+    }
+
+    @Composable
+    private fun DefaultContentSample(title: StringResource, desc: StringResource) {
+        Column(
+            modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(horizontal = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(title),
+                style = MaxiPulsTheme.typography.bold.copy(
+                    fontSize = 20.sp,
+                    color = MaxiPulsTheme.colors.uiKit.textColor
+                ),
+            )
+            Spacer(Modifier.size(20.dp))
+            Text(
+                text = stringResource(desc),
+                style = MaxiPulsTheme.typography.regular.copy(
+                    fontSize = 16.sp,
+                    lineHeight = 16.sp,
+                    color = MaxiPulsTheme.colors.uiKit.textColor
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.weight(1f))
         }
     }
 

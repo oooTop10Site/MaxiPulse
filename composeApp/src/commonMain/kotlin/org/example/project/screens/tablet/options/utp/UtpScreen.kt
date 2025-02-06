@@ -1,4 +1,4 @@
-package org.example.project.screens.tablet.utp
+package org.example.project.screens.tablet.options.utp
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -39,7 +39,6 @@ import maxipuls.composeapp.generated.resources.stage_readiness
 import maxipuls.composeapp.generated.resources.start_tarining
 import maxipuls.composeapp.generated.resources.utp_title
 import maxipuls.composeapp.generated.resources.year_education
-import org.example.project.domain.model.ButtonActions
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.toText
 import org.example.project.screens.adaptive.root.ScreenSize

@@ -1,4 +1,4 @@
-package org.example.project.screens.tablet.utp
+package org.example.project.screens.tablet.options.utp
 
 import org.example.project.platform.BaseScreenModel
 import org.orbitmvi.orbit.syntax.simple.intent

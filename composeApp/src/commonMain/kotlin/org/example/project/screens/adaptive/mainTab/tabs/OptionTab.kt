@@ -8,7 +8,6 @@ import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.options
 import maxipuls.composeapp.generated.resources.rectangle_list
 import org.example.project.screens.tablet.options.OptionsScreen
-import org.example.project.screens.tablet.utp.UtpScreen
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -23,6 +22,6 @@ object OptionTab : Tab {
 
     @Composable
     override fun Content() {
-        Navigator(UtpScreen())
+        Navigator(OptionsScreen())
     }
 }
