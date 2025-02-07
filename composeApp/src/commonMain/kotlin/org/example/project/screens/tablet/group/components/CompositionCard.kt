@@ -32,12 +32,14 @@ fun CompositionCard(
     modifier: Modifier = Modifier,
     title: String,
     members: Int,
+    isSelect: Boolean = false,
+    isEdit: Boolean = true,
     onClick: () -> Unit,
     onEdit: () -> Unit,
 ) {
     Column(
         modifier.background(
-            color = MaxiPulsTheme.colors.uiKit.card,
+            color = if (isSelect) MaxiPulsTheme.colors.uiKit.grey800 else MaxiPulsTheme.colors.uiKit.card,
             shape = RoundedCornerShape(25.dp)
         ).clip(RoundedCornerShape(25.dp)).clickableBlank() {
             onClick()
@@ -52,7 +54,7 @@ fun CompositionCard(
             Text(
                 text = title, style = MaxiPulsTheme.typography.bold.copy(
                     fontSize = 16.sp,
-                    color = MaxiPulsTheme.colors.uiKit.textColor
+                    color = if (isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.textColor
                 ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -60,15 +62,16 @@ fun CompositionCard(
             )
 
             Spacer(Modifier.size(5.dp))
-
-            Icon(
-                painterResource(Res.drawable.pencil),
-                contentDescription = null,
-                modifier = Modifier.size(24.dp).clickableBlank {
-                    onEdit()
-                },
-                tint = MaxiPulsTheme.colors.uiKit.primary
-            )
+            if (isEdit) {
+                Icon(
+                    painterResource(Res.drawable.pencil),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp).clickableBlank {
+                        onEdit()
+                    },
+                    tint = MaxiPulsTheme.colors.uiKit.primary
+                )
+            }
 
 
         }
@@ -84,7 +87,7 @@ fun CompositionCard(
                 text = stringResource(Res.string.members),
                 style = MaxiPulsTheme.typography.regular.copy(
                     fontSize = 16.sp,
-                    color = MaxiPulsTheme.colors.uiKit.textColor
+                    color = if (isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.textColor
                 ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -96,7 +99,7 @@ fun CompositionCard(
             Text(
                 text = members.toString(), style = MaxiPulsTheme.typography.regular.copy(
                     fontSize = 16.sp,
-                    color = MaxiPulsTheme.colors.uiKit.textColor
+                    color = if (isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.textColor
                 ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis

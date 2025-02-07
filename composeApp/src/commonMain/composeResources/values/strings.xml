@@ -99,6 +99,18 @@
     <string name="by_october">октября</string>
     <string name="by_november">ноября</string>
     <string name="by_december">декабря</string>
+    <string name="january">Январь</string>
+    <string name="february">Февраль</string>
+    <string name="march">Март</string>
+    <string name="april">Апрель</string>
+    <string name="may">Май</string>
+    <string name="june">Июнь</string>
+    <string name="july">Июль</string>
+    <string name="august">Август</string>
+    <string name="september">Сентябрь</string>
+    <string name="october">Октябрь</string>
+    <string name="november">Ноябрь</string>
+    <string name="december">Декабрь</string>
     <string name="accessed_devices">Доступные устройства</string>
     <string name="saved_devices">Сохраненные устройства</string>
     <string name="active">Активен</string>
@@ -201,6 +213,7 @@
     <string name="sportsman_fio">Спортсмен, ФИО</string>
     <string name="high_level">Высокий</string>
     <string name="date">Дата</string>
+    <string name="analize_utp">Анализ UTP</string>
     <string name="no_high_level">Невысокий</string>
     <string name="empty_level">Отсутвует</string>
     <string name="fear_active">Страх физической активности из-за боязни травмы</string>
@@ -208,6 +221,7 @@
     <string name="level_anxiety_mood">Уровень тревожных настроений</string>
     <string name="scale_tampa">Шкала кинезиофобии Tampa (TSK)</string>
     <string name="planned_utp">Планирование учебно-тренировочного процесса</string>
+    <string name="planned_utp_short">Планирование УТП</string>
     <string name="planned_utp_desc">Система МАКСИПУЛЬС предназначена для получения оперативной информации о быстро изменяющемся состоянии организма спортсмена во время выполнения тренировочной работы и сразу после неё.
 
 Мониторинг показателей тренировочной нагрузки позволяет корректировать интенсивность и продолжительность отдельных упражнений в ходе тренировочного занятия, и также планировать интервалы отдыха.

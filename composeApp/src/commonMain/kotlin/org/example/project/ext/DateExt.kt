@@ -14,6 +14,8 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.until
 import kotlinx.serialization.descriptors.PrimitiveKind
 import maxipuls.composeapp.generated.resources.Res
+import maxipuls.composeapp.generated.resources.april
+import maxipuls.composeapp.generated.resources.august
 import maxipuls.composeapp.generated.resources.by_april
 import maxipuls.composeapp.generated.resources.by_august
 import maxipuls.composeapp.generated.resources.by_december
@@ -26,12 +28,22 @@ import maxipuls.composeapp.generated.resources.by_may
 import maxipuls.composeapp.generated.resources.by_november
 import maxipuls.composeapp.generated.resources.by_october
 import maxipuls.composeapp.generated.resources.by_september
+import maxipuls.composeapp.generated.resources.december
+import maxipuls.composeapp.generated.resources.february
 import maxipuls.composeapp.generated.resources.friday
 import maxipuls.composeapp.generated.resources.friday_sh
+import maxipuls.composeapp.generated.resources.january
+import maxipuls.composeapp.generated.resources.july
+import maxipuls.composeapp.generated.resources.june
+import maxipuls.composeapp.generated.resources.march
+import maxipuls.composeapp.generated.resources.may
 import maxipuls.composeapp.generated.resources.monday
 import maxipuls.composeapp.generated.resources.monday_sh
+import maxipuls.composeapp.generated.resources.november
+import maxipuls.composeapp.generated.resources.october
 import maxipuls.composeapp.generated.resources.saturday
 import maxipuls.composeapp.generated.resources.saturday_sh
+import maxipuls.composeapp.generated.resources.september
 import maxipuls.composeapp.generated.resources.sunday
 import maxipuls.composeapp.generated.resources.sunday_sh
 import maxipuls.composeapp.generated.resources.thursday
@@ -98,6 +110,18 @@ fun Long.addZero(): String {
     return this.toString()
 }
 
+fun LocalDate.generateCalendarGrid(): List<LocalDate> {
+    val firstDayOfMonth = LocalDate(year, month, 1)
+    val firstDayOfWeek = firstDayOfMonth.dayOfWeek
+
+    // Определяем дату начала массива (понедельник перед началом месяца)
+    val startOffset = firstDayOfWeek.ordinal // ordinal: Monday=0, Sunday=6
+    val startDate = firstDayOfMonth.minus(startOffset.toLong(), DateTimeUnit.DAY)
+
+    // Генерируем 35 дней подряд (5 недель)
+    return List(35) { startDate.plus(it.toLong(), DateTimeUnit.DAY) }
+}
+
 fun DayOfWeek.toText(): StringResource {
     return when (this) {
         DayOfWeek.MONDAY -> Res.string.monday
@@ -143,6 +167,27 @@ fun Month?.toByText(): StringResource {
         }
     }
 }
+
+fun Month?.toText(): StringResource {
+    return when (this) {
+        Month.JANUARY -> Res.string.january
+        Month.FEBRUARY -> Res.string.february
+        Month.MARCH -> Res.string.march
+        Month.APRIL -> Res.string.april
+        Month.MAY -> Res.string.may
+        Month.JUNE -> Res.string.june
+        Month.JULY -> Res.string.july
+        Month.AUGUST -> Res.string.august
+        Month.SEPTEMBER -> Res.string.september
+        Month.OCTOBER -> Res.string.october
+        Month.NOVEMBER -> Res.string.november
+        Month.DECEMBER -> Res.string.december
+        else -> {
+            Res.string.january // По умолчанию Январь
+        }
+    }
+}
+
 
 fun LocalDate.calculateAge(): Int {
     val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date

@@ -2,9 +2,13 @@ package org.example.project.screens.tablet.options.utp
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.utp.DayUtpUI
+import org.example.project.domain.model.utp.UTPTab
+import org.example.project.ext.generateCalendarGrid
 import org.example.project.utils.Constants
 
 data class UtpState(
@@ -22,11 +26,19 @@ data class UtpState(
     val selectMicroCycle: String,
     val readiness: List<String>,
     val selectReadiness: String,
+    val utpTab: UTPTab,
+    val tabs: List<UTPTab>,
+    val groups: List<GroupUI>,
+    val selectGroup: GroupUI?,
+    val daysDate: List<LocalDate>,
+    val currentDate: LocalDate,
 ) {
     companion object {
-        val currentDate =Clock.System.now()
+        val currentDate = Clock.System.now()
+        val date = currentDate.toLocalDateTime(TimeZone.currentSystemDefault()).date
 
         val InitState = UtpState(
+            groups = emptyList(),
             stageOfReadiness = listOf(
                 "Спортивно-оздоровительный этап",
                 "Этап начальной подготовки",
@@ -69,6 +81,8 @@ data class UtpState(
                     progressTraining = 0
                 ),
             ),
+            currentDate = date,
+            daysDate = date.generateCalendarGrid(),
             selectDay = currentDate.toLocalDateTime(TimeZone.UTC).date.dayOfWeek,
             selectYear = 0,
             selectMesocycle = "",
@@ -81,7 +95,10 @@ data class UtpState(
                 "Общеподготовительный",
                 "Специально-подготовительный",
                 "Предсоревновательный"
-            )
+            ),
+            utpTab = UTPTab.PannedUtp,
+            tabs = UTPTab.entries,
+            selectGroup = null
         )
     }
 }
