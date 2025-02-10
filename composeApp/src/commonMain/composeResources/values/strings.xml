@@ -261,6 +261,7 @@
     <string name="rating">Рейтинг</string>
     <string name="appeared_new_task">Появились новые задачи</string>
     <string name="borg_scale">Шкала Борга</string>
+    <string name="by_date">По дате</string>
     <string name="turn_on_gps">Включите местоположение</string>
     <string name="turn_on_bluetooth">Включите bluetooth</string>
     <string name="delete_sportsman_alert">Вы уверены, что хотите удалить\nспортсмена? Отменить это действие\nневозможно.</string>
@@ -281,4 +282,13 @@
 % ЧСС max. Рассчитывается от значения ЧСС max, записанного в профиле
 
 Пульсовая тренировочная зона, в которой находится в данный момент спортсмен. Индивидуальные границы зон можно посмотреть и отредактировать в профиле спортсмена.</string>
+
+
+    <string name="type_event">Тип события</string>
+    <string name="planned_training_effect">Планирование должного тренировочного эффекта</string>
+    <string name="criteria_upload">Критерий нагрузки</string>
+    <string name="duration_stage_min">Время этапа (мин)</string>
+    <string name="upload_in_percent_by_chss_max">Нагрузка в процентах от ЧСС max</string>
+    <string name="result_training_effect">Результирующий должный тренировочный эффект</string>
+
 </resources>

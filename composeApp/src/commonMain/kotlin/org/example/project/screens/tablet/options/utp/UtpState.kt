@@ -6,6 +6,9 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.example.project.domain.model.composition.GroupUI
+import org.example.project.domain.model.log.CriteriaUpload
+import org.example.project.domain.model.log.EventType
+import org.example.project.domain.model.training.TrainingUtpUI
 import org.example.project.domain.model.utp.DayUtpUI
 import org.example.project.domain.model.utp.UTPTab
 import org.example.project.ext.generateCalendarGrid
@@ -20,7 +23,7 @@ data class UtpState(
     val selectYear: Int,
     val mesocycle: List<String>,
     val selectMesocycle: String,
-    val days: List<DayUtpUI>,
+    val days: List<TrainingUtpUI>,
     val selectDay: DayOfWeek,
     val microCycle: List<String>,
     val selectMicroCycle: String,
@@ -30,8 +33,11 @@ data class UtpState(
     val tabs: List<UTPTab>,
     val groups: List<GroupUI>,
     val selectGroup: GroupUI?,
-    val daysDate: List<LocalDate>,
-    val currentDate: LocalDate,
+    val daysDate: List<TrainingUtpUI>,
+    val selectedDay: TrainingUtpUI?,
+    val currentDay: LocalDate,
+    val events: List<EventType>,
+    val criteriaUploads: List<CriteriaUpload>,
 ) {
     companion object {
         val currentDate = Clock.System.now()
@@ -51,38 +57,9 @@ data class UtpState(
             ),
             years = listOf(3, 4, 5, 6),
             mesocycle = emptyList(),
-            days = listOf(
-                DayUtpUI(
-                    day = DayOfWeek.MONDAY,
-                    progressTraining = 35
-                ),
-                DayUtpUI(
-                    day = DayOfWeek.TUESDAY,
-                    progressTraining = 124
-                ),
-                DayUtpUI(
-                    day = DayOfWeek.WEDNESDAY,
-                    progressTraining = 42
-                ),
-                DayUtpUI(
-                    day = DayOfWeek.THURSDAY,
-                    progressTraining = 178
-                ),
-                DayUtpUI(
-                    day = DayOfWeek.FRIDAY,
-                    progressTraining = Constants.MAX_TRAINING_INTENSITY
-                ),
-                DayUtpUI(
-                    day = DayOfWeek.SATURDAY,
-                    progressTraining = 19
-                ),
-                DayUtpUI(
-                    day = DayOfWeek.SUNDAY,
-                    progressTraining = 0
-                ),
-            ),
-            currentDate = date,
-            daysDate = date.generateCalendarGrid(),
+            days = emptyList(),
+            selectedDay = null,
+            daysDate = date.generateCalendarGrid().map { TrainingUtpUI.default(it) },
             selectDay = currentDate.toLocalDateTime(TimeZone.UTC).date.dayOfWeek,
             selectYear = 0,
             selectMesocycle = "",
@@ -98,7 +75,10 @@ data class UtpState(
             ),
             utpTab = UTPTab.PannedUtp,
             tabs = UTPTab.entries,
-            selectGroup = null
+            selectGroup = null,
+            currentDay = date,
+            events = EventType.entries,
+            criteriaUploads = CriteriaUpload.entries
         )
     }
 }

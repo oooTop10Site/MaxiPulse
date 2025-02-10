@@ -14,10 +14,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.model.rememberScreenModel
@@ -27,11 +37,20 @@ import org.example.project.screens.adaptive.root.RootNavigator
 import org.example.project.theme.uiKit.BackIcon
 import org.example.project.theme.uiKit.MaxiPageContainer
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.activity_avoidance
+import maxipuls.composeapp.generated.resources.by_date
+import maxipuls.composeapp.generated.resources.calendar
 import maxipuls.composeapp.generated.resources.date
+import maxipuls.composeapp.generated.resources.date_birthday
 import maxipuls.composeapp.generated.resources.description
 import maxipuls.composeapp.generated.resources.fear_active
 import maxipuls.composeapp.generated.resources.fio
@@ -40,22 +59,28 @@ import maxipuls.composeapp.generated.resources.level_anxiety_mood
 import maxipuls.composeapp.generated.resources.mpk
 import maxipuls.composeapp.generated.resources.sportsman_fio
 import org.example.project.domain.model.questionnaire.SportsmanQuestionnaireUI
+import org.example.project.ext.clickableBlank
 import org.example.project.ext.toUI
 import org.example.project.screens.tablet.tests.TestItem
 import org.example.project.screens.tablet.training.trainingResult.RegularResultBox
 import org.example.project.screens.tablet.training.trainingResult.TitleResultBox
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiButton
+import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.theme.uiKit.MaxiTextFieldMenu
 import org.example.project.utils.Constants
 import org.example.project.utils.debouncedClick
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 class QuestionnaireResultScreen : Screen {
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val rootNavigator = RootNavigator.currentOrThrow
+        var openDialog = remember { mutableStateOf(false) }
+        var datePickerState = rememberDatePickerState()
         val viewModel = rememberScreenModel { QuestionnaireResultViewModel() }
         val state by viewModel.stateFlow.collectAsState()
         MaxiPageContainer(modifier = Modifier.fillMaxSize()) {
@@ -121,20 +146,26 @@ class QuestionnaireResultScreen : Screen {
                             },
                         )
                         Spacer(Modifier.size(20.dp))
-
-                        MaxiTextFieldMenu<String>(
-                            text = state.selectGroup.orEmpty(),
-                            currentValue = state.selectGroup.orEmpty(),
-                            onChangeWorkScope = {
-                                viewModel.changeGroup(it)
+                        MaxiOutlinedTextField(
+                            value = state.date?.toUI().orEmpty(),
+                            onValueChange = {
+                            },
+                            readOnly = true,
+                            onClick = {
+                                openDialog.value = true
+                            },
+                            trailingIcon = {
+                                Icon(
+                                    painterResource(Res.drawable.calendar),
+                                    modifier = Modifier.size(24.dp).clickableBlank {
+                                        openDialog.value = true
+                                    },
+                                    contentDescription = null
+                                )
                             },
                             modifier = Modifier.height(Constants.TextFieldHeight)
                                 .weight(1f),
-                            placeholderText = stringResource(Res.string.group),
-                            items = state.groups,
-                            itemToString = {
-                                it
-                            },
+                            placeholder = stringResource(Res.string.by_date),
                         )
                         Spacer(Modifier.size(80.dp))
                         MaxiButton(
@@ -189,6 +220,52 @@ class QuestionnaireResultScreen : Screen {
                         }
                     }
                 }
+            }
+        }
+
+        if (openDialog.value) {
+            val confirmEnabled = remember {
+                derivedStateOf { datePickerState.selectedDateMillis != null }
+            }
+            DatePickerDialog(
+                onDismissRequest = {
+                    // Dismiss the dialog when the user clicks outside the dialog or on the back
+                    // button. If you want to disable that functionality, simply use an empty
+                    // onDismissRequest.
+                    openDialog.value = false
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            val selectedDate =
+                                Instant.fromEpochMilliseconds(
+                                    datePickerState.selectedDateMillis ?: 0
+                                )
+                                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                            openDialog.value = false
+                            viewModel.changeDate(
+                                selectedDate.date
+                            )
+                        },
+                        enabled = confirmEnabled.value
+                    ) {
+                        Text("OK")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            openDialog.value = false
+                        }
+                    ) {
+                        Text("Отмена")
+                    }
+                }
+            ) {
+                DatePicker(
+                    state = datePickerState,
+                    colors = DatePickerDefaults.colors(containerColor = MaterialTheme.colorScheme.background)
+                )
             }
         }
     }

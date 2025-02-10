@@ -32,3 +32,7 @@ enum class EventType(val title: String) {
     Training("Тренеровка"),
     Championship("Чемпионат")
 }
+
+enum class CriteriaUpload(val title: String, value: Int) {
+    PercentByChssMax("Процент от ЧСС max", 0),
+}
