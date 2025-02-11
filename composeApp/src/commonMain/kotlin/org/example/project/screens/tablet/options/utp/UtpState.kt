@@ -9,16 +9,13 @@ import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.log.CriteriaUpload
 import org.example.project.domain.model.log.EventType
 import org.example.project.domain.model.training.TrainingUtpUI
+import org.example.project.domain.model.trainingStage.TrainingStageUI
 import org.example.project.domain.model.utp.DayUtpUI
 import org.example.project.domain.model.utp.UTPTab
 import org.example.project.ext.generateCalendarGrid
 import org.example.project.utils.Constants
 
 data class UtpState(
-    val stageOfReadiness: List<String>,
-    val selectStageOfReadiness: String,
-    val periodOfReadiness: List<String>,
-    val selectPeriodOfReadiness: String,
     val years: List<Int>,
     val selectYear: Int,
     val mesocycle: List<String>,
@@ -38,6 +35,9 @@ data class UtpState(
     val currentDay: LocalDate,
     val events: List<EventType>,
     val criteriaUploads: List<CriteriaUpload>,
+    val trainingStages: List<String>,
+    val yearsReadies: List<String>
+
 ) {
     companion object {
         val currentDate = Clock.System.now()
@@ -45,16 +45,6 @@ data class UtpState(
 
         val InitState = UtpState(
             groups = emptyList(),
-            stageOfReadiness = listOf(
-                "Спортивно-оздоровительный этап",
-                "Этап начальной подготовки",
-                "Учебно-тренировочный этап",
-                "Этап спортивного совершенствования"
-            ),
-            periodOfReadiness = listOf(
-                "Подготовительный",
-                "Соревновательный",
-            ),
             years = listOf(3, 4, 5, 6),
             mesocycle = emptyList(),
             days = emptyList(),
@@ -63,8 +53,6 @@ data class UtpState(
             selectDay = currentDate.toLocalDateTime(TimeZone.UTC).date.dayOfWeek,
             selectYear = 0,
             selectMesocycle = "",
-            selectStageOfReadiness = "",
-            selectPeriodOfReadiness = "",
             microCycle = listOf("1", "2", "3"),
             selectMicroCycle = "",
             selectReadiness = "",
@@ -78,7 +66,14 @@ data class UtpState(
             selectGroup = null,
             currentDay = date,
             events = EventType.entries,
-            criteriaUploads = CriteriaUpload.entries
+            criteriaUploads = CriteriaUpload.entries,
+            trainingStages = listOf(
+                "Спортивно-оздоровительный этап",
+                "Этап начальной подготовки",
+                "Учебно-тренировочный этап",
+                "Этап спортивного совершенствования"
+            ),
+            yearsReadies = listOf("ЭНП (3-6 год обучения)")
         )
     }
 }

@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -112,11 +113,43 @@ internal fun ColumnScope.TrimpContent(
                 modifier = Modifier.fillMaxHeight(),
                 color = MaxiPulsTheme.colors.uiKit.divider
             )
-            TitleResultBox(
-                modifier = Modifier.weight(1f).fillMaxHeight(),
-                color = MaxiPulsTheme.colors.uiKit.primary.copy(alpha = 0.1f),
-                text = stringResource(Res.string.trimp)
-            )
+            Column(Modifier.weight(1f).fillMaxHeight()) {
+                TitleResultBox(
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    color = MaxiPulsTheme.colors.uiKit.primary.copy(alpha = 0.1f),
+                    text = stringResource(Res.string.trimp)
+                )
+                Box(
+                    Modifier.weight(1f).fillMaxWidth().background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(
+                                Color(0xFFE72163),
+                                Color(0xFF3092F7)
+                            )
+                        )
+                    )
+                ) {
+                    Row(
+                        Modifier.fillMaxWidth().fillMaxHeight()
+                            .background(color = Color.White.copy(alpha = 0.6f)),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        listOf(50, 100, 150, 200, 250, 300, 350).forEach {
+                            Text(
+                                text = it.toString(),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaxiPulsTheme.typography.medium.copy(
+                                    fontSize = 14.sp,
+                                    color = MaxiPulsTheme.colors.uiKit.textColor
+                                ),
+                                modifier = Modifier.weight(1f),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
+            }
             VerticalDivider(
                 modifier = Modifier.fillMaxHeight(),
                 color = MaxiPulsTheme.colors.uiKit.divider
@@ -136,7 +169,8 @@ internal fun ColumnScope.TrimpContent(
             items(state.filterSportmans) {
                 CellItem(
                     sportsmanTrainingResultUI = it,
-                    maxTrimp = state.filterSportmans.maxOf { it.trimp })
+                    maxTrimp = 350.0
+                )
                 HorizontalDivider(
                     modifier = Modifier.fillMaxWidth(),
                     color = MaxiPulsTheme.colors.uiKit.divider

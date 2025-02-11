@@ -7,6 +7,7 @@ import org.example.project.domain.model.log.EventType
 import org.example.project.domain.model.training.TrainingUtpStageUI
 import org.example.project.domain.model.training.TrainingUtpUI
 import org.example.project.domain.model.utp.UTPTab
+import org.example.project.domain.repository.GamerRepository
 import org.example.project.domain.repository.GroupRepository
 import org.example.project.platform.BaseScreenModel
 import org.example.project.utils.orEmpty
@@ -19,11 +20,24 @@ import kotlin.text.isDigit
 internal class UtpViewModel : BaseScreenModel<UtpState, UtpEvent>(UtpState.InitState) {
 
     private val groupRepository: GroupRepository by inject()
+    private val gamerRepository: GamerRepository by inject()
 
-    fun changeSelectStageOfReadiness(value: String) = intent {
+    fun changeSelectTrainingStage(id: String, value: String) = intent {
         reduce {
             state.copy(
-                selectStageOfReadiness = value
+                selectGroup = state.selectGroup?.copy(
+                    selectTrainingStage = value
+                ),
+            )
+        }
+    }
+
+    fun changeSelectYearReadies(id: String, value: String) = intent {
+        reduce {
+            state.copy(
+                selectGroup = state.selectGroup?.copy(
+                    yearReadies = value
+                ),
             )
         }
     }
@@ -67,6 +81,7 @@ internal class UtpViewModel : BaseScreenModel<UtpState, UtpEvent>(UtpState.InitS
                 )
         }
     }
+
     fun changeSelectedEvent(event: EventType) = intent {
         reduce {
             state.copy(
@@ -86,6 +101,7 @@ internal class UtpViewModel : BaseScreenModel<UtpState, UtpEvent>(UtpState.InitS
             )
         }
     }
+
     fun changeSelectedMin(min: String, trainingUtpStageId: String) = intent {
         reduce {
             state.copy(
@@ -138,14 +154,6 @@ internal class UtpViewModel : BaseScreenModel<UtpState, UtpEvent>(UtpState.InitS
         reduce {
             state.copy(
                 selectGroup = groupUI
-            )
-        }
-    }
-
-    fun changeSelectPeriodOfReadiness(value: String) = intent {
-        reduce {
-            state.copy(
-                selectPeriodOfReadiness = value
             )
         }
     }

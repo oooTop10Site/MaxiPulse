@@ -9,6 +9,8 @@ fun GroupResponse.toUI(): GroupUI {
         id = id.orEmpty(),
         title = title.orEmpty(),
         avatar = image.orEmpty(),
-        member = count.orEmpty()
+        member = count.orEmpty(),
+        yearReadies = "",
+        selectTrainingStage = "" //todo()
     )
 }

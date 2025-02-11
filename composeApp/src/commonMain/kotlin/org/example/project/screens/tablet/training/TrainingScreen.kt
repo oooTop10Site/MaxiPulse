@@ -335,7 +335,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen, KoinComp
             MaxiButton(
                 modifier = Modifier.padding(bottom = 20.dp).size(width = 200.dp, height = 50.dp)
                     .align(Alignment.BottomCenter),
-                enabled = state.stages.isNotEmpty(),
+//                enabled = state.stages.isNotEmpty(),
                 onClick = debouncedClick() {
                     viewModel.changeIsStart()
                 },

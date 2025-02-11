@@ -3,6 +3,7 @@ package org.example.project.domain.model.training
 import kotlinx.datetime.LocalDate
 import org.example.project.domain.model.log.CriteriaUpload
 import org.example.project.domain.model.log.EventType
+import org.example.project.domain.model.trainingStage.TrainingStageUI
 import org.example.project.platform.randomUUID
 
 data class TrainingUtpUI(
@@ -19,7 +20,7 @@ data class TrainingUtpUI(
                 date = initDate,
                 typeOfEvent = EventType.Training,
                 criteriaUpload = CriteriaUpload.PercentByChssMax,
-                stages = emptyList()
+                stages = emptyList(),
             )
         }
     }

@@ -5,10 +5,12 @@ data class GroupUI(
     val title: String,
     val member: Int,
     val avatar: String,
+    val selectTrainingStage: String,
+    val yearReadies: String,
 ) {
     companion object {
         val Default = GroupUI(
-            "", "", 0, ""
+            "", "", 0, "", "", ""
         )
     }
 }

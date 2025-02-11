@@ -290,5 +290,7 @@
     <string name="duration_stage_min">Время этапа (мин)</string>
     <string name="upload_in_percent_by_chss_max">Нагрузка в процентах от ЧСС max</string>
     <string name="result_training_effect">Результирующий должный тренировочный эффект</string>
+    <string name="year_readiness">Год подготовки</string>
+
 
 </resources>
