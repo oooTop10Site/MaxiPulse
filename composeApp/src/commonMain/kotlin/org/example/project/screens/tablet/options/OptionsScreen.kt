@@ -48,7 +48,7 @@ import maxipuls.composeapp.generated.resources.test_background
 import org.example.project.domain.model.option.Option.*
 import org.example.project.screens.adaptive.root.RootNavigator
 import org.example.project.screens.tablet.options.Questionnaire.QuestionnaireResultScreen
-import org.example.project.screens.tablet.tests.TestItem
+import org.example.project.screens.tablet.tests.SelectableDefaultItem
 import org.example.project.screens.tablet.options.utp.UtpScreen
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiButton
@@ -184,7 +184,7 @@ class OptionsScreen : Screen {
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
                         items(state.items) {
-                            TestItem(
+                            SelectableDefaultItem(
                                 modifier = Modifier.fillMaxWidth().height(45.dp),
                                 title = stringResource(it.title),
                                 isPay = false,

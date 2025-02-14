@@ -5,6 +5,7 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.example.project.domain.model.AnalizeGraph
 import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.log.CriteriaUpload
 import org.example.project.domain.model.log.EventType
@@ -36,7 +37,13 @@ data class UtpState(
     val events: List<EventType>,
     val criteriaUploads: List<CriteriaUpload>,
     val trainingStages: List<String>,
-    val yearsReadies: List<String>
+    val yearsReadies: List<String>,
+    val isWeek: Boolean,
+    val period: String,
+    val periods: List<String>,
+    val isCompareWithPlan: Boolean,
+    val analizeGraphTabs: List<AnalizeGraph>,
+    val selectAnalizeGraph: AnalizeGraph?,
 
 ) {
     companion object {
@@ -73,7 +80,13 @@ data class UtpState(
                 "Учебно-тренировочный этап",
                 "Этап спортивного совершенствования"
             ),
-            yearsReadies = listOf("ЭНП (3-6 год обучения)")
+            yearsReadies = listOf("ЭНП (3-6 год обучения)"),
+            period = "",
+            periods = emptyList<String>(),
+            isWeek = false,
+            isCompareWithPlan = false,
+            analizeGraphTabs = AnalizeGraph.entries,
+            selectAnalizeGraph = null
         )
     }
 }

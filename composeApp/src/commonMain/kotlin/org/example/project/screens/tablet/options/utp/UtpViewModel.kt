@@ -1,6 +1,7 @@
 package org.example.project.screens.tablet.options.utp
 
 import kotlinx.datetime.LocalDate
+import org.example.project.domain.model.AnalizeGraph
 import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.log.CriteriaUpload
 import org.example.project.domain.model.log.EventType
@@ -28,6 +29,36 @@ internal class UtpViewModel : BaseScreenModel<UtpState, UtpEvent>(UtpState.InitS
                 selectGroup = state.selectGroup?.copy(
                     selectTrainingStage = value
                 ),
+            )
+        }
+    }
+
+    fun changePeriod(value: String) = intent {
+        reduce {
+            state.copy(
+                period = value
+            )
+        }
+    }
+
+    fun changeSelectAnalizeGraph(value: AnalizeGraph) = intent {
+        reduce {
+            state.copy(selectAnalizeGraph = value)
+        }
+    }
+
+    fun changeIsWeek() = intent {
+        reduce {
+            state.copy(
+                isWeek = !state.isWeek
+            )
+        }
+    }
+
+    fun changeIsComposeWithPlan() = intent {
+        reduce {
+            state.copy(
+                isCompareWithPlan = !state.isCompareWithPlan
             )
         }
     }

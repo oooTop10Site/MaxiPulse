@@ -291,6 +291,13 @@
     <string name="upload_in_percent_by_chss_max">Нагрузка в процентах от ЧСС max</string>
     <string name="result_training_effect">Результирующий должный тренировочный эффект</string>
     <string name="year_readiness">Год подготовки</string>
+    <string name="week">Неделя</string>
+    <string name="month">Месяц</string>
+    <string name="is_compare_with_plan">Сравнить с планом</string>
+    <string name="monotony">Монотония</string>
+    <string name="growth">Прирост</string>
+    <string name="load">Нагрузка</string>
+    <string name="tension">Напряженность</string>
 
 
 </resources>

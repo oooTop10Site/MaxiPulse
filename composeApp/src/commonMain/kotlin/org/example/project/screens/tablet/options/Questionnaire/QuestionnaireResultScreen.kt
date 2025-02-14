@@ -42,7 +42,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import maxipuls.composeapp.generated.resources.Res
@@ -50,18 +49,15 @@ import maxipuls.composeapp.generated.resources.activity_avoidance
 import maxipuls.composeapp.generated.resources.by_date
 import maxipuls.composeapp.generated.resources.calendar
 import maxipuls.composeapp.generated.resources.date
-import maxipuls.composeapp.generated.resources.date_birthday
 import maxipuls.composeapp.generated.resources.description
 import maxipuls.composeapp.generated.resources.fear_active
-import maxipuls.composeapp.generated.resources.fio
 import maxipuls.composeapp.generated.resources.group
 import maxipuls.composeapp.generated.resources.level_anxiety_mood
-import maxipuls.composeapp.generated.resources.mpk
 import maxipuls.composeapp.generated.resources.sportsman_fio
 import org.example.project.domain.model.questionnaire.SportsmanQuestionnaireUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.toUI
-import org.example.project.screens.tablet.tests.TestItem
+import org.example.project.screens.tablet.tests.SelectableDefaultItem
 import org.example.project.screens.tablet.training.trainingResult.RegularResultBox
 import org.example.project.screens.tablet.training.trainingResult.TitleResultBox
 import org.example.project.theme.MaxiPulsTheme
@@ -97,7 +93,7 @@ class QuestionnaireResultScreen : Screen {
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
                         items(state.types) {
-                            TestItem(
+                            SelectableDefaultItem(
                                 modifier = Modifier.fillMaxWidth().height(45.dp),
                                 title = stringResource(it.title),
                                 isPay = false,

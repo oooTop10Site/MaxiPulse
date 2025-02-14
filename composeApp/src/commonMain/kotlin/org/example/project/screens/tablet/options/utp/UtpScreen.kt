@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -42,10 +43,14 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.datetime.DayOfWeek
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.add_ic
+import maxipuls.composeapp.generated.resources.calendar
 import maxipuls.composeapp.generated.resources.cancel
 import maxipuls.composeapp.generated.resources.criteria_upload
 import maxipuls.composeapp.generated.resources.duration_stage_min
 import maxipuls.composeapp.generated.resources.event
+import maxipuls.composeapp.generated.resources.is_compare_with_plan
+import maxipuls.composeapp.generated.resources.month
+import maxipuls.composeapp.generated.resources.period
 import maxipuls.composeapp.generated.resources.planned_training_effect
 import maxipuls.composeapp.generated.resources.readies_for_upload
 import maxipuls.composeapp.generated.resources.result_training_effect
@@ -54,11 +59,14 @@ import maxipuls.composeapp.generated.resources.stage_readiness
 import maxipuls.composeapp.generated.resources.start_tarining
 import maxipuls.composeapp.generated.resources.type_event
 import maxipuls.composeapp.generated.resources.upload_in_percent_by_chss_max
+import maxipuls.composeapp.generated.resources.week
 import maxipuls.composeapp.generated.resources.year_education
 import maxipuls.composeapp.generated.resources.year_readiness
+import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.log.CriteriaUpload
 import org.example.project.domain.model.log.EventType
 import org.example.project.domain.model.trainingStage.TrainingStageUI
+import org.example.project.domain.model.utp.UTPTab
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.toText
 import org.example.project.ext.toUI
@@ -66,6 +74,7 @@ import org.example.project.screens.adaptive.root.RootNavigator
 import org.example.project.screens.adaptive.root.ScreenSize
 import org.example.project.screens.tablet.group.components.CompositionCard
 import org.example.project.screens.tablet.group.groupEdit.GroupEditScreen
+import org.example.project.screens.tablet.tests.SelectableDefaultItem
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.AlertButtons
 import org.example.project.theme.uiKit.BackIcon
@@ -75,6 +84,7 @@ import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiCheckbox
 import org.example.project.theme.uiKit.MaxiOutlinedTextField
 import org.example.project.theme.uiKit.MaxiPageContainer
+import org.example.project.theme.uiKit.MaxiSwitch
 import org.example.project.theme.uiKit.MaxiTextFieldMenu
 import org.example.project.utils.Constants
 import org.example.project.utils.debouncedClick
@@ -183,204 +193,15 @@ class UtpScreen : Screen {
                         }
                     }
                     if (state.selectGroup != null) {
-                        Column(
-                            modifier = Modifier.weight(1f).fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Spacer(Modifier.size(20.dp))
-                            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 20.dp)) {
-                                Row(
-                                    modifier = Modifier.weight(1f),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        modifier = Modifier,
-                                        text = stringResource(Res.string.stage_readiness),
-                                        style = MaxiPulsTheme.typography.medium.copy(
-                                            fontSize = 14.sp,
-                                            lineHeight = 14.sp,
-                                            color = MaxiPulsTheme.colors.uiKit.textColor
-                                        ),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                    Spacer(Modifier.size(40.dp))
-
-
-                                    MaxiTextFieldMenu<String>(
-                                        currentValue = state.selectGroup?.selectTrainingStage.orEmpty(),
-                                        text = state.selectGroup?.selectTrainingStage.orEmpty(),
-                                        onChangeWorkScope = {
-                                            viewModel.changeSelectTrainingStage(
-                                                id = state.selectedDay?.id.orEmpty(),
-                                                value = it
-                                            )
-                                        },
-                                        items = state.trainingStages,
-                                        itemToString = { it },
-                                        modifier = Modifier.height(Constants.TextFieldHeight)
-                                            .weight(1f),
-                                        placeholderText = ""
-                                    )
-                                }
-                                Spacer(Modifier.size(24.dp))
-                                Row(
-                                    modifier = Modifier.weight(1f),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        modifier = Modifier,
-                                        text = stringResource(Res.string.year_readiness),
-                                        style = MaxiPulsTheme.typography.medium.copy(
-                                            fontSize = 14.sp,
-                                            lineHeight = 14.sp,
-                                            color = MaxiPulsTheme.colors.uiKit.textColor
-                                        ),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                    Spacer(Modifier.size(40.dp))
-
-                                    MaxiTextFieldMenu<String>(
-                                        currentValue = state.selectGroup?.yearReadies.orEmpty(),
-                                        text = state.selectGroup?.yearReadies.orEmpty(),
-                                        onChangeWorkScope = {
-                                            viewModel.changeSelectYearReadies(
-                                                id = state.selectedDay?.id.orEmpty(),
-                                                value = it
-                                            )
-                                        },
-                                        items = state.yearsReadies,
-                                        itemToString = { it },
-                                        modifier = Modifier.height(Constants.TextFieldHeight)
-                                            .weight(1f),
-                                        placeholderText = ""
-                                    )
-                                }
+                        when (state.utpTab) {
+                            UTPTab.PannedUtp -> {
+                                PlannedUtpConetent(state.selectGroup, viewModel, state)
                             }
-                            Spacer(Modifier.size(60.dp))
-                            Column(
-                                modifier = Modifier.weight(1f).fillMaxWidth()
-                                    .padding(horizontal = 20.dp).border(
-                                        shape = RoundedCornerShape(25.dp),
-                                        color = MaxiPulsTheme.colors.uiKit.divider,
-                                        width = 1.dp
-                                    ).clip(RoundedCornerShape(25.dp))
-                            ) {
-                                Box(
-                                    modifier = Modifier.weight(1f).fillMaxWidth(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = stringResource(state.currentDay.month.toText()),
-                                        style = MaxiPulsTheme.typography.medium.copy(
-                                            fontSize = 16.sp,
-                                            lineHeight = 16.sp,
-                                            color = MaxiPulsTheme.colors.uiKit.textColor
-                                        )
-                                    )
-                                }
 
-                                HorizontalDivider(
-                                    Modifier.fillMaxWidth(),
-                                    color = MaxiPulsTheme.colors.uiKit.divider,
-                                    thickness = 1.dp
-                                )
-                                val daysOfWeek = DayOfWeek.entries
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.weight(1f).fillMaxWidth()
-                                ) {
-                                    daysOfWeek.forEachIndexed { index, dayOfWeek ->
-                                        Box(
-                                            modifier = Modifier.weight(1f).fillMaxHeight(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Text(
-                                                text = stringResource(dayOfWeek.toText()),
-                                                modifier = Modifier,
-                                                style = MaxiPulsTheme.typography.medium.copy(
-                                                    textAlign = TextAlign.Center,
-                                                    fontSize = 16.sp,
-                                                    lineHeight = 16.sp,
-                                                    color = MaxiPulsTheme.colors.uiKit.textColor
-                                                )
-                                            )
-                                        }
-                                        if (index != daysOfWeek.lastIndex) {
-                                            VerticalDivider(
-                                                Modifier.fillMaxHeight(),
-                                                color = MaxiPulsTheme.colors.uiKit.divider,
-                                                thickness = 1.dp
-                                            )
-                                        }
-                                    }
-                                }
-                                state.daysDate.chunked(7).forEach { chunk ->
-                                    HorizontalDivider(
-                                        Modifier.fillMaxWidth(),
-                                        color = MaxiPulsTheme.colors.uiKit.divider,
-                                        thickness = 1.dp
-                                    )
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier.weight(1f).fillMaxWidth()
-                                    ) {
-                                        chunk.forEachIndexed { index, utpTraining ->
-                                            val isSelect = utpTraining.date == state.currentDay
-                                            Box(
-                                                modifier = Modifier.weight(1f).fillMaxHeight()
-                                                    .clickableBlank {
-                                                        viewModel.changeSelectDay(utpTraining.date)
-                                                    },
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                Box(
-                                                    modifier = Modifier.then(
-                                                        if (isSelect) Modifier.size(
-                                                            50.dp
-                                                        ).background(
-                                                            color = MaxiPulsTheme.colors.uiKit.primary,
-                                                            shape = RoundedCornerShape(10.dp)
-                                                        ) else Modifier
-                                                    ), contentAlignment = Alignment.Center
-                                                ) {
-                                                    Text(
-                                                        text = utpTraining.date.dayOfMonth.toString(),
-                                                        modifier = Modifier,
-                                                        textAlign = TextAlign.Center,
-                                                        style = MaxiPulsTheme.typography.bold.copy(
-                                                            textAlign = TextAlign.Center,
-                                                            fontSize = 16.sp,
-                                                            lineHeight = 16.sp,
-                                                            color = if (isSelect) MaxiPulsTheme.colors.uiKit.white else MaxiPulsTheme.colors.uiKit.textColor.copy(
-                                                                alpha = if (utpTraining.date.month != state.currentDay.month) 0.3f else 1f
-                                                            )
-                                                        )
-                                                    )
-                                                }
-                                            }
-                                            if (index != chunk.lastIndex) {
-                                                VerticalDivider(
-                                                    Modifier.fillMaxHeight(),
-                                                    color = MaxiPulsTheme.colors.uiKit.divider,
-                                                    thickness = 1.dp
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
+                            UTPTab.AnalizeUtp -> {
+                                AnalizeUtpConetent(state.selectGroup, viewModel, state)
 
                             }
-                            Spacer(Modifier.size(70.dp))
-                            MaxiButton(
-                                onClick = debouncedClick() {
-
-                                },
-                                text = stringResource(Res.string.start_tarining),
-                                modifier = Modifier.height(69.dp).width(416.dp)
-                            )
-                            Spacer(Modifier.size(20.dp))
                         }
                     }
                 }
@@ -390,7 +211,339 @@ class UtpScreen : Screen {
             PlannedTraining(viewModel, state)
         }
     }
+
+    @Composable
+    private fun ColumnScope.AnalizeUtpConetent(
+        selectGroup: GroupUI?,
+        viewModel: UtpViewModel,
+        state: UtpState
+    ) {
+
+        Column(modifier = Modifier.fillMaxWidth().weight(1f)) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(Res.string.week),
+                    style = MaxiPulsTheme.typography.regular.copy(
+                        fontSize = 16.sp,
+                        lineHeight = 16.sp,
+                        color = MaxiPulsTheme.colors.uiKit.textColor
+                    )
+                )
+                Spacer(Modifier.size(15.dp))
+                MaxiSwitch(checked = state.isWeek, onCheckedChange = {
+                    viewModel.changeIsWeek()
+                })
+                Spacer(Modifier.size(15.dp))
+                Text(
+                    text = stringResource(Res.string.month),
+                    style = MaxiPulsTheme.typography.regular.copy(
+                        fontSize = 16.sp,
+                        lineHeight = 16.sp,
+                        color = MaxiPulsTheme.colors.uiKit.textColor
+                    )
+                )
+                Spacer(Modifier.size(90.dp))
+
+                MaxiTextFieldMenu<String>(
+                    currentValue = state.period,
+                    text = state.period,
+                    onChangeWorkScope = {
+                        viewModel.changePeriod(
+                            value = it
+                        )
+                    },
+                    items = state.periods,
+                    itemToString = { it },
+                    modifier = Modifier.height(Constants.TextFieldHeight)
+                        .weight(1f),
+                    placeholderText = stringResource(Res.string.period)
+                )
+                Spacer(Modifier.size(20.dp))
+
+                Icon(
+                    painter = painterResource(Res.drawable.calendar),
+                    modifier = Modifier.size(30.dp),
+                    contentDescription = null,
+                    tint = MaxiPulsTheme.colors.uiKit.textColor
+                )
+            }
+
+            Row(
+                modifier = Modifier.weight(1f)
+                    .border(
+                        width = 1.dp,
+                        color = MaxiPulsTheme.colors.uiKit.divider,
+                        shape = RoundedCornerShape(25.dp)
+                    ),
+            ) {
+                Box(modifier = Modifier.weight(1f))
+                VerticalDivider(
+                    modifier = Modifier.fillMaxHeight(),
+                    thickness = 1.dp,
+                    color = MaxiPulsTheme.colors.uiKit.divider
+                )
+                Spacer(Modifier.size(30.dp))
+                LazyColumn(
+                    modifier = Modifier,
+                    contentPadding = PaddingValues(vertical = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    items(state.analizeGraphTabs) {
+                        SelectableDefaultItem(
+                            modifier = Modifier.width(170.dp).height(37.dp),
+                            title = stringResource(it.title),
+                            onClick = {
+                                viewModel.changeSelectAnalizeGraph(it)
+                            },
+                            isPay = false,
+                            isSelect = it == state.selectAnalizeGraph
+                        )
+                    }
+
+                }
+                Spacer(Modifier.size(20.dp))
+
+            }
+
+            Spacer(Modifier.size(40.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(Res.string.is_compare_with_plan),
+                    style = MaxiPulsTheme.typography.regular.copy(
+                        fontSize = 16.sp,
+                        lineHeight = 16.sp,
+                        color = MaxiPulsTheme.colors.uiKit.textColor
+                    )
+                )
+                Spacer(Modifier.size(15.dp))
+                MaxiSwitch(checked = state.isCompareWithPlan, onCheckedChange = {
+                    viewModel.changeIsComposeWithPlan()
+                })
+            }
+            Spacer(Modifier.size(20.dp))
+
+        }
+    }
+
 }
+
+@Composable
+private fun ColumnScope.PlannedUtpConetent(
+    selectGroup: GroupUI?,
+    viewModel: UtpViewModel,
+    state: UtpState
+) {
+    Column(
+        modifier = Modifier.weight(1f).fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(Modifier.size(20.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 20.dp)
+        ) {
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier,
+                    text = stringResource(Res.string.stage_readiness),
+                    style = MaxiPulsTheme.typography.medium.copy(
+                        fontSize = 14.sp,
+                        lineHeight = 14.sp,
+                        color = MaxiPulsTheme.colors.uiKit.textColor
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(Modifier.size(40.dp))
+
+
+                MaxiTextFieldMenu<String>(
+                    currentValue = selectGroup?.selectTrainingStage.orEmpty(),
+                    text = selectGroup?.selectTrainingStage.orEmpty(),
+                    onChangeWorkScope = {
+                        viewModel.changeSelectTrainingStage(
+                            id = state.selectedDay?.id.orEmpty(),
+                            value = it
+                        )
+                    },
+                    items = state.trainingStages,
+                    itemToString = { it },
+                    modifier = Modifier.height(Constants.TextFieldHeight)
+                        .weight(1f),
+                    placeholderText = ""
+                )
+            }
+            Spacer(Modifier.size(24.dp))
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier,
+                    text = stringResource(Res.string.year_readiness),
+                    style = MaxiPulsTheme.typography.medium.copy(
+                        fontSize = 14.sp,
+                        lineHeight = 14.sp,
+                        color = MaxiPulsTheme.colors.uiKit.textColor
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(Modifier.size(40.dp))
+
+                MaxiTextFieldMenu<String>(
+                    currentValue = selectGroup?.yearReadies.orEmpty(),
+                    text = selectGroup?.yearReadies.orEmpty(),
+                    onChangeWorkScope = {
+                        viewModel.changeSelectYearReadies(
+                            id = state.selectedDay?.id.orEmpty(),
+                            value = it
+                        )
+                    },
+                    items = state.yearsReadies,
+                    itemToString = { it },
+                    modifier = Modifier.height(Constants.TextFieldHeight)
+                        .weight(1f),
+                    placeholderText = ""
+                )
+            }
+        }
+        Spacer(Modifier.size(60.dp))
+        Column(
+            modifier = Modifier.weight(1f).fillMaxWidth()
+                .padding(horizontal = 20.dp).border(
+                    shape = RoundedCornerShape(25.dp),
+                    color = MaxiPulsTheme.colors.uiKit.divider,
+                    width = 1.dp
+                ).clip(RoundedCornerShape(25.dp))
+        ) {
+            Box(
+                modifier = Modifier.weight(1f).fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(state.currentDay.month.toText()),
+                    style = MaxiPulsTheme.typography.medium.copy(
+                        fontSize = 16.sp,
+                        lineHeight = 16.sp,
+                        color = MaxiPulsTheme.colors.uiKit.textColor
+                    )
+                )
+            }
+
+            HorizontalDivider(
+                Modifier.fillMaxWidth(),
+                color = MaxiPulsTheme.colors.uiKit.divider,
+                thickness = 1.dp
+            )
+            val daysOfWeek = DayOfWeek.entries
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f).fillMaxWidth()
+            ) {
+                daysOfWeek.forEachIndexed { index, dayOfWeek ->
+                    Box(
+                        modifier = Modifier.weight(1f).fillMaxHeight(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(dayOfWeek.toText()),
+                            modifier = Modifier,
+                            style = MaxiPulsTheme.typography.medium.copy(
+                                textAlign = TextAlign.Center,
+                                fontSize = 16.sp,
+                                lineHeight = 16.sp,
+                                color = MaxiPulsTheme.colors.uiKit.textColor
+                            )
+                        )
+                    }
+                    if (index != daysOfWeek.lastIndex) {
+                        VerticalDivider(
+                            Modifier.fillMaxHeight(),
+                            color = MaxiPulsTheme.colors.uiKit.divider,
+                            thickness = 1.dp
+                        )
+                    }
+                }
+            }
+            state.daysDate.chunked(7).forEach { chunk ->
+                HorizontalDivider(
+                    Modifier.fillMaxWidth(),
+                    color = MaxiPulsTheme.colors.uiKit.divider,
+                    thickness = 1.dp
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f).fillMaxWidth()
+                ) {
+                    chunk.forEachIndexed { index, utpTraining ->
+                        val isSelect = utpTraining.date == state.currentDay
+                        Box(
+                            modifier = Modifier.weight(1f).fillMaxHeight()
+                                .clickableBlank {
+                                    viewModel.changeSelectDay(utpTraining.date)
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Box(
+                                modifier = Modifier.then(
+                                    if (isSelect) Modifier.size(
+                                        50.dp
+                                    ).background(
+                                        color = MaxiPulsTheme.colors.uiKit.primary,
+                                        shape = RoundedCornerShape(10.dp)
+                                    ) else Modifier
+                                ), contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = utpTraining.date.dayOfMonth.toString(),
+                                    modifier = Modifier,
+                                    textAlign = TextAlign.Center,
+                                    style = MaxiPulsTheme.typography.bold.copy(
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 16.sp,
+                                        lineHeight = 16.sp,
+                                        color = if (isSelect) MaxiPulsTheme.colors.uiKit.white else MaxiPulsTheme.colors.uiKit.textColor.copy(
+                                            alpha = if (utpTraining.date.month != state.currentDay.month) 0.3f else 1f
+                                        )
+                                    )
+                                )
+                            }
+                        }
+                        if (index != chunk.lastIndex) {
+                            VerticalDivider(
+                                Modifier.fillMaxHeight(),
+                                color = MaxiPulsTheme.colors.uiKit.divider,
+                                thickness = 1.dp
+                            )
+                        }
+                    }
+                }
+            }
+
+        }
+        Spacer(Modifier.size(70.dp))
+        MaxiButton(
+            onClick = debouncedClick() {
+
+            },
+            text = stringResource(Res.string.start_tarining),
+            modifier = Modifier.height(69.dp).width(416.dp)
+        )
+        Spacer(Modifier.size(20.dp))
+    }
+}
+
 
 @Composable
 internal fun PlannedTraining(viewModel: UtpViewModel, state: UtpState) {
@@ -404,7 +557,12 @@ internal fun PlannedTraining(viewModel: UtpViewModel, state: UtpState) {
     state.selectedDay?.let {
         MaxiAlertDialog(
             modifier = Modifier.fillMaxWidth(0.8f).fillMaxHeight(0.8f),
-            paddingValues = PaddingValues(top = 20.dp, bottom = 40.dp, start = 40.dp, end = 40.dp),
+            paddingValues = PaddingValues(
+                top = 20.dp,
+                bottom = 40.dp,
+                start = 40.dp,
+                end = 40.dp
+            ),
             onDismiss = {
                 viewModel.dismiss()
             },

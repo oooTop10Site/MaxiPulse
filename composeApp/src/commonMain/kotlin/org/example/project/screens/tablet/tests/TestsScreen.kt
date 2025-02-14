@@ -51,7 +51,6 @@ import maxipuls.composeapp.generated.resources.search
 import maxipuls.composeapp.generated.resources.start_test
 import maxipuls.composeapp.generated.resources.test_background
 import maxipuls.composeapp.generated.resources.test_desc
-import org.example.project.domain.model.test.TestUI
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.adaptive.mainTab.tabs.MainTab
 import org.example.project.theme.uiKit.MaxiButton
@@ -173,7 +172,7 @@ class TestsScreen : Screen {
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
                         items(state.tests) {
-                            TestItem(
+                            SelectableDefaultItem(
                                 modifier = Modifier.fillMaxWidth(),
                                 title = stringResource(it.title),
                                 icon = it.icon,
@@ -193,7 +192,7 @@ class TestsScreen : Screen {
 }
 
 @Composable
-internal fun TestItem(
+internal fun SelectableDefaultItem(
     modifier: Modifier = Modifier,
     title: String,
     isPay: Boolean,
