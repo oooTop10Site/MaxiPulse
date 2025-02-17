@@ -5,12 +5,14 @@ import org.example.project.domain.model.AnalizeGraph
 import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.log.CriteriaUpload
 import org.example.project.domain.model.log.EventType
+import org.example.project.domain.model.training.TrainingStageChssUI
 import org.example.project.domain.model.training.TrainingUtpStageUI
 import org.example.project.domain.model.training.TrainingUtpUI
 import org.example.project.domain.model.utp.UTPTab
 import org.example.project.domain.repository.GamerRepository
 import org.example.project.domain.repository.GroupRepository
 import org.example.project.platform.BaseScreenModel
+import org.example.project.platform.randomUUID
 import org.example.project.utils.orEmpty
 import org.koin.core.component.inject
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -32,6 +34,7 @@ internal class UtpViewModel : BaseScreenModel<UtpState, UtpEvent>(UtpState.InitS
             )
         }
     }
+
 
     fun changePeriod(value: String) = intent {
         reduce {
@@ -142,6 +145,33 @@ internal class UtpViewModel : BaseScreenModel<UtpState, UtpEvent>(UtpState.InitS
                             if (it.id == trainingUtpStageId) it.copy(
                                 min = min.take(3).filter { it.isDigit() }.toIntOrNull().orEmpty()
                             ) else it
+                        }
+                    )
+                }
+            )
+        }
+    }
+
+
+    fun trainingStages(input: String) = intent {
+        println(input)
+        println(
+            "TrainingStageChssUI.parseTrainingStages(input) - ${
+                TrainingStageChssUI.parseTrainingStages(
+                    input
+                )
+            }}"
+        )
+        reduce {
+            state.copy(
+                selectedDay = state.selectedDay?.let {
+                    it.copy(
+                        stages = TrainingStageChssUI.parseTrainingStages(input).map {
+                            TrainingUtpStageUI(
+                                id = randomUUID(),
+                                min = it.time.toInt(),
+                                value = it.chss
+                            )
                         }
                     )
                 }

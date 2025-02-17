@@ -129,25 +129,13 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen, KoinComp
         val viewModel = rememberScreenModel {
             TrainingViewModel()
         }
-        var showRecord by remember { mutableStateOf(false) }
-        var isRecording by remember { mutableStateOf(false) }
-        var recognizedText by remember { mutableStateOf("") }
-        val speechRecognizer: SpeechToTextRecognizer by inject()
-        val audioPermissionsService: PermissionsService by inject()
-        var audioPermission by remember { mutableStateOf(false) }
+
         DisposableEffect(Unit) {
             onDispose {
                 viewModel.scanBluetoothSensorsManager.stopScan() {}
             }
         }
-        LaunchedEffect(Unit) {
-            speechRecognizer.setOnResultListener { text ->
-                recognizedText = text
-            }
-            speechRecognizer.setOnPartialResultListener { text ->
-                recognizedText = text
-            }
-        }
+
         val state by viewModel.stateFlow.collectAsState()
         val navigator = RootNavigator.currentOrThrow
         viewModel.scanBluetoothSensorsManager.scanSensors() {
@@ -343,112 +331,8 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen, KoinComp
                     Res.string.stop
                 )
             )
-            val scope = rememberCoroutineScope()
-            audioPermissionsService.checkPermissionFlow(Permission.RECORD_AUDIO)
-                .collectAsState(audioPermissionsService.checkPermission(Permission.RECORD_AUDIO))
-                .granted {
-                    audioPermission = true
-                }
-            if (!showRecord && !state.isStart) {
-                FloatingActionButton(
-                    containerColor = MaxiPulsTheme.colors.uiKit.primary,
-                    contentColor = MaxiPulsTheme.colors.uiKit.white,
-                    modifier = Modifier.padding(20.dp).align(Alignment.BottomEnd),
-                    onClick = debouncedClick() {
-                        recognizedText = ""
-                        if (audioPermission) {
-                            showRecord = !showRecord
-                        } else {
-                            scope.launch {
-                                if (audioPermissionsService.checkPermission(Permission.RECORD_AUDIO)
-                                        .granted()
-                                ) {
-                                    speechRecognizer.startListening()
-                                    audioPermission = true
-                                } else {
-                                    audioPermissionsService.providePermission(Permission.RECORD_AUDIO)
-                                }
 
-                            }
-                        }
 
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.mic),
-                        contentDescription = if (showRecord) "Stop" else "Mic"
-                    )
-                }
-            }
-            if (showRecord) {
-                MaxiAlertDialog(
-                    alertDialogButtons = if (isRecording) MaxiAlertDialogButtons.Accept else null,
-                    modifier = Modifier.width(300.dp).animateContentSize(),
-                    paddingAfterTitle = false,
-                    title = null,
-                    acceptText = stringResource(Res.string.ok),
-                    accept = {
-                        isRecording = !isRecording
-                        showRecord = !showRecord
-                        speechRecognizer.stopListening()
-                        viewModel.trainingStages(recognizedText)
-                    },
-                    cancelText = null,
-                    cancel = {
-                        isRecording = !isRecording
-                        showRecord = !showRecord
-                        speechRecognizer.stopListening()
-                    },
-                    descriptionContent = {
-                        Column(modifier = Modifier) {
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                text = "Пример ввода: Тренировка состоит из 3 частей,\nПервая - продолжительность 10 минут  ЧСС пик 165.\nВторая - продолжительность 20 минут  ЧСС пик 192.\nТретья - продолжительность 30 минут  ЧСС пик 202. ",
-                                style = MaxiPulsTheme.typography.regular.copy(
-                                    color = MaxiPulsTheme.colors.uiKit.textColor,
-                                    fontSize = 13.sp,
-                                    lineHeight = 16.sp,
-                                )
-                            )
-
-                            Spacer(Modifier.size(40.dp))
-                            if (isRecording) {
-                                Text(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    text = if (recognizedText.isBlank()) "Говорите..." else recognizedText,
-                                    style = MaxiPulsTheme.typography.medium.copy(
-                                        color = MaxiPulsTheme.colors.uiKit.textColor,
-                                        fontSize = 16.sp,
-                                        lineHeight = 18.sp,
-                                    ),
-                                    textAlign = if (recognizedText.isBlank()) TextAlign.Center else TextAlign.Start
-                                )
-                            } else {
-                                FloatingActionButton(
-                                    containerColor = MaxiPulsTheme.colors.uiKit.primary,
-                                    contentColor = MaxiPulsTheme.colors.uiKit.white,
-                                    modifier = Modifier.padding(vertical = 20.dp)
-                                        .align(Alignment.CenterHorizontally),
-                                    onClick = debouncedClick() {
-                                        isRecording = !isRecording
-                                        speechRecognizer.startListening()
-                                    }
-                                ) {
-                                    Icon(
-                                        painter = painterResource(Res.drawable.mic),
-                                        contentDescription = if (showRecord) "Stop" else "Mic"
-                                    )
-                                }
-                            }
-                            Spacer(Modifier.size(40.dp))
-                        }
-                    },
-                    onDismiss = {
-                        isRecording = !isRecording
-                        showRecord = !showRecord
-                        speechRecognizer.stopListening()
-                    })
-            }
         }
 
         if (state.isAlertDialog) {

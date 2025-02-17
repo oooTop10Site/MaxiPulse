@@ -9,11 +9,13 @@ import org.example.project.domain.model.AnalizeGraph
 import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.log.CriteriaUpload
 import org.example.project.domain.model.log.EventType
+import org.example.project.domain.model.training.TrainingStageChssUI
 import org.example.project.domain.model.training.TrainingUtpUI
 import org.example.project.domain.model.trainingStage.TrainingStageUI
 import org.example.project.domain.model.utp.DayUtpUI
 import org.example.project.domain.model.utp.UTPTab
 import org.example.project.ext.generateCalendarGrid
+import org.example.project.ext.weekDates
 import org.example.project.utils.Constants
 
 data class UtpState(
@@ -44,8 +46,10 @@ data class UtpState(
     val isCompareWithPlan: Boolean,
     val analizeGraphTabs: List<AnalizeGraph>,
     val selectAnalizeGraph: AnalizeGraph?,
+    val currentWeek: List<LocalDate>,
 
-) {
+
+    ) {
     companion object {
         val currentDate = Clock.System.now()
         val date = currentDate.toLocalDateTime(TimeZone.currentSystemDefault()).date
@@ -86,7 +90,8 @@ data class UtpState(
             isWeek = false,
             isCompareWithPlan = false,
             analizeGraphTabs = AnalizeGraph.entries,
-            selectAnalizeGraph = null
+            selectAnalizeGraph = AnalizeGraph.MONOTONY,
+            currentWeek = date.weekDates(),
         )
     }
 }

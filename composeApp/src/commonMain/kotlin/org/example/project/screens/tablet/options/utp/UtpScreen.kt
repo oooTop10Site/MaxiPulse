@@ -1,9 +1,11 @@
 package org.example.project.screens.tablet.options.utp
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +23,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -32,6 +35,8 @@ import androidx.compose.runtime.collectAsState
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -90,8 +95,27 @@ import org.example.project.utils.Constants
 import org.example.project.utils.debouncedClick
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import maxipuls.composeapp.generated.resources.mic
+import maxipuls.composeapp.generated.resources.ok
+import org.example.project.domain.model.AnalizeGraph
+import org.example.project.ext.granted
+import org.example.project.ext.toTextShort
+import org.example.project.platform.SpeechToTextRecognizer
+import org.example.project.platform.permission.model.Permission
+import org.example.project.platform.permission.service.PermissionsService
+import org.example.project.screens.tablet.options.utp.graphs.GrowthGraph
+import org.example.project.screens.tablet.options.utp.graphs.LoadGraph
+import org.example.project.screens.tablet.options.utp.graphs.MonotonyGraph
+import org.example.project.screens.tablet.options.utp.graphs.TensionGraph
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import kotlin.getValue
 
-class UtpScreen : Screen {
+class UtpScreen : Screen, KoinComponent {
 
     @Composable
     override fun Content() {
@@ -270,43 +294,82 @@ class UtpScreen : Screen {
                     tint = MaxiPulsTheme.colors.uiKit.textColor
                 )
             }
-
-            Row(
-                modifier = Modifier.weight(1f)
-                    .border(
-                        width = 1.dp,
-                        color = MaxiPulsTheme.colors.uiKit.divider,
-                        shape = RoundedCornerShape(25.dp)
-                    ),
-            ) {
-                Box(modifier = Modifier.weight(1f))
-                VerticalDivider(
-                    modifier = Modifier.fillMaxHeight(),
-                    thickness = 1.dp,
-                    color = MaxiPulsTheme.colors.uiKit.divider
-                )
-                Spacer(Modifier.size(30.dp))
-                LazyColumn(
-                    modifier = Modifier,
-                    contentPadding = PaddingValues(vertical = 20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
+            var width by remember {
+                mutableStateOf(0.dp)
+            }
+            Column(modifier = Modifier.weight(1f).padding(end = 20.dp)) {
+                Row(
+                    modifier = Modifier.weight(1f),
                 ) {
-                    items(state.analizeGraphTabs) {
-                        SelectableDefaultItem(
-                            modifier = Modifier.width(170.dp).height(37.dp),
-                            title = stringResource(it.title),
-                            onClick = {
-                                viewModel.changeSelectAnalizeGraph(it)
-                            },
-                            isPay = false,
-                            isSelect = it == state.selectAnalizeGraph
-                        )
+                    BoxWithConstraints(modifier = Modifier.weight(1f)) {
+                        width = maxWidth
+                        when (state.selectAnalizeGraph) {
+                            AnalizeGraph.MONOTONY -> MonotonyGraph()
+                            AnalizeGraph.GROWTH -> GrowthGraph()
+                            AnalizeGraph.LOAD -> LoadGraph()
+                            AnalizeGraph.TENSION -> TensionGraph(modifier = Modifier.fillMaxSize())
+                            null -> {
+                                Box(
+                                    modifier = Modifier.fillMaxSize()
+                                        .padding(start = 112.dp, end = 40.dp).border(
+                                        width = 1.dp,
+                                        color = MaxiPulsTheme.colors.uiKit.divider,
+                                        shape = RoundedCornerShape(
+                                            topStart = 25.dp,
+                                            bottomStart = 25.dp
+                                        )
+                                    )
+                                )
+                            }
+                        }
+                    }
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxHeight().border(
+                            width = 1.dp,
+                            color = MaxiPulsTheme.colors.uiKit.divider,
+                            shape = RoundedCornerShape(topEnd = 25.dp, bottomEnd = 25.dp)
+                        ).padding(start = 30.dp, end = 20.dp),
+                        contentPadding = PaddingValues(vertical = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
+                        items(state.analizeGraphTabs) {
+                            SelectableDefaultItem(
+                                modifier = Modifier.width(170.dp).height(37.dp),
+                                title = stringResource(it.title),
+                                onClick = {
+                                    viewModel.changeSelectAnalizeGraph(it)
+                                },
+                                isPay = false,
+                                isSelect = it == state.selectAnalizeGraph
+                            )
+                        }
+
                     }
 
                 }
                 Spacer(Modifier.size(20.dp))
+                Row(
+                    modifier = Modifier.width(width).padding(start = 72.dp).padding(horizontal = 54.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    state.currentWeek.forEach { item ->
+                        Text(
+                            text = "${
+                                item.toUI().split(".").dropLast(1).joinToString(".")
+                            }\n${stringResource(item.dayOfWeek.toTextShort()).uppercase()}",
+                            style = MaxiPulsTheme.typography.regular.copy(
+                                fontSize = 14.sp,
+                                lineHeight = 14.sp,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+                    }
 
+
+                }
             }
 
             Spacer(Modifier.size(40.dp))
@@ -546,9 +609,22 @@ private fun ColumnScope.PlannedUtpConetent(
 
 
 @Composable
-internal fun PlannedTraining(viewModel: UtpViewModel, state: UtpState) {
+internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpState) {
     val scrollState = rememberLazyListState()
-
+    var showRecord by remember { mutableStateOf(false) }
+    var isRecording by remember { mutableStateOf(false) }
+    var recognizedText by remember { mutableStateOf("") }
+    val speechRecognizer: SpeechToTextRecognizer by inject()
+    val audioPermissionsService: PermissionsService by inject()
+    var audioPermission by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        speechRecognizer.setOnResultListener { text ->
+            recognizedText = text
+        }
+        speechRecognizer.setOnPartialResultListener { text ->
+            recognizedText = text
+        }
+    }
     LaunchedEffect(Unit) {
         if (state.selectedDay?.stages.orEmpty().isNotEmpty()) {
             scrollState.animateScrollToItem(state.selectedDay?.stages?.lastIndex ?: 0)
@@ -748,23 +824,77 @@ internal fun PlannedTraining(viewModel: UtpViewModel, state: UtpState) {
                         println("state.days - ${state.selectedDay.stages}")
                         val enable =
                             state.selectedDay.stages.all { it.value != 0 && it.min != 0 }
-                        Box(
-                            modifier = Modifier.size(80.dp)
-                                .background(
-                                    if (enable) MaxiPulsTheme.colors.uiKit.primary else MaxiPulsTheme.colors.uiKit.grey500,
-                                    shape = CircleShape
-                                )
-                                .clip(CircleShape).clickableBlank(enabled = enable) {
-                                    viewModel.addEmptyStage()
-                                },
-                            contentAlignment = Alignment.Center
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(30.dp)
                         ) {
-                            Icon(
-                                painterResource(Res.drawable.add_ic),
-                                contentDescription = null,
-                                modifier = Modifier.size(44.dp),
-                                tint = MaxiPulsTheme.colors.uiKit.lightTextColor
-                            )
+                            Box(
+                                modifier = Modifier.size(80.dp)
+                                    .background(
+                                        if (enable) MaxiPulsTheme.colors.uiKit.primary else MaxiPulsTheme.colors.uiKit.grey500,
+                                        shape = CircleShape
+                                    )
+                                    .clip(CircleShape).clickableBlank(enabled = enable) {
+                                        viewModel.addEmptyStage()
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painterResource(Res.drawable.add_ic),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(44.dp),
+                                    tint = MaxiPulsTheme.colors.uiKit.lightTextColor
+                                )
+                            }
+                            val scope = rememberCoroutineScope()
+                            audioPermissionsService.checkPermissionFlow(Permission.RECORD_AUDIO)
+                                .collectAsState(audioPermissionsService.checkPermission(Permission.RECORD_AUDIO))
+                                .granted {
+                                    audioPermission = true
+                                }
+
+                            if (!showRecord) {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier.size(80.dp)
+                                        .background(
+                                            if (enable) MaxiPulsTheme.colors.uiKit.primary else MaxiPulsTheme.colors.uiKit.grey500,
+                                            shape = CircleShape
+                                        )
+                                        .clip(CircleShape).clickableBlank(
+                                            enabled = enable,
+                                            onClick = debouncedClick() {
+                                                recognizedText = ""
+                                                if (audioPermission) {
+                                                    showRecord = !showRecord
+                                                } else {
+                                                    scope.launch {
+                                                        if (audioPermissionsService.checkPermission(
+                                                                Permission.RECORD_AUDIO
+                                                            )
+                                                                .granted()
+                                                        ) {
+                                                            speechRecognizer.startListening()
+                                                            audioPermission = true
+                                                        } else {
+                                                            audioPermissionsService.providePermission(
+                                                                Permission.RECORD_AUDIO
+                                                            )
+                                                        }
+
+                                                    }
+                                                }
+
+                                            }),
+                                ) {
+                                    Icon(
+                                        painter = painterResource(Res.drawable.mic),
+                                        modifier = Modifier.size(44.dp),
+                                        tint = MaxiPulsTheme.colors.uiKit.white,
+                                        contentDescription = if (showRecord) "Stop" else "Mic"
+                                    )
+                                }
+                            }
                         }
                     }
 
@@ -817,6 +947,76 @@ internal fun PlannedTraining(viewModel: UtpViewModel, state: UtpState) {
                 )
             }
         }
+    }
+
+    if (showRecord) {
+        MaxiAlertDialog(
+            alertDialogButtons = if (isRecording) MaxiAlertDialogButtons.Accept else null,
+            modifier = Modifier.width(300.dp).animateContentSize(),
+            paddingAfterTitle = false,
+            title = null,
+            acceptText = stringResource(Res.string.ok),
+            accept = {
+                isRecording = !isRecording
+                showRecord = !showRecord
+                speechRecognizer.stopListening()
+                viewModel.trainingStages(recognizedText)
+            },
+            cancelText = null,
+            cancel = {
+                isRecording = !isRecording
+                showRecord = !showRecord
+                speechRecognizer.stopListening()
+            },
+            descriptionContent = {
+                Column(modifier = Modifier) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Пример ввода: Тренировка состоит из 3 частей,\nПервая - продолжительность 10 минут  ЧСС пик 165.\nВторая - продолжительность 20 минут  ЧСС пик 192.\nТретья - продолжительность 30 минут  ЧСС пик 202. ",
+                        style = MaxiPulsTheme.typography.regular.copy(
+                            color = MaxiPulsTheme.colors.uiKit.textColor,
+                            fontSize = 13.sp,
+                            lineHeight = 16.sp,
+                        )
+                    )
+
+                    Spacer(Modifier.size(40.dp))
+                    if (isRecording) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = if (recognizedText.isBlank()) "Говорите..." else recognizedText,
+                            style = MaxiPulsTheme.typography.medium.copy(
+                                color = MaxiPulsTheme.colors.uiKit.textColor,
+                                fontSize = 16.sp,
+                                lineHeight = 18.sp,
+                            ),
+                            textAlign = if (recognizedText.isBlank()) TextAlign.Center else TextAlign.Start
+                        )
+                    } else {
+                        FloatingActionButton(
+                            containerColor = MaxiPulsTheme.colors.uiKit.primary,
+                            contentColor = MaxiPulsTheme.colors.uiKit.white,
+                            modifier = Modifier.padding(vertical = 20.dp)
+                                .align(Alignment.CenterHorizontally),
+                            onClick = debouncedClick() {
+                                isRecording = !isRecording
+                                speechRecognizer.startListening()
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(Res.drawable.mic),
+                                contentDescription = if (showRecord) "Stop" else "Mic"
+                            )
+                        }
+                    }
+                    Spacer(Modifier.size(40.dp))
+                }
+            },
+            onDismiss = {
+                isRecording = !isRecording
+                showRecord = !showRecord
+                speechRecognizer.stopListening()
+            })
     }
 }
 

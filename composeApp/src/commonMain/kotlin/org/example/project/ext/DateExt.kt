@@ -203,6 +203,15 @@ fun getCurrentWeekDates(): List<LocalDate> {
     return List(7) { startOfWeek.plus(DatePeriod(days = it)) }
 }
 
+fun LocalDate.weekDates(): List<LocalDate> {
+    val currentDate = this
+    val currentDayOfWeek = currentDate.dayOfWeek
+    val daysFromMonday = currentDayOfWeek.ordinal // Сколько дней прошло с понедельника
+    val startOfWeek =
+        currentDate.minus(DatePeriod(days = daysFromMonday)) // Начало недели (понедельник)
+    return List(7) { startOfWeek.plus(DatePeriod(days = it)) }
+}
+
 fun Long.formatSeconds(returnEmptyIfZero: Boolean = false): String {
     val hours = this / 3600
     val minutes = (this % 3600) / 60

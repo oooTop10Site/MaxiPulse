@@ -61,21 +61,6 @@ internal class TrainingViewModel :
         }
     }
 
-    fun trainingStages(input: String) = intent {
-        println(input)
-        println(
-            "TrainingStageChssUI.parseTrainingStages(input) - ${
-                TrainingStageChssUI.parseTrainingStages(
-                    input
-                )
-            }}"
-        )
-        reduce {
-            state.copy(
-                stages = TrainingStageChssUI.parseTrainingStages(input)
-            )
-        }
-    }
 
     fun changeIsTrimp() = intent {
         reduce {
