@@ -304,7 +304,7 @@ class UtpScreen : Screen, KoinComponent {
                     BoxWithConstraints(modifier = Modifier.weight(1f)) {
                         width = maxWidth
                         when (state.selectAnalizeGraph) {
-                            AnalizeGraph.MONOTONY -> MonotonyGraph()
+                            AnalizeGraph.MONOTONY -> MonotonyGraph(modifier = Modifier.fillMaxSize())
                             AnalizeGraph.GROWTH -> GrowthGraph()
                             AnalizeGraph.LOAD -> LoadGraph()
                             AnalizeGraph.TENSION -> TensionGraph(modifier = Modifier.fillMaxSize())

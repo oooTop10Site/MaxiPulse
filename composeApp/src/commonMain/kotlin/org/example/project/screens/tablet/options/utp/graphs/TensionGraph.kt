@@ -16,41 +16,36 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import maxipuls.composeapp.generated.resources.Res
-import maxipuls.composeapp.generated.resources.big_arrow_down
 import org.example.project.ext.getCurrentWeekDates
-import org.example.project.ext.toAnalizeColor
-import org.example.project.screens.tablet.loadAnalize.DayOfWeekTrainingUI
+import org.example.project.ext.toAnalizeTensionBackgroundColor
+import org.example.project.ext.toAnalizeTensionValueColor
+import org.example.project.screens.tablet.loadAnalize.TensionUI
 import org.example.project.theme.MaxiPulsTheme
-import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun TensionGraph(modifier: Modifier = Modifier) {
     val trainingUIData = listOf(
-        DayOfWeekTrainingUI(expectTrainingMark = 229, trainingMark = 229),
-        DayOfWeekTrainingUI(expectTrainingMark = 210, trainingMark = 210),
-        DayOfWeekTrainingUI(expectTrainingMark = 450, trainingMark = 450),
-        DayOfWeekTrainingUI(expectTrainingMark = 300, trainingMark = 300),
-        DayOfWeekTrainingUI(expectTrainingMark = 390, trainingMark = 390),
-        DayOfWeekTrainingUI(expectTrainingMark = 440, trainingMark = 440),
-        DayOfWeekTrainingUI(expectTrainingMark = 0, trainingMark = 0),
+        TensionUI(1.2),
+        TensionUI(1.6),
+        TensionUI(1.7),
+        TensionUI(2.0),
+        TensionUI(2.1),
+        TensionUI(1.3),
+        TensionUI(1.75)
     )
     val daysOfWeek = getCurrentWeekDates()
-    val ratings = listOf(800, 540, 360, 140)
+    val ratings = listOf(2.5, 2.0, 1.7)
     Box(modifier = modifier) {
         Column(modifier = Modifier.fillMaxSize()) {
             ratings.forEachIndexed { index, item ->
@@ -67,8 +62,8 @@ fun TensionGraph(modifier: Modifier = Modifier) {
                         0.dp
                     )
                 }
-                val next = ratings.getOrNull(index + 1) ?: 0
-                Row(modifier = Modifier.weight(((item - next).toDouble() / 800.0).toFloat())) {
+                val next = ratings.getOrNull(index + 1) ?: 0.0
+                Row(modifier = Modifier.weight(((item - next).toDouble() / 2.5).toFloat())) {
                     Box(
                         modifier = Modifier.width(72.dp).fillMaxHeight(),
                         contentAlignment = Alignment.TopStart
@@ -88,7 +83,7 @@ fun TensionGraph(modifier: Modifier = Modifier) {
                     }
                     Box(
                         Modifier.weight(1f).fillMaxHeight().background(
-                            color = item.toAnalizeColor().copy(alpha = 0.5f),
+                            color = item.toAnalizeTensionBackgroundColor(),
                             shape = shape
                         ).clip(
                             shape
@@ -108,10 +103,18 @@ fun TensionGraph(modifier: Modifier = Modifier) {
                     Column(
                         verticalArrangement = Arrangement.Bottom,
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxHeight((it.trainingMark.toDouble() / 800.0).toFloat())
-                            .width(55.dp)
+                        modifier = Modifier.fillMaxHeight((it.value.toDouble() / 2.5).toFloat())
+                            .width(55.dp).background(
+                                color = MaxiPulsTheme.colors.uiKit.white.copy(
+                                    alpha = 0.2f
+                                ),
+                                shape = RoundedCornerShape(
+                                    topStart = 25.dp,
+                                    topEnd = 25.dp
+                                )
+                            )
                             .background(
-                                color = it.trainingMark.toAnalizeColor(),
+                                color = it.value.toAnalizeTensionValueColor(),
                                 shape = RoundedCornerShape(
                                     topStart = 25.dp,
                                     topEnd = 25.dp
@@ -126,7 +129,7 @@ fun TensionGraph(modifier: Modifier = Modifier) {
                         Spacer(Modifier.weight(1f))
                     }
                     Column(
-                        modifier = Modifier.fillMaxHeight(((it.trainingMark.toDouble()-15) / 800.0).toFloat())
+                        modifier = Modifier.fillMaxHeight(((it.value.toFloat() - 0.1f) / 2.5f))
                             .align(
                                 Alignment.BottomCenter
                             ),
@@ -161,11 +164,11 @@ fun TensionGraph(modifier: Modifier = Modifier) {
             val circleCenters = mutableListOf<Offset>()
 
             trainingUIData.forEachIndexed { index, data ->
-                if (data.trainingMark != 0) {
+                if (data.value != 0.0) {
                     val x =
                         elementWidth / 2 + index * (elementWidth + spaceBetween) // Центр элемента по горизонтали
                     val y =
-                        size.height * (1f - (((data.trainingMark).toFloat() - 30f) / 800f))
+                        size.height * (1f - (((data.value).toFloat() - 0.2f) / 2.5f))
                     circleCenters.add(Offset(x, y))
                 }
             }

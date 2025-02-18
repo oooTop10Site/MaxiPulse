@@ -13,6 +13,38 @@ fun Int.toAnalizeColor(): Color {
     }
 }
 
+fun Double.toAnalizeLoadBackgroundColor(): Color {
+    return when (this) {
+        2.5 -> Color(0xFFB9556F)
+        1.875 -> Color(0xFFE9557A)
+        1.25 -> Color(0xFFB6E181)
+        0.625 -> Color(0xFFC7D8F7)
+        else -> Color.Unspecified
+    }
+}
+
+
+fun Double.toAnalizeTensionBackgroundColor(): Color {
+    return when (this) {
+        in 0.0..1.7 -> Color(0xFFB6E181)
+        in 1.7..2.0 -> Color(0xFFFFBF6B)
+        in 2.0..2.5 -> Color(0xFFE9557A)
+        else -> Color.Unspecified
+    }
+}
+
+
+fun Double.toAnalizeTensionValueColor(): Color {
+    return when (this) {
+        in 0.0..1.7 -> Color(0xFFFF7E9F)
+        in 1.7..1.85 -> Color(0xFFFF4170)
+        in 1.85..1.95 -> Color(0xFFF1124A)
+        in 2.0..2.5 -> Color(0xFF950025)
+        else -> Color.Unspecified
+    }
+}
+
+
 fun List<Int>.max(default: Int): Int {
     return try {
         this.max()

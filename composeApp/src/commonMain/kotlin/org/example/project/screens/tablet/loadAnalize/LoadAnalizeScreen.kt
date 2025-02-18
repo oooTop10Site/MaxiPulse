@@ -332,3 +332,8 @@ data class DayOfWeekTrainingUI(
 
 )
 
+data class TensionUI(
+    val value: Double
+
+)
+
