@@ -74,6 +74,7 @@ import org.example.project.domain.model.ButtonActions
 import org.example.project.domain.model.MainAlertDialog
 import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.domain.model.test.TestUI
+import org.example.project.domain.model.training.TrainingStageChssUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.granted
 import org.example.project.platform.ScanBluetoothSensorsManager
@@ -111,7 +112,8 @@ import kotlin.getValue
 internal fun KoinComponent.MainDesktopContent(
     viewModel: MainViewModel,
     state: MainState,
-    testUI: TestUI?
+    testUI: TestUI?,
+    stages: List<TrainingStageChssUI>,
 ) {
     MaxiPageContainer() {
         val rootNavigator = RootNavigator.currentOrThrow
@@ -137,7 +139,7 @@ internal fun KoinComponent.MainDesktopContent(
                     when (it) {
                         is MainEvent.ShuttleRun -> rootNavigator.push(ShuttleRunScreen(it.sportsmans))
                         is MainEvent.ReadiesForUpload -> rootNavigator.push(ReadiesForUploadScreen(it.sportsmans))
-                        is MainEvent.Training -> rootNavigator.push(TrainingScreen(it.sportsmans))
+                        is MainEvent.Training -> rootNavigator.push(TrainingScreen(it.sportsmans, stages))
                     }
                 }
             }

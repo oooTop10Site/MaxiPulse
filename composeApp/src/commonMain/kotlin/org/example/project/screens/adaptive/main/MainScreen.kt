@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.ok
 import org.example.project.domain.model.test.TestUI
+import org.example.project.domain.model.training.TrainingStageChssUI
 import org.example.project.ext.granted
 import org.example.project.platform.SpeechToTextRecognizer
 import org.example.project.platform.permission.model.Permission
@@ -44,7 +45,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.getValue
 
-class MainScreen(val testUI: TestUI? = null) : Screen, KoinComponent {
+class MainScreen(val testUI: TestUI? = null,   val stages: List<TrainingStageChssUI> = emptyList<TrainingStageChssUI>()) : Screen, KoinComponent {
     @Composable
     override fun Content() {
         val viewModel = rememberScreenModel {
@@ -52,6 +53,6 @@ class MainScreen(val testUI: TestUI? = null) : Screen, KoinComponent {
         }
         val state by viewModel.stateFlow.collectAsState()
 
-        MainContent(viewModel, state, testUI)
+        MainContent(viewModel, state, testUI, stages)
     }
 }

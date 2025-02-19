@@ -70,10 +70,10 @@ internal class TrainingViewModel :
         }
     }
 
-    fun loadSportsman(sportsmans: List<SportsmanSensorUI>) = intent {
+    fun loadSportsman(sportsmans: List<SportsmanSensorUI>, stages: List<TrainingStageChssUI>,) = intent {
         reduce {
             state.copy(
-                sportsmans = sportsmans
+                sportsmans = sportsmans, stages = stages
             )
         }
     }

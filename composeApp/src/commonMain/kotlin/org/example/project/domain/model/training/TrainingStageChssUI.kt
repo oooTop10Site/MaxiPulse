@@ -3,7 +3,7 @@ package org.example.project.domain.model.training
 import cafe.adriel.voyager.core.lifecycle.JavaSerializable
 
 data class TrainingStageChssUI(
-    val time: Long, //seconds
+    val time: Long, //min
     val title: String, //например разминка
     val chss: Int
 ) : JavaSerializable {
@@ -89,4 +89,5 @@ data class TrainingStageChssUI(
         }
 
     }
+
 }

@@ -98,7 +98,7 @@ internal class UtpViewModel : BaseScreenModel<UtpState, UtpEvent>(UtpState.InitS
         reduce {
             state.copy(
                 selectedDay = state.selectedDay?.let {
-                    it.copy(stages = it.stages + TrainingUtpStageUI.Default)
+                    it.copy(stages = it.stages + TrainingUtpStageUI.Default.copy(id = randomUUID()))
                 }
             )
         }
@@ -170,7 +170,8 @@ internal class UtpViewModel : BaseScreenModel<UtpState, UtpEvent>(UtpState.InitS
                             TrainingUtpStageUI(
                                 id = randomUUID(),
                                 min = it.time.toInt(),
-                                value = it.chss
+                                value = it.chss,
+                                title = it.title
                             )
                         }
                     )

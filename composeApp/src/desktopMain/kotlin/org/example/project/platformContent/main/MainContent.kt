@@ -72,6 +72,7 @@ import maxipuls.composeapp.generated.resources.what_do_if_sensor_not_active_desc
 import org.example.project.domain.model.ButtonActions
 import org.example.project.domain.model.MainAlertDialog
 import org.example.project.domain.model.test.TestUI
+import org.example.project.domain.model.training.TrainingStageChssUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.granted
 import org.example.project.platform.ScanBluetoothSensorsManager
@@ -108,7 +109,8 @@ import kotlin.getValue
 internal actual fun KoinComponent.MainContent(
     viewModel: MainViewModel,
     state: MainState,
-    testUI: TestUI?
+    testUI: TestUI?,
+    stages: List<TrainingStageChssUI>,
 ) {
     val scanBluetoothSensorsManager: ScanBluetoothSensorsManager by inject()
     if (state.alertDialog is MainAlertDialog.SelectSensor) {
@@ -143,7 +145,7 @@ internal actual fun KoinComponent.MainContent(
                         is MainEvent.ReadiesForUpload -> rootNavigator.push(ReadiesForUploadScreen(it.sportsmans))
                         is MainEvent.Training -> {
                             scanBluetoothSensorsManager.stopScan { }
-                            rootNavigator.push(TrainingScreen(it.sportsmans))
+                            rootNavigator.push(TrainingScreen(it.sportsmans, stages))
                         }
                     }
                 }

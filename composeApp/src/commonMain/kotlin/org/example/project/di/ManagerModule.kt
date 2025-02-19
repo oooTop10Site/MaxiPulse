@@ -2,6 +2,8 @@ package org.example.project.di
 
 //import com.plusmobileapps.konnectivity.Konnectivity
 import com.russhwolf.settings.Settings
+import org.example.project.data.repository.AiAssistantManager
+import org.example.project.data.repository.AiAssistantManagerImpl
 import org.example.project.data.repository.AuthRepositoryImpl
 import org.example.project.domain.manager.AuthManager
 import org.example.project.domain.manager.AuthManagerImpl
@@ -19,6 +21,7 @@ val moduleManager = module {
 //    singleOf(::Konnectivity)
     singleOf(::AuthManagerImpl) { bind<AuthManager>() }
     singleOf(::MessageObserverManagerImpl) { bind<MessageObserverManager>() }
+    singleOf(::AiAssistantManagerImpl) { bind<AiAssistantManager>() }
     singleOf(::ScanBluetoothSensorsManager)
     singleOf(::SpeechToTextRecognizer)
 

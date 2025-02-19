@@ -93,6 +93,7 @@ import maxipuls.composeapp.generated.resources.zone4
 import maxipuls.composeapp.generated.resources.zone5
 import org.example.project.domain.model.sportsman.SensorUI
 import org.example.project.domain.model.sportsman.SportsmanSensorUI
+import org.example.project.domain.model.training.TrainingStageChssUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.formatSeconds
 import org.example.project.ext.granted
@@ -122,7 +123,10 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.getValue
 
-class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen, KoinComponent {
+class TrainingScreen(
+    val sportsmans: List<SportsmanSensorUI>,
+    val stages: List<TrainingStageChssUI> = emptyList<TrainingStageChssUI>(),
+) : Screen, KoinComponent {
 
     @Composable
     override fun Content() {
@@ -143,7 +147,7 @@ class TrainingScreen(val sportsmans: List<SportsmanSensorUI>) : Screen, KoinComp
             viewModel.newDataFromSportsman(it, sportsmans)
         }
         LaunchedEffect(viewModel) {
-            viewModel.loadSportsman(sportsmans)
+            viewModel.loadSportsman(sportsmans, stages = stages)
             viewModel.container.sideEffectFlow.collect {
                 when (it) {
 

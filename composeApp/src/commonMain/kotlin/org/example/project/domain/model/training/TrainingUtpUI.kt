@@ -28,12 +28,14 @@ data class TrainingUtpUI(
 
 data class TrainingUtpStageUI(
     val id: String,
+    val title: String,
     val min: Int,
     val value: Int
 ) {
     companion object {
         val Default = TrainingUtpStageUI(
             randomUUID(),
+            "",
             0, 0
         )
     }

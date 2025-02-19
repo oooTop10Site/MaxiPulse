@@ -15,14 +15,17 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -102,11 +105,14 @@ import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.mic
 import maxipuls.composeapp.generated.resources.ok
 import org.example.project.domain.model.AnalizeGraph
+import org.example.project.domain.model.training.TrainingStageChssUI
 import org.example.project.ext.granted
 import org.example.project.ext.toTextShort
+import org.example.project.ext.toTrainingStageChssUI
 import org.example.project.platform.SpeechToTextRecognizer
 import org.example.project.platform.permission.model.Permission
 import org.example.project.platform.permission.service.PermissionsService
+import org.example.project.screens.adaptive.main.MainScreen
 import org.example.project.screens.tablet.options.utp.graphs.GrowthGraph
 import org.example.project.screens.tablet.options.utp.graphs.LoadGraph
 import org.example.project.screens.tablet.options.utp.graphs.MonotonyGraph
@@ -312,13 +318,13 @@ class UtpScreen : Screen, KoinComponent {
                                 Box(
                                     modifier = Modifier.fillMaxSize()
                                         .padding(start = 112.dp, end = 40.dp).border(
-                                        width = 1.dp,
-                                        color = MaxiPulsTheme.colors.uiKit.divider,
-                                        shape = RoundedCornerShape(
-                                            topStart = 25.dp,
-                                            bottomStart = 25.dp
+                                            width = 1.dp,
+                                            color = MaxiPulsTheme.colors.uiKit.divider,
+                                            shape = RoundedCornerShape(
+                                                topStart = 25.dp,
+                                                bottomStart = 25.dp
+                                            )
                                         )
-                                    )
                                 )
                             }
                         }
@@ -351,7 +357,8 @@ class UtpScreen : Screen, KoinComponent {
                 }
                 Spacer(Modifier.size(20.dp))
                 Row(
-                    modifier = Modifier.width(width).padding(start = 72.dp).padding(horizontal = 54.dp),
+                    modifier = Modifier.width(width).padding(start = 72.dp)
+                        .padding(horizontal = 54.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -403,6 +410,7 @@ private fun ColumnScope.PlannedUtpConetent(
     viewModel: UtpViewModel,
     state: UtpState
 ) {
+    val navigator = RootNavigator.currentOrThrow
     Column(
         modifier = Modifier.weight(1f).fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -598,7 +606,7 @@ private fun ColumnScope.PlannedUtpConetent(
         Spacer(Modifier.size(70.dp))
         MaxiButton(
             onClick = debouncedClick() {
-
+                navigator.push(MainScreen(stages = (state.days.find { it.date == state.currentDay }?.stages?.map { it.toTrainingStageChssUI() })?: emptyList<TrainingStageChssUI>()))
             },
             text = stringResource(Res.string.start_tarining),
             modifier = Modifier.height(69.dp).width(416.dp)
@@ -644,7 +652,9 @@ internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpSt
             },
         ) {
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().verticalScroll(
+                    rememberScrollState(0)
+                ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -746,12 +756,13 @@ internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpSt
 
                 LazyColumn(
                     state = scrollState,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.heightIn(max = 288.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     contentPadding = PaddingValues(vertical = 20.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     items(state.selectedDay.stages) { item ->
+                        println("item - $item")
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
