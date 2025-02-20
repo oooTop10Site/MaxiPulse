@@ -109,7 +109,7 @@ fun RootApp() {
                     CompositionLocalProvider(
                         RootNavigator provides screen,
                     ) {
-                        TabNavigator(tab = MainTab()) {
+                        TabNavigator(tab = MainTab()) { tabNavigator ->
                             val rootNavigator = RootNavigator.currentOrThrow
 
                             LaunchedEffect(Unit) {
@@ -117,7 +117,7 @@ fun RootApp() {
                                     viewModel.aiManager.eventsScreen.receiveAsFlow().collect {
                                         when (it) {
                                             is AiEvent.ScreenEvent -> {
-                                                navigateEvent(rootNavigator, it.value)
+                                                navigateEvent(rootNavigator, tabNavigator = tabNavigator, it.value)
                                             }
 
                                             is AiEvent.TrainingEvent -> {

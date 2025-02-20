@@ -51,6 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.currentOrThrow
+import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import maxipuls.composeapp.generated.resources.accessed_devices
 import maxipuls.composeapp.generated.resources.add_ic
 import maxipuls.composeapp.generated.resources.add_round_ic
@@ -85,6 +86,7 @@ class SensorScreen : Screen {
             SensorViewModel()
         }
         val rootNavigator = RootNavigator.currentOrThrow
+        val tabNavigator = LocalTabNavigator.current
         viewModel.scanBluetoothSensorsManager.scanSensors(onCatch = { }) {
             println("device - $it")
             viewModel.addRemoteSensor(it)
@@ -92,7 +94,6 @@ class SensorScreen : Screen {
         val state by viewModel.stateFlow.collectAsState()
 
         LaunchedEffect(viewModel) {
-            navigateEvent(rootNavigator, Screens.TestsScreen)
             viewModel.loadSensors()
         }
         MaxiPageContainer(topBar = {
