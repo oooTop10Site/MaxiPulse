@@ -46,6 +46,7 @@ import org.example.project.platform.permission.service.PermissionsService
 import org.example.project.screens.adaptive.main.MainScreen
 import org.example.project.screens.adaptive.splash.SplashScreen
 import org.example.project.screens.tablet.group.GroupScreen
+import org.example.project.screens.tablet.log.LogScreen
 import org.example.project.screens.tablet.options.utp.UtpScreen
 import org.example.project.screens.tablet.sensor.SensorScreen
 import org.example.project.screens.tablet.tests.TestsScreen
@@ -218,7 +219,7 @@ fun navigateEvent(navigator: Navigator, it: Screens) {
         SensorsScreen -> navigator.push(SensorScreen())
         HomeScreen -> navigator.push(MainScreen())
         TestsScreen -> navigator.push(TestsScreen())
-        MagazineScreen -> {}
+        MagazineScreen -> {navigator.push(LogScreen())}
     }
 }
 
