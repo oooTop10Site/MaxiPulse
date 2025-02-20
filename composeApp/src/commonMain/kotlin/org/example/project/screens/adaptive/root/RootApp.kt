@@ -166,7 +166,9 @@ fun RootApp() {
                             shape = CircleShape,
                             width = 1.dp
                         ).align(Alignment.Center).clickableBlank {
-
+                            isRecording = !isRecording
+                            showRecord = !showRecord
+                            viewModel.speechRecognizer.stopListening()
                         }
                     ) {
                         Icon(

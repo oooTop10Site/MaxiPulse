@@ -13,12 +13,12 @@ fun Int.toAnalizeColor(): Color {
     }
 }
 
-fun Double.toAnalizeLoadBackgroundColor(): Color {
+fun Float.toAnalizeLoadBackgroundColor(): Color {
     return when (this) {
-        2.5 -> Color(0xFFB9556F)
-        1.875 -> Color(0xFFE9557A)
-        1.25 -> Color(0xFFB6E181)
-        0.625 -> Color(0xFFC7D8F7)
+        1400f -> Color(0xFFB9556F)
+        1100f -> Color(0xFFE9557A)
+        1050f -> Color(0xFFB6E181)
+        700f -> Color(0xFFC7D8F7)
         else -> Color.Unspecified
     }
 }
