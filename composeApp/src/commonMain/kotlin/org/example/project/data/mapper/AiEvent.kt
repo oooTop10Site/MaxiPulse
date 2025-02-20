@@ -10,7 +10,8 @@ fun String.toAiEvent(): AiEvent {
         val type = this.split(" ").firstOrNull().orEmpty()
         when (type) {
             AiEventEnum.TrainingEvent.prefix -> {
-                val value = this.split(" ").let { it.subList(1, it.lastIndex) }
+                val value = this.split(" ").let { it.subList(1, it.lastIndex+1) }
+                println("value = $value")
                 AiEvent.TrainingEvent(value = value.map {
                     val (title, time, chss) = it.split("-")
                     TrainingStageChssUI(

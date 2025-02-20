@@ -134,7 +134,9 @@ fun RootApp() {
                             color = MaxiPulsTheme.colors.uiKit.grey800,
                             shape = CircleShape,
                             width = 1.dp
-                        ).align(Alignment.Center)
+                        ).align(Alignment.Center).clickableBlank {
+
+                        }
                     ) {
                         Icon(
                             painter = painterResource(Res.drawable.mic),

@@ -1,6 +1,7 @@
 package org.example.project.screens.tablet.options.utp
 
 import kotlinx.datetime.LocalDate
+import org.example.project.data.mapper.toAiEvent
 import org.example.project.domain.model.AiEvent
 import org.example.project.domain.model.AnalizeGraph
 import org.example.project.domain.model.composition.GroupUI
@@ -27,6 +28,8 @@ internal class UtpViewModel : BaseScreenModel<UtpState, UtpEvent>(UtpState.InitS
     private val groupRepository: GroupRepository by inject()
     private val gamerRepository: GamerRepository by inject()
     private val aiRepository: AiAssistantRepository by inject()
+
+
 
     fun changeSelectTrainingStage(id: String, value: String) = intent {
         reduce {
