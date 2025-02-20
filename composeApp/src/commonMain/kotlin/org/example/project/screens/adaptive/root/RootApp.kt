@@ -46,7 +46,11 @@ import org.example.project.platform.permission.model.Permission
 import org.example.project.platform.permission.service.PermissionsService
 import org.example.project.screens.adaptive.main.MainScreen
 import org.example.project.screens.adaptive.mainTab.MainTabScreen
+import org.example.project.screens.adaptive.mainTab.tabs.CompositionsTab
+import org.example.project.screens.adaptive.mainTab.tabs.LogTab
 import org.example.project.screens.adaptive.mainTab.tabs.MainTab
+import org.example.project.screens.adaptive.mainTab.tabs.SensorTab
+import org.example.project.screens.adaptive.mainTab.tabs.TestTab
 import org.example.project.screens.adaptive.splash.SplashScreen
 import org.example.project.screens.tablet.group.GroupScreen
 import org.example.project.screens.tablet.log.LogScreen
@@ -222,14 +226,14 @@ fun RootApp() {
     }
 }
 
-fun navigateEvent(navigator: Navigator, it: Screens) {
+fun navigateEvent(navigator: Navigator, tabNavigator: TabNavigator, it: Screens) {
     when (it) {
         UtpScreen -> navigator.push(UtpScreen())
-        GroupScreen -> navigator.push(GroupScreen())
-        SensorsScreen -> navigator.push(SensorScreen())
-        HomeScreen -> navigator.push(MainScreen())
-        TestsScreen -> navigator.push(TestsScreen())
-        MagazineScreen -> {navigator.push(LogScreen())}
+        GroupScreen -> tabNavigator.current = CompositionsTab
+        SensorsScreen -> tabNavigator.current = SensorTab
+        HomeScreen -> tabNavigator.current = MainTab()
+        TestsScreen -> tabNavigator.current = TestTab
+        MagazineScreen -> tabNavigator.current = LogTab
     }
 }
 
