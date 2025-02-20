@@ -16,7 +16,7 @@ class AiAssistantRepositoryImpl(
     private val aiApi: AiApi,
     private val aiAssistantManager: AiAssistantManager
 ) : AiAssistantRepository {
-    override suspend fun sendMessage(autoSendEvent: Boolean, message: String): Either<Failure, AiEvent> {
+    override suspend fun sendMessage(message: String, autoSendEvent: Boolean): Either<Failure, AiEvent> {
         return apiCall(call = {
             println("СОобщение ебучее - $message")
             aiApi.sendPrompt(PromptRequest(message))
