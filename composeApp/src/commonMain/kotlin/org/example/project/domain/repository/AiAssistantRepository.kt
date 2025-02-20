@@ -6,6 +6,6 @@ import org.example.project.platform.Failure
 
 interface AiAssistantRepository {
 
-    suspend fun sendMessage(message: String): Either<Failure, AiEvent>
+    suspend fun sendMessage(autoSendEvent: Boolean, message: String): Either<Failure, AiEvent>
 
 }

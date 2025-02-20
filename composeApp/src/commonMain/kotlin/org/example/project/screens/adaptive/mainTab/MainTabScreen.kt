@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,16 +38,20 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.back_ic
 import maxipuls.composeapp.generated.resources.logo_small
 import maxipuls.composeapp.generated.resources.profile
+import org.example.project.domain.model.AiEvent
 import org.example.project.ext.clickableBlank
 import org.example.project.theme.MaxiPulsTheme
 import org.example.project.theme.uiKit.MaxiPageContainer
@@ -61,7 +66,11 @@ import org.example.project.screens.adaptive.mainTab.tabs.SettingsTab
 import org.example.project.screens.adaptive.mainTab.tabs.SportsmanTab
 import org.example.project.screens.adaptive.mainTab.tabs.TestTab
 import org.example.project.screens.adaptive.mainTab.tabs.OptionTab
+import org.example.project.screens.adaptive.root.RootNavigator
+import org.example.project.screens.adaptive.root.RootViewModel
 import org.example.project.screens.adaptive.root.ScreenSize
+import org.example.project.screens.adaptive.root.navigateEvent
+import org.example.project.screens.adaptive.root.trainingEvent
 import org.koin.core.component.KoinComponent
 
 class MainTabScreen(private val tab: Tab = MainTab()) : Screen, KoinComponent {
@@ -70,12 +79,32 @@ class MainTabScreen(private val tab: Tab = MainTab()) : Screen, KoinComponent {
         val screenSize = ScreenSize.currentOrThrow
         val navigator = LocalNavigator.currentOrThrow
         var isOpen = remember { mutableStateOf(false) }
-
+        val viewModel: RootViewModel = viewModel { RootViewModel() }
 
         MaxiPageContainer(
             modifier = Modifier.fillMaxSize().background(MaxiPulsTheme.colors.uiKit.background)
         ) {
             TabNavigator(tab) {
+                val rootNavigator =  RootNavigator.currentOrThrow
+                LaunchedEffect(Unit) {
+                    launch {
+                        viewModel.aiManager.eventsScreen.receiveAsFlow().collect {
+                            when (it) {
+                                is AiEvent.ScreenEvent -> {
+                                    navigateEvent(rootNavigator, it.value)
+                                }
+
+                                is AiEvent.TrainingEvent -> {
+                                    trainingEvent(rootNavigator, it.value)
+                                }
+
+                                AiEvent.Unknown -> {
+                                    viewModel.observerManager.putMessage("Не удалось распознать сообщение")
+                                }
+                            }
+                        }
+                    }
+                }
                 val tabNavigator = LocalTabNavigator.current
                 when (screenSize.widthSizeClass) {
                     WindowWidthSizeClass.Compact, WindowWidthSizeClass.Medium -> {

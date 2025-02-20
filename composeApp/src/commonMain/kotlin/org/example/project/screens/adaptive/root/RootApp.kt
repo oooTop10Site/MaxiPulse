@@ -102,26 +102,7 @@ fun RootApp() {
                     CompositionLocalProvider(
                         RootNavigator provides it,
                     ) {
-                        val rootNavigator = RootNavigator.currentOrThrow
-                        LaunchedEffect(Unit) {
-                            launch {
-                                viewModel.aiManager.eventsScreen.receiveAsFlow().collect {
-                                    when (it) {
-                                        is AiEvent.ScreenEvent -> {
-                                            navigateEvent(rootNavigator, it.value)
-                                        }
 
-                                        is AiEvent.TrainingEvent -> {
-                                            trainingEvent(rootNavigator, it.value)
-                                        }
-
-                                        AiEvent.Unknown -> {
-                                            viewModel.observerManager.putMessage("Не удалось распознать сообщение")
-                                        }
-                                    }
-                                }
-                            }
-                        }
                         SlideTransition(
                             it,
                         ) {

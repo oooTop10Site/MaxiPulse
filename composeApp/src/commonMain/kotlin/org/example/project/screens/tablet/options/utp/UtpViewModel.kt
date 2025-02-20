@@ -1,6 +1,7 @@
 package org.example.project.screens.tablet.options.utp
 
 import kotlinx.datetime.LocalDate
+import org.example.project.domain.model.AiEvent
 import org.example.project.domain.model.AnalizeGraph
 import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.log.CriteriaUpload
@@ -9,6 +10,7 @@ import org.example.project.domain.model.training.TrainingStageChssUI
 import org.example.project.domain.model.training.TrainingUtpStageUI
 import org.example.project.domain.model.training.TrainingUtpUI
 import org.example.project.domain.model.utp.UTPTab
+import org.example.project.domain.repository.AiAssistantRepository
 import org.example.project.domain.repository.GamerRepository
 import org.example.project.domain.repository.GroupRepository
 import org.example.project.platform.BaseScreenModel
@@ -24,6 +26,7 @@ internal class UtpViewModel : BaseScreenModel<UtpState, UtpEvent>(UtpState.InitS
 
     private val groupRepository: GroupRepository by inject()
     private val gamerRepository: GamerRepository by inject()
+    private val aiRepository: AiAssistantRepository by inject()
 
     fun changeSelectTrainingStage(id: String, value: String) = intent {
         reduce {
@@ -154,30 +157,36 @@ internal class UtpViewModel : BaseScreenModel<UtpState, UtpEvent>(UtpState.InitS
 
 
     fun trainingStages(input: String) = intent {
-        println(input)
-        println(
-            "TrainingStageChssUI.parseTrainingStages(input) - ${
-                TrainingStageChssUI.parseTrainingStages(
-                    input
-                )
-            }}"
-        )
-        reduce {
-            state.copy(
-                selectedDay = state.selectedDay?.let {
-                    it.copy(
-                        stages = TrainingStageChssUI.parseTrainingStages(input).map {
-                            TrainingUtpStageUI(
-                                id = randomUUID(),
-                                min = it.time.toInt(),
-                                value = it.chss,
-                                title = it.title
+        launchOperation(
+            operation = {
+                aiRepository.sendMessage(autoSendEvent = false, input)
+            },
+            success = { response ->
+                when (response) {
+                    is AiEvent.ScreenEvent -> {}
+                    is AiEvent.TrainingEvent -> {
+                        reduceLocal {
+                            state.copy(
+                                selectedDay = state.selectedDay?.let {
+                                    it.copy(
+                                        stages = response.value.map {
+                                            TrainingUtpStageUI(
+                                                id = randomUUID(),
+                                                min = it.time.toInt(),
+                                                value = it.chss,
+                                                title = it.title
+                                            )
+                                        }
+                                    )
+                                }
                             )
                         }
-                    )
+                    }
+
+                    AiEvent.Unknown -> {}
                 }
-            )
-        }
+            }
+        )
     }
 
     fun changeSelectedValue(value: String, trainingUtpStageId: String) = intent {
