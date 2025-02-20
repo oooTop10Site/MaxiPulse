@@ -22,7 +22,7 @@ class AiAssistantRepositoryImpl(
             aiApi.sendPrompt(PromptRequest(message))
 
         }, mapResponse = {
-            val response = it.generatedText.toAiEvent()
+            val response = it.generatedText.orEmpty().toAiEvent()
             aiAssistantManager.putMessage(response)
             response
         })

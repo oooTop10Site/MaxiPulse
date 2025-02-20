@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 class PromptResponse(
     @SerialName("generated_text")
-    val generatedText: String
+    val generatedText: String?
 )

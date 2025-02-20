@@ -22,7 +22,7 @@ fun String.toAiEvent(): AiEvent {
             }
 
             AiEventEnum.ScreenEvent.prefix -> {
-                val screen = type.split(" ").lastOrNull().orEmpty()
+                val screen = this.split(" ").lastOrNull().orEmpty()
                 Screens.entries.find { it.title == screen }?.let {
                     AiEvent.ScreenEvent(it)
                 } ?: AiEvent.Unknown
