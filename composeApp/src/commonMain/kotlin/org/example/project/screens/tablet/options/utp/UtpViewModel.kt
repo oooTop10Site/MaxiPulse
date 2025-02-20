@@ -159,7 +159,7 @@ internal class UtpViewModel : BaseScreenModel<UtpState, UtpEvent>(UtpState.InitS
     fun trainingStages(input: String) = intent {
         launchOperation(
             operation = {
-                aiRepository.sendMessage(autoSendEvent = false, input)
+                aiRepository.sendMessage(autoSendEvent = false, message = input)
             },
             success = { response ->
                 when (response) {
