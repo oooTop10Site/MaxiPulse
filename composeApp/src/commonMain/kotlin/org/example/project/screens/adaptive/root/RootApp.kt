@@ -28,6 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.NavigatorDisposeBehavior
 import cafe.adriel.voyager.navigator.currentOrThrow
+import cafe.adriel.voyager.navigator.tab.TabNavigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -44,6 +45,8 @@ import org.example.project.platform.SpeechToTextRecognizer
 import org.example.project.platform.permission.model.Permission
 import org.example.project.platform.permission.service.PermissionsService
 import org.example.project.screens.adaptive.main.MainScreen
+import org.example.project.screens.adaptive.mainTab.MainTabScreen
+import org.example.project.screens.adaptive.mainTab.tabs.MainTab
 import org.example.project.screens.adaptive.splash.SplashScreen
 import org.example.project.screens.tablet.group.GroupScreen
 import org.example.project.screens.tablet.log.LogScreen
@@ -98,16 +101,39 @@ fun RootApp() {
                     SplashScreen(),
                     disposeBehavior = NavigatorDisposeBehavior(
                     )
-                ) {
+                ) { screen ->
                     CompositionLocalProvider(
-                        RootNavigator provides it,
+                        RootNavigator provides screen,
                     ) {
+                        TabNavigator(tab = MainTab()) {
+                            val rootNavigator = RootNavigator.currentOrThrow
 
-                        SlideTransition(
-                            it,
-                        ) {
-                            it.Content()
-                        }
+                            LaunchedEffect(Unit) {
+                                launch {
+                                    viewModel.aiManager.eventsScreen.receiveAsFlow().collect {
+                                        when (it) {
+                                            is AiEvent.ScreenEvent -> {
+                                                navigateEvent(rootNavigator, it.value)
+                                            }
+
+                                            is AiEvent.TrainingEvent -> {
+                                                trainingEvent(rootNavigator, it.value)
+                                            }
+
+                                            AiEvent.Unknown -> {
+                                                viewModel.observerManager.putMessage("Не удалось распознать сообщение")
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+
+                            SlideTransition(
+                                screen,
+                            ) {
+                                it.Content()
+                            }
 //                    val modifierSnackbarHost = when (windowSizeClass.widthSizeClass) {
 //                        WindowWidthSizeClass.Compact -> Modifier.fillMaxWidth()
 //                            .padding(horizontal = 16.dp)
@@ -119,10 +145,11 @@ fun RootApp() {
 //                                .padding(horizontal = 16.dp)
 //                        }
 //                    }
-                        MaxiSnackbarHost(
+                            MaxiSnackbarHost(
 //                        modifier = modifierSnackbarHost,
-                            hostState = stateHost
-                        )
+                                hostState = stateHost
+                            )
+                        }
                     }
                 }
                 AnimatedVisibility(

@@ -50,6 +50,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.currentOrThrow
 import maxipuls.composeapp.generated.resources.accessed_devices
 import maxipuls.composeapp.generated.resources.add_ic
 import maxipuls.composeapp.generated.resources.add_round_ic
@@ -59,6 +60,9 @@ import maxipuls.composeapp.generated.resources.saved_devices
 import maxipuls.composeapp.generated.resources.search_available_devices
 import maxipuls.composeapp.generated.resources.sensor_not_choose
 import maxipuls.composeapp.generated.resources.sensor_not_found
+import org.example.project.data.mapper.toAiEvent
+import org.example.project.data.model.screen.Screens
+import org.example.project.domain.model.AiEvent
 import org.example.project.domain.model.sensor.SensorPreviewUI
 import org.example.project.domain.model.sportsman.SensorStatus
 import org.example.project.domain.model.sportsman.SensorUI
@@ -66,6 +70,8 @@ import org.example.project.ext.clickableBlank
 import org.example.project.ext.toColor
 import org.example.project.ext.toText
 import org.example.project.platform.ScanBluetoothSensorsManager
+import org.example.project.screens.adaptive.root.RootNavigator
+import org.example.project.screens.adaptive.root.navigateEvent
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.component.inject
@@ -78,6 +84,7 @@ class SensorScreen : Screen {
         val viewModel = rememberScreenModel {
             SensorViewModel()
         }
+        val rootNavigator = RootNavigator.currentOrThrow
         viewModel.scanBluetoothSensorsManager.scanSensors(onCatch = { }) {
             println("device - $it")
             viewModel.addRemoteSensor(it)
@@ -85,6 +92,7 @@ class SensorScreen : Screen {
         val state by viewModel.stateFlow.collectAsState()
 
         LaunchedEffect(viewModel) {
+            navigateEvent(rootNavigator, Screens.TestsScreen)
             viewModel.loadSensors()
         }
         MaxiPageContainer(topBar = {

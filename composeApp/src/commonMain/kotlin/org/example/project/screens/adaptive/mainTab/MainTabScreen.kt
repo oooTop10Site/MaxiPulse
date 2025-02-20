@@ -80,47 +80,29 @@ class MainTabScreen(private val tab: Tab = MainTab()) : Screen, KoinComponent {
         val navigator = LocalNavigator.currentOrThrow
         var isOpen = remember { mutableStateOf(false) }
         val viewModel: RootViewModel = viewModel { RootViewModel() }
+        val tabNavigator = LocalTabNavigator.current
 
+        LaunchedEffect(tab) {
+            tabNavigator.current = tab
+        }
         MaxiPageContainer(
             modifier = Modifier.fillMaxSize().background(MaxiPulsTheme.colors.uiKit.background)
         ) {
-            TabNavigator(tab) {
+
                 val rootNavigator =  RootNavigator.currentOrThrow
-                LaunchedEffect(Unit) {
-                    launch {
-                        viewModel.aiManager.eventsScreen.receiveAsFlow().collect {
-                            when (it) {
-                                is AiEvent.ScreenEvent -> {
-                                    navigateEvent(rootNavigator, it.value)
-                                }
-
-                                is AiEvent.TrainingEvent -> {
-                                    trainingEvent(rootNavigator, it.value)
-                                }
-
-                                AiEvent.Unknown -> {
-                                    viewModel.observerManager.putMessage("Не удалось распознать сообщение")
-                                }
-                            }
-                        }
-                    }
-                }
-                val tabNavigator = LocalTabNavigator.current
                 when (screenSize.widthSizeClass) {
                     WindowWidthSizeClass.Compact, WindowWidthSizeClass.Medium -> {
-                        LargeLeftMenu(isOpen, tabNavigator, it)
+                        LargeLeftMenu(isOpen, tabNavigator, tabNavigator)
                     }
 
                     WindowWidthSizeClass.Expanded -> {
-                        LargeLeftMenu(isOpen, tabNavigator, it)
+                        LargeLeftMenu(isOpen, tabNavigator, tabNavigator)
                     }
 
                     else -> {
-                        LargeLeftMenu(isOpen, tabNavigator, it)
+                        LargeLeftMenu(isOpen, tabNavigator, tabNavigator)
                     }
                 }
-
-            }
         }
 
     }
