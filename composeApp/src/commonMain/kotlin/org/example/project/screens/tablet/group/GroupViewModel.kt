@@ -1,5 +1,6 @@
 package org.example.project.screens.tablet.group
 
+import org.example.project.domain.repository.AiAssistantRepository
 import org.example.project.domain.repository.GroupRepository
 import org.example.project.platform.BaseScreenModel
 import org.koin.core.component.inject

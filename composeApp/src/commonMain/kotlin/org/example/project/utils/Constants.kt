@@ -5,6 +5,7 @@ import androidx.compose.ui.unit.dp
 object Constants {
     const val FILE_SIZE_MB = 10
     const val BASE_URL = "https://api.maxipulse.vobrabotke.ru/"
+    const val BASE_URL_AI = "https://denis_gay:8000/"
     const val BASE_SOCKET_URL = "ws://192.168.147.127:8000/ws"
     val TextFieldHeight = 44.dp
     const val MAX_TRAINING_INTENSITY = 200

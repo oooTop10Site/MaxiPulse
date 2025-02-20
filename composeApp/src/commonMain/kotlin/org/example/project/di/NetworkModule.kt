@@ -20,15 +20,10 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import maxipuls.composeapp.generated.resources.Res
-import maxipuls.composeapp.generated.resources.not_connected
-import maxipuls.composeapp.generated.resources.try_after
 import org.example.project.domain.manager.AuthManager
 import org.example.project.ext.toToken
 import org.example.project.platform.Failure
 import org.example.project.utils.Constants
-import org.jetbrains.compose.resources.getString
-import org.jetbrains.compose.resources.stringResource
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 
@@ -36,9 +31,13 @@ internal val networkModule = module {
 
     factoryOf(::provideJson)
     factoryOf(::provideHttpClient)
-    factory { provideKtorHttpClient(get(), Constants.BASE_URL, get()) }
+    factory { provideAiKtorHttpClient(get(), Constants.BASE_URL_AI, get()) }
+    factory { provideMaxiKtorHttpClient(get(), Constants.BASE_URL, get()) }
 
 }
+
+typealias KtorfitAI = Ktorfit
+typealias KtorfitMaxi = Ktorfit
 
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -151,11 +150,37 @@ private fun provideHttpClient(
 
 }
 
-private fun provideKtorHttpClient(
+fun provideMaxiKtorHttpClient(
     httpClient: HttpClient,
     baseUrl: String,
     authManager: AuthManager
-): Ktorfit {
+): KtorfitMaxi {
+    httpClient.sendPipeline.intercept(HttpSendPipeline.State){
+//        if (authManager.token!!.isNotBlank()){
+//            if (authManager.token != null){
+//                context.headers["Authorization"] = authManager.token!!.toToken()
+//            }else{
+//                context.headers["Authorization"] = ""
+//            }
+//        }
+        if (authManager.token != null){
+            context.headers["Authorization"] = authManager.token!!.toToken()
+        }else{
+//            context.headers["Authorization"] = ""
+        }
+//        proceedWith(subject)
+    }
+    return ktorfit {
+        baseUrl(baseUrl)
+        httpClient(httpClient)
+    }
+}
+
+fun provideAiKtorHttpClient(
+    httpClient: HttpClient,
+    baseUrl: String,
+    authManager: AuthManager
+): KtorfitAI {
     httpClient.sendPipeline.intercept(HttpSendPipeline.State){
 //        if (authManager.token!!.isNotBlank()){
 //            if (authManager.token != null){

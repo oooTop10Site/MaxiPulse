@@ -65,6 +65,8 @@ kotlin {
         commonMain.dependencies {
 //            implementation(libs.libres.compose)
 
+            implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.2")
+
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)

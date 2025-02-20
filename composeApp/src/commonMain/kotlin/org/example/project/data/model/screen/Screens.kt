@@ -2,7 +2,7 @@ package org.example.project.data.model.screen
 
 import org.example.project.screens.tablet.options.utp.UtpScreen
 
-enum class Screens(name: String) {
+enum class Screens(val title: String) {
 
     UtpScreen("utp-screen"),
     GroupScreen("group-screen"),

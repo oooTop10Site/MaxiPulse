@@ -1,9 +1,11 @@
 package org.example.project.di
 
+import org.example.project.data.repository.AiAssistantRepositoryImpl
 import org.example.project.data.repository.AuthRepositoryImpl
 import org.example.project.data.repository.GamerRepositoryImpl
 import org.example.project.data.repository.GroupRepositoryImpl
 import org.example.project.data.repository.SensorRepositoryImpl
+import org.example.project.domain.repository.AiAssistantRepository
 import org.example.project.domain.repository.AuthRepository
 import org.example.project.domain.repository.GamerRepository
 import org.example.project.domain.repository.GroupRepository
@@ -17,5 +19,6 @@ val repositoryModule = module {
     factoryOf(::GroupRepositoryImpl) { bind<GroupRepository>() }
     factoryOf(::GamerRepositoryImpl) { bind<GamerRepository>() }
     factoryOf(::SensorRepositoryImpl) { bind<SensorRepository>() }
+    factoryOf(::AiAssistantRepositoryImpl) { bind<AiAssistantRepository>() }
 
 }

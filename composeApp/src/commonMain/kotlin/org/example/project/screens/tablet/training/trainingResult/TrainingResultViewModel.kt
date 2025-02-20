@@ -47,7 +47,7 @@ internal class TrainingResultViewModel : BaseScreenModel<TrainingResultState, Tr
     fun loadStage(sourceSportsmans: List<SportsmanSensorUI>, stages: List<TrainingStageChssUI>) =
         intent {
             val startTraining = sourceSportsmans.filter { it.sensor != null }
-                .minOf { it.sensor?.heartRate.orEmpty().minOf(default = 0) { it.mills } }
+                .minOf(default = 0L) { it.sensor?.heartRate.orEmpty().minOf(default = 0) { it.mills } }
             reduce {
                 state.copy(
                     tabs = state.tabs + stages.mapIndexed { index, item ->
