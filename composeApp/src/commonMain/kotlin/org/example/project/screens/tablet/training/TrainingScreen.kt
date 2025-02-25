@@ -6,7 +6,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -32,7 +31,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -74,7 +72,6 @@ import maxipuls.composeapp.generated.resources.chss_max
 import maxipuls.composeapp.generated.resources.drop_ic
 import maxipuls.composeapp.generated.resources.ending_training
 import maxipuls.composeapp.generated.resources.info_ic
-import maxipuls.composeapp.generated.resources.mic
 import maxipuls.composeapp.generated.resources.ok
 import maxipuls.composeapp.generated.resources.profile
 import maxipuls.composeapp.generated.resources.start
@@ -96,14 +93,9 @@ import org.example.project.domain.model.sportsman.SportsmanSensorUI
 import org.example.project.domain.model.training.TrainingStageChssUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.formatSeconds
-import org.example.project.ext.granted
 import org.example.project.ext.roundToIntOrNull
 import org.example.project.ext.toSensorPreviewUI
-import org.example.project.platform.SpeechToTextRecognizer
-import org.example.project.platform.permission.model.Permission
-import org.example.project.platform.permission.service.PermissionsService
 import org.example.project.screens.adaptive.root.RootNavigator
-import org.example.project.screens.tablet.sensor.SensorPreviewCard
 import org.example.project.screens.tablet.sensor.SensorPreviewContent
 import org.example.project.screens.tablet.training.trainingResult.TrainingResultScreen
 import org.example.project.theme.MaxiPulsTheme
@@ -120,8 +112,6 @@ import org.example.project.utils.orEmpty
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
-import kotlin.getValue
 
 class TrainingScreen(
     val sportsmans: List<SportsmanSensorUI>,
@@ -191,34 +181,36 @@ class TrainingScreen(
                             modifier = Modifier.align(Alignment.CenterEnd),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = stringResource(Res.string.chss),
-                                style = MaxiPulsTheme.typography.regular.copy(
-                                    fontSize = 16.sp,
-                                    color = MaxiPulsTheme.colors.uiKit.textColor
-                                ),
-                                modifier = Modifier
-                            )
-                            Spacer(Modifier.size(20.dp))
+                            if (state.isPay) {
+                                Text(
+                                    text = stringResource(Res.string.chss),
+                                    style = MaxiPulsTheme.typography.regular.copy(
+                                        fontSize = 16.sp,
+                                        color = MaxiPulsTheme.colors.uiKit.textColor
+                                    ),
+                                    modifier = Modifier
+                                )
+                                Spacer(Modifier.size(20.dp))
 
-                            MaxiSwitch(
-                                checked = state.isTrimp,
-                                onCheckedChange = { viewModel.changeIsTrimp() },
-                                modifier = Modifier.size(width = 50.dp, height = 25.dp)
-                            )
+                                MaxiSwitch(
+                                    checked = state.isTrimp,
+                                    onCheckedChange = { viewModel.changeIsTrimp() },
+                                    modifier = Modifier.size(width = 50.dp, height = 25.dp)
+                                )
 
-                            Spacer(Modifier.size(20.dp))
+                                Spacer(Modifier.size(20.dp))
 
-                            Text(
-                                text = stringResource(Res.string.trimp),
-                                style = MaxiPulsTheme.typography.regular.copy(
-                                    fontSize = 16.sp,
-                                    color = MaxiPulsTheme.colors.uiKit.textColor
-                                ),
-                                modifier = Modifier
-                            )
+                                Text(
+                                    text = stringResource(Res.string.trimp),
+                                    style = MaxiPulsTheme.typography.regular.copy(
+                                        fontSize = 16.sp,
+                                        color = MaxiPulsTheme.colors.uiKit.textColor
+                                    ),
+                                    modifier = Modifier
+                                )
 
-                            Spacer(Modifier.size(40.dp))
+                                Spacer(Modifier.size(40.dp))
+                            }
                             Icon(
                                 painterResource(Res.drawable.info_ic),
                                 contentDescription = null,
@@ -293,7 +285,7 @@ class TrainingScreen(
                     )
                 }
                 LazyVerticalGrid(
-                    columns = GridCells.Adaptive(150.dp),
+                    columns = GridCells.Adaptive(if (state.isPay) 150.dp else 400.dp),
                     modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(
                         top = 20.dp,
@@ -305,16 +297,25 @@ class TrainingScreen(
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     items(state.sportsmans) {
-                        if (state.isTrimp) {
-                            TrimpSportsmanItem(
-                                modifier = Modifier.fillMaxWidth().height(180.dp),
-                                sportsmanUI = it
-                            ) {
-                                viewModel.changeSelectSportsman(it)
+                        if (state.isPay) {
+                            if (state.isTrimp) {
+                                TrimpPaymentSportsmanItem(
+                                    modifier = Modifier.fillMaxWidth().height(180.dp),
+                                    sportsmanUI = it
+                                ) {
+                                    viewModel.changeSelectSportsman(it)
+                                }
+                            } else {
+                                ChssPaymentSportsmanItem(
+                                    modifier = Modifier.fillMaxWidth().height(180.dp),
+                                    sportsmanUI = it
+                                ) {
+                                    viewModel.changeSelectSportsman(it)
+                                }
                             }
                         } else {
                             ChssSportsmanItem(
-                                modifier = Modifier.fillMaxWidth().height(180.dp),
+                                modifier = Modifier.fillMaxWidth().height(85.dp),
                                 sportsmanUI = it
                             ) {
                                 viewModel.changeSelectSportsman(it)
@@ -799,6 +800,126 @@ private fun ChssSportsmanItem(
         }
     }
 
+    val hmax = 230
+    val hmin = 0
+
+    Box(
+        modifier.background(
+            color = MaxiPulsTheme.colors.uiKit.card,
+            shape = RoundedCornerShape(10.dp)
+        ).clip(RoundedCornerShape(10.dp)).clickableBlank { onClick() }
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Text(
+                text = "${sportsmanUI.lastname}\n${sportsmanUI.name}",
+                style = MaxiPulsTheme.typography.semiBold.copy(
+                    fontSize = 24.sp,
+                    lineHeight = 30.sp,
+                    color = MaxiPulsTheme.colors.uiKit.textColor
+                ),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
+            )
+
+            Spacer(Modifier.size(13.dp))
+
+            Row(
+                modifier = Modifier.fillMaxHeight().width(142.dp)
+                    .background(color = Color(0xFFFFA93A)),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier.weight(0.7f).fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(Modifier.weight(1f))
+                    Text(
+                        text = stringResource(Res.string.chss_max),
+                        style = MaxiPulsTheme.typography.semiBold.copy(
+                            fontSize = 16.sp,
+                            lineHeight = 16.sp,
+                            color = MaxiPulsTheme.colors.uiKit.lightTextColor
+                        ),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Spacer(Modifier.weight(1f))
+
+                    Text(
+                        text = "${
+                            ((sportsmanUI.sensor?.heartRate.orEmpty().map { it.value }.lastOrNull()
+                                .orEmpty()
+                                .toFloat() / hmax) * 100).roundToIntOrNull().orEmpty()
+                        }%",
+                        style = MaxiPulsTheme.typography.semiBold.copy(
+                            fontSize = 16.sp,
+                            lineHeight = 16.sp,
+                            color = MaxiPulsTheme.colors.uiKit.lightTextColor
+                        ),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Spacer(Modifier.weight(1f))
+
+
+                }
+                Spacer(Modifier.size(8.dp))
+                Text(
+                    text = sportsmanUI.sensor?.heartRate.orEmpty().lastOrNull()?.value.orEmpty()
+                        .toString(),
+                    style = MaxiPulsTheme.typography.bold.copy(
+                        fontSize = 40.sp,
+                        lineHeight = 40.sp,
+                        color = MaxiPulsTheme.colors.uiKit.lightTextColor
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(Modifier.size(10.dp))
+
+            }
+
+        }
+    }
+
+}
+
+@Composable
+private fun ChssPaymentSportsmanItem(
+    modifier: Modifier = Modifier,
+    sportsmanUI: SportsmanSensorUI,
+    onClick: () -> Unit,
+) {
+    val coroutineScope = rememberCoroutineScope()
+    var sensorAvailable: Boolean? by remember { mutableStateOf(null) }
+    var sportsmanMutable = remember { mutableStateOf(sportsmanUI) }
+    LaunchedEffect(sportsmanUI) {
+        sportsmanMutable.value = sportsmanUI
+    }
+
+    LaunchedEffect(sportsmanMutable) {
+        if (sensorAvailable == null) {
+            launch {
+                SportsmanSensorUI.available(sportsmanMutable).collect {
+                    println("fromCHSS - $it")
+
+                    sensorAvailable = it
+                }
+            }
+        }
+    }
+
 
     val hmax = 230
     val hmin = 0
@@ -919,7 +1040,7 @@ private fun ChssSportsmanItem(
 }
 
 @Composable
-private fun TrimpSportsmanItem(
+private fun TrimpPaymentSportsmanItem(
     modifier: Modifier = Modifier,
     sportsmanUI: SportsmanSensorUI,
     onClick: () -> Unit,

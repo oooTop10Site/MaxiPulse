@@ -224,7 +224,6 @@ fun RootApp() {
                     }
                 }
 
-                Text(text = recognizedText, fontSize = 30.sp)
             }
         }
     }
