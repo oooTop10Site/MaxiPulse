@@ -834,7 +834,7 @@ private fun ChssSportsmanItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
-                    modifier = Modifier.weight(0.7f).fillMaxHeight(),
+                    modifier = Modifier.weight(0.85f).fillMaxHeight(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Spacer(Modifier.weight(1f))
@@ -890,6 +890,14 @@ private fun ChssSportsmanItem(
 
             }
 
+        }
+        if (!sportsmanUI.isTraining) {
+            Box(
+                modifier = Modifier.fillMaxSize().background(
+                    color = Color.Black.copy(alpha = 0.3f),
+                    shape = RoundedCornerShape(10.dp)
+                ).clip(RoundedCornerShape(10.dp))
+            )
         }
     }
 
