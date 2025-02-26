@@ -829,7 +829,7 @@ private fun ChssSportsmanItem(
             Spacer(Modifier.size(13.dp))
 
             Row(
-                modifier = Modifier.fillMaxHeight().width(142.dp)
+                modifier = Modifier.fillMaxHeight().width(160.dp)
                     .background(color = Color(0xFFFFA93A)),
                 verticalAlignment = Alignment.CenterVertically
             ) {

@@ -38,6 +38,16 @@ data class SensorUI(
         )
     }
 
+    fun available(): Boolean  {
+            val currentTime = Clock.System.now()
+                .toEpochMilliseconds()
+            println("currentTime - $currentTime")
+            println("heartRate.lastOrNull()?.mills.orEmpty() - ${this.heartRate.lastOrNull()?.mills.orEmpty()}")
+            println("minus - ${currentTime - this.heartRate.lastOrNull()?.mills.orEmpty()}")
+
+            return (currentTime - this.heartRate.lastOrNull()?.mills.orEmpty()) <= 5000
+        }
+
 
 }
 
