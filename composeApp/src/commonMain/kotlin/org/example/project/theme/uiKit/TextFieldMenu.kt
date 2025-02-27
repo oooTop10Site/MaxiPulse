@@ -27,6 +27,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -45,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
@@ -85,7 +87,7 @@ fun <T> MaxiTextFieldResMenu(
                 isError = isError,
                 readOnly = true,
                 onClick = {
-                    if(enabled) {
+                    if (enabled) {
                         isExpand = !isExpand
                     }
                 },
@@ -198,7 +200,10 @@ fun <T> MaxiTextFieldMenu(
     placeholderText: String,
     modifier: Modifier = Modifier,
     trailingIcon: (@Composable () -> Unit)? = null,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    containerColor: Color = MaxiPulsTheme.colors.uiKit.white,
+    textColor: Color = MaxiPulsTheme.colors.uiKit.textColor,
+    hintTextColor: Color = MaxiPulsTheme.colors.uiKit.placeholder,
 ) {
     var isExpand by remember { mutableStateOf(false) }
     var width by remember { mutableStateOf(0.dp) }
@@ -216,6 +221,20 @@ fun <T> MaxiTextFieldMenu(
                     .height(Constants.TextFieldHeight),
                 value = text,
                 isError = isError,
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = MaxiPulsTheme.colors.uiKit.textFieldStroke,
+                    errorBorderColor = Color.Transparent,
+                    focusedContainerColor = containerColor,
+                    errorContainerColor = containerColor,
+                    disabledContainerColor = containerColor,
+                    unfocusedContainerColor = containerColor,
+                    focusedBorderColor = MaxiPulsTheme.colors.uiKit.textFieldStroke,
+                    errorTextColor = textColor ,
+                    focusedTextColor = textColor,
+                    disabledTextColor = textColor,
+                    unfocusedTextColor = textColor,
+//        disabledBorderColor = Color.Transparent
+                ),
                 readOnly = true,
                 onClick = {
                     if (!isExpand) {
@@ -262,7 +281,7 @@ fun <T> MaxiTextFieldMenu(
                                 .heightIn(max = 163.dp)
                                 .clip(RoundedCornerShape(bottomStart = 15.dp, bottomEnd = 15.dp))
                                 .background(
-                                    color = MaxiPulsTheme.colors.uiKit.white,
+                                    color = containerColor,
                                     shape = RoundedCornerShape(
                                         bottomStart = 15.dp,
                                         bottomEnd = 15.dp
@@ -289,7 +308,7 @@ fun <T> MaxiTextFieldMenu(
                                         Text(
                                             text = itemToString(item),
                                             style = MaxiPulsTheme.typography.medium.copy(
-                                                color = if (currentValue == item) MaxiPulsTheme.colors.uiKit.textColor else MaxiPulsTheme.colors.uiKit.placeholder,
+                                                color = if (currentValue == item) textColor else hintTextColor,
                                                 fontSize = 14.sp,
                                                 lineHeight = 14.sp
                                             ),

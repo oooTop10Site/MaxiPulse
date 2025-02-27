@@ -10,6 +10,7 @@ import org.example.project.domain.model.sensor.SensorPreviewUI
 import org.example.project.domain.model.sportsman.SensorStatus
 import org.example.project.domain.model.sportsman.SensorStatus.*
 import org.example.project.domain.model.sportsman.SensorUI
+import org.example.project.domain.model.sportsman.SportsmanUI
 import org.example.project.theme.MaxiPulsTheme
 import org.jetbrains.compose.resources.stringResource
 
@@ -38,6 +39,7 @@ fun SensorUI.toSensorPreviewUI(): SensorPreviewUI {
         id = sensorId,
         name = deviceName,
         mac = sensorId,
-        status = status
+        status = status,
+        sportsmanUI = SportsmanUI.Default //todo
     )
 }

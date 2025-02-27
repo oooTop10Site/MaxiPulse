@@ -26,6 +26,7 @@ class UIKitColors(
     val available: Color,
     val black50: Color,
     val black25: Color,
+    val fieldBG: Color,
 
     val red500: Color,
 
@@ -71,6 +72,7 @@ fun uiKitColors() = UIKitColors(
     disable = Color(0xFF3093F9),
     textColorWithAlpha = Color.Black.copy(alpha = 0.25f),
     available = Color(0xFF3093F9),
+    fieldBG = Color(0xFFD3D3D3),
 
     red500 = Color(0xFFF48FB0),
 

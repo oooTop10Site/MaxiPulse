@@ -61,18 +61,22 @@ import maxipuls.composeapp.generated.resources.saved_devices
 import maxipuls.composeapp.generated.resources.search_available_devices
 import maxipuls.composeapp.generated.resources.sensor_not_choose
 import maxipuls.composeapp.generated.resources.sensor_not_found
+import maxipuls.composeapp.generated.resources.sportsman
 import org.example.project.data.mapper.toAiEvent
 import org.example.project.data.model.screen.Screens
 import org.example.project.domain.model.AiEvent
 import org.example.project.domain.model.sensor.SensorPreviewUI
 import org.example.project.domain.model.sportsman.SensorStatus
 import org.example.project.domain.model.sportsman.SensorUI
+import org.example.project.domain.model.sportsman.SportsmanUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.toColor
 import org.example.project.ext.toText
 import org.example.project.platform.ScanBluetoothSensorsManager
 import org.example.project.screens.adaptive.root.RootNavigator
 import org.example.project.screens.adaptive.root.navigateEvent
+import org.example.project.theme.uiKit.MaxiTextFieldMenu
+import org.example.project.utils.Constants
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.component.inject
@@ -95,6 +99,7 @@ class SensorScreen : Screen {
 
         LaunchedEffect(viewModel) {
             viewModel.loadSensors()
+            viewModel.loadSportsman()
         }
         MaxiPageContainer(topBar = {
             Column(
@@ -146,6 +151,14 @@ class SensorScreen : Screen {
                             SensorPreviewCard(
                                 modifier = Modifier.weight(1f),
                                 sensorUI = it,
+                                sportsmen = state.sportsmen,
+                                canChange = true,
+                                changeSportsman = { sportsman ->
+                                    viewModel.changeSportsman(
+                                        sensorId = it.id,
+                                        sportsmanUI = sportsman
+                                    )
+                                },
                                 icon = {
                                     Icon(
                                         painter = painterResource(Res.drawable.close_solid_ic),
@@ -195,6 +208,7 @@ class SensorScreen : Screen {
                         ) {
                             items(state.sensors) { it ->
                                 SensorPreviewCard(
+                                    canChange = false,
                                     modifier = Modifier.weight(1f),
                                     sensorUI = it,
                                     icon = {
@@ -206,6 +220,9 @@ class SensorScreen : Screen {
                                                 viewModel.addSensor(it)
                                             }.size(30.dp)
                                         )
+                                    },
+                                    sportsmen = state.sportsmen,
+                                    changeSportsman = { sportsman ->
                                     }
                                 ) {
                                 }
@@ -306,12 +323,16 @@ internal fun ColumnScope.SensorPreviewContent(
 
 
 @Composable
-internal fun SensorPreviewCard(
+fun SensorPreviewCard(
     modifier: Modifier = Modifier,
-    sensorUI: SensorPreviewUI?,
+    sensorUI: SensorPreviewUI,
+    canChange: Boolean = true,
+    sportsmen: List<SportsmanUI>,
+    changeSportsman: (SportsmanUI) -> Unit,
     icon: @Composable (() -> Unit)? = null,
     onClick: () -> Unit,
 ) {
+    println(sensorUI)
     Column(
         modifier.background(
             color = MaxiPulsTheme.colors.uiKit.card,
@@ -324,6 +345,26 @@ internal fun SensorPreviewCard(
             icon,
             onClick
         )
+        if (canChange) {
+            Spacer(Modifier.size(5.dp))
+
+            MaxiTextFieldMenu<SportsmanUI>(
+                currentValue = sensorUI.sportsmanUI,
+                text = "${sensorUI.sportsmanUI.lastname} ${sensorUI.sportsmanUI.name}",
+                onChangeWorkScope = {
+                    changeSportsman(it)
+                },
+                hintTextColor = MaxiPulsTheme.colors.uiKit.textColor.copy(alpha = 0.8f),
+                items = sportsmen,
+                itemToString = { "${it.lastname} ${it.name}" },
+                modifier = Modifier.height(Constants.TextFieldHeight)
+                    .fillMaxWidth().padding(horizontal = 20.dp),
+                placeholderText = "",
+                containerColor = MaxiPulsTheme.colors.uiKit.fieldBG
+            )
+            Spacer(Modifier.size(15.dp))
+
+        }
     }
 }
 

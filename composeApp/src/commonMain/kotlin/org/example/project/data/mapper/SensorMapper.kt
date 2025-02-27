@@ -6,6 +6,7 @@ import org.example.project.domain.model.sensor.SensorPreviewUI
 import org.example.project.domain.model.sportsman.HeartBit
 import org.example.project.domain.model.sportsman.SensorStatus
 import org.example.project.domain.model.sportsman.SensorUI
+import org.example.project.domain.model.sportsman.SportsmanUI
 import org.example.project.platform.randomUUID
 import org.example.project.utils.orEmpty
 
@@ -14,7 +15,8 @@ fun SensorResponse.toUI(): SensorPreviewUI {
         id = randomUUID(),
         mac = deviceAddress.orEmpty(),
         name = deviceName.orEmpty(),
-        status = SensorStatus.Active //todo
+        status = SensorStatus.Active, //todo
+        sportsmanUI = SportsmanUI.Default //todo
     )
 }
 
@@ -36,6 +38,7 @@ fun SensorPreviewResponse.toUI(): SensorPreviewUI {
     return SensorPreviewUI(
         id = id.orEmpty(),
         name = name.orEmpty(),
-        mac = mac.orEmpty()
+        mac = mac.orEmpty(),
+        sportsmanUI = SportsmanUI.Default //todo
     )
 }
