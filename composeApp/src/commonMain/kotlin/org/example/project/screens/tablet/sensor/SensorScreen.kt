@@ -206,6 +206,7 @@ class SensorScreen : Screen {
                             contentPadding = PaddingValues(vertical = 20.dp),
                             verticalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
+                            println(state.sensors)
                             items(state.sensors) { it ->
                                 SensorPreviewCard(
                                     canChange = false,

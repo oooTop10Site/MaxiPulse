@@ -55,7 +55,7 @@ internal class SensorViewModel : BaseScreenModel<SensorState, SensorEvent>(Senso
         println(sensors.find { it.id == sensorId })
         reduce {
             state.copy(
-                sensors = sensors
+                savedSensors = sensors
             )
         }
     }
