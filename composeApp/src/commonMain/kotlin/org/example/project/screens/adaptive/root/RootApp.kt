@@ -27,9 +27,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
+import cafe.adriel.voyager.core.lifecycle.LifecycleEffectOnce
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.NavigatorDisposeBehavior
 import cafe.adriel.voyager.navigator.currentOrThrow
+import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -69,13 +72,15 @@ import org.koin.core.component.inject
 import kotlin.getValue
 
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalVoyagerApi::class)
 @Composable
 fun RootApp() {
     val windowSizeClass = calculateWindowSizeClass()
     var isRecording by remember { mutableStateOf(false) }
     var recognizedText by remember { mutableStateOf("") }
     var audioPermission by remember { mutableStateOf(false) }
+    var rememberTabNavigator: TabNavigator? by remember { mutableStateOf(null) }
+    var rememberNavigator: Navigator? by remember { mutableStateOf(null) }
     val scope = rememberCoroutineScope()
     MaxiPulsTheme {
         CompositionLocalProvider(ScreenSize provides windowSizeClass) {
@@ -112,30 +117,32 @@ fun RootApp() {
                     CompositionLocalProvider(
                         RootNavigator provides screen,
                     ) {
-                        TabNavigator(tab = MainTab()) { tabNavigator ->
+                        TabNavigator(
+                            tab = MainTab()
+                        ) { tabNavigator ->
                             val rootNavigator = RootNavigator.currentOrThrow
-
                             LaunchedEffect(Unit) {
                                 launch {
-                                    viewModel.aiManager.eventsScreen.receiveAsFlow().collect {
-                                        when (it) {
-                                            is AiEvent.ScreenEvent -> {
-                                                navigateEvent(
-                                                    rootNavigator,
-                                                    tabNavigator = tabNavigator,
-                                                    it.value
-                                                )
-                                            }
+                                    viewModel.aiManager.eventsScreen.receiveAsFlow()
+                                        .collect { event ->
+                                            when (event) {
+                                                is AiEvent.ScreenEvent -> {
+                                                    navigateEvent(
+                                                        rootNavigator,
+                                                        tabNavigator = tabNavigator,
+                                                        event.value
+                                                    )
+                                                }
 
-                                            is AiEvent.TrainingEvent -> {
-                                                trainingEvent(rootNavigator, it.value)
-                                            }
+                                                is AiEvent.TrainingEvent -> {
+                                                    trainingEvent(rootNavigator, event.value)
+                                                }
 
-                                            AiEvent.Unknown -> {
-                                                viewModel.observerManager.putMessage("Не удалось распознать сообщение")
+                                                AiEvent.Unknown -> {
+                                                    viewModel.observerManager.putMessage("Не удалось распознать сообщение")
+                                                }
                                             }
                                         }
-                                    }
                                 }
                             }
 
@@ -143,7 +150,13 @@ fun RootApp() {
                             SlideTransition(
                                 screen,
                             ) {
+                                val tabNav = LocalTabNavigator.current
+                                val nav = RootNavigator.current
+                                println("nav - $nav")
+                                rememberTabNavigator = tabNav
+                                rememberNavigator = nav
                                 it.Content()
+
                             }
 //                    val modifierSnackbarHost = when (windowSizeClass.widthSizeClass) {
 //                        WindowWidthSizeClass.Compact -> Modifier.fillMaxWidth()
@@ -244,32 +257,34 @@ fun navigateEvent(navigator: Navigator, tabNavigator: TabNavigator, it: Screens)
         }
 
         GroupScreen -> {
-            tabNavigator.current = CompositionsTab
             navigator.popUntilRoot()
-
+            tabNavigator.current = CompositionsTab
         }
 
         SensorsScreen -> {
-            tabNavigator.current = SensorTab
             navigator.popUntilRoot()
+            tabNavigator.current = SensorTab
+
 
         }
 
         HomeScreen -> {
-            tabNavigator.current = MainTab()
             navigator.popUntilRoot()
+            tabNavigator.current = MainTab()
+
 
         }
 
         TestsScreen -> {
-            tabNavigator.current = TestTab
             navigator.popUntilRoot()
+            tabNavigator.current = TestTab
+
 
         }
 
         MagazineScreen -> {
-            tabNavigator.current = LogTab
             navigator.popUntilRoot()
+            tabNavigator.current = LogTab
 
         }
     }

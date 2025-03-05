@@ -1,5 +1,6 @@
 package org.example.project.domain.manager
 
+import cafe.adriel.voyager.navigator.tab.TabNavigator
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,5 +19,6 @@ interface MessageObserverManager {
     fun openMobileMenu()
 
     fun setLastApiCall(lastApiCall: () -> Unit)
+
 
 }

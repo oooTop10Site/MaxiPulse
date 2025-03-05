@@ -73,7 +73,7 @@ import org.example.project.screens.adaptive.root.navigateEvent
 import org.example.project.screens.adaptive.root.trainingEvent
 import org.koin.core.component.KoinComponent
 
-class MainTabScreen(private val tab: Tab = MainTab()) : Screen, KoinComponent {
+class MainTabScreen() : Screen, KoinComponent {
     @Composable
     override fun Content() {
         val screenSize = ScreenSize.currentOrThrow
@@ -82,9 +82,6 @@ class MainTabScreen(private val tab: Tab = MainTab()) : Screen, KoinComponent {
         val viewModel: RootViewModel = viewModel { RootViewModel() }
         val tabNavigator = LocalTabNavigator.current
 
-        LaunchedEffect(tab) {
-            tabNavigator.current = tab
-        }
         MaxiPageContainer(
             modifier = Modifier.fillMaxSize().background(MaxiPulsTheme.colors.uiKit.background)
         ) {

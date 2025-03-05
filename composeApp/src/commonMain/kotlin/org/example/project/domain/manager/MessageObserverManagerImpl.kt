@@ -1,5 +1,6 @@
 package org.example.project.domain.manager
 
+import cafe.adriel.voyager.navigator.tab.TabNavigator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -12,6 +13,7 @@ import kotlinx.coroutines.launch
 class MessageObserverManagerImpl : MessageObserverManager {
     override val message: Channel<String> = Channel(Channel.BUFFERED)
     override val openMobileMenu: Channel<Unit> = Channel(Channel.BUFFERED)
+
     private val _lastApiCall = MutableStateFlow<(() -> Unit)?>(null)
     override val lastApiCall: StateFlow<(() -> Unit)?> = _lastApiCall.asStateFlow()
 

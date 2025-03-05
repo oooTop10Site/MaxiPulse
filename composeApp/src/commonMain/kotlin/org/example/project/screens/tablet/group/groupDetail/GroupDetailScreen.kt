@@ -32,11 +32,13 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.currentOrThrow
+import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.back_ic
 import maxipuls.composeapp.generated.resources.close_solid_ic
 import maxipuls.composeapp.generated.resources.pencil
 import org.example.project.ext.clickableBlank
+import org.example.project.screens.adaptive.mainTab.tabs.SensorTab
 import org.example.project.screens.tablet.group.groupEdit.GroupEditScreen
 import org.example.project.screens.adaptive.root.RootNavigator
 import org.example.project.screens.adaptive.root.ScreenSize
@@ -57,6 +59,7 @@ class GroupDetailScreen(private val groupId: String) : Screen {
             GroupDetailViewModel()
         }
         val rootNavigator = RootNavigator.currentOrThrow
+        println("rootNavigator = $rootNavigator")
         val state by viewModel.stateFlow.collectAsState()
         val screenSize = ScreenSize.currentOrThrow
         val chunkSize = when (screenSize.widthSizeClass) {
