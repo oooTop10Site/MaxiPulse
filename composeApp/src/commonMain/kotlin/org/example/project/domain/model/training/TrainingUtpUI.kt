@@ -11,7 +11,9 @@ data class TrainingUtpUI(
     val date: LocalDate,
     val typeOfEvent: EventType,
     val criteriaUpload: CriteriaUpload,
-    val stages: List<TrainingUtpStageUI>
+    val stages: List<TrainingUtpStageUI>,
+    val expectValue: Float,
+    val existValue: Float,
 ) {
     companion object {
         fun default(initDate: LocalDate): TrainingUtpUI {
@@ -21,6 +23,8 @@ data class TrainingUtpUI(
                 typeOfEvent = EventType.Training,
                 criteriaUpload = CriteriaUpload.PercentByChssMax,
                 stages = emptyList(),
+                existValue = 0.3f,
+                expectValue = 0.7f
             )
         }
     }

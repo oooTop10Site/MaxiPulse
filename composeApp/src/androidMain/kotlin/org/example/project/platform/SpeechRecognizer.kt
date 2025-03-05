@@ -20,18 +20,23 @@ actual class SpeechToTextRecognizer : KoinComponent {
 
     actual fun startListening() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(
-                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
-            )
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ru-RU") // Принудительно указываем русский язык
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH) // Улучшенное распознавание
+            putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, true) // Ограничение на язык
             putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true) // Включаем промежуточные результаты
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ru-RU") // Указываем язык
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "ru-RU") // Предпочтительный язык
+            putExtra(RecognizerIntent.EXTRA_SUPPORTED_LANGUAGES, arrayOf("ru-RU")) // Разрешаем только русский
+            putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1) // Ограничение количества результатов
         }
         speechRecognizer.startListening(intent)
     }
 
+
+
     actual fun stopListening() {
         speechRecognizer.stopListening()
+        onResultListener = null
+        onPartialResultListener = null
     }
 
     actual fun setOnPartialResultListener(listener: (String) -> Unit) {

@@ -34,7 +34,8 @@ data class UtpState(
     val groups: List<GroupUI>,
     val selectGroup: GroupUI?,
     val daysDate: List<TrainingUtpUI>,
-    val selectedDay: TrainingUtpUI?,
+    val selectedDay: Pair<LocalDate, List<TrainingUtpUI>>?,
+    val selectedTrainingUtpUI: TrainingUtpUI?,
     val currentDay: LocalDate,
     val events: List<EventType>,
     val criteriaUploads: List<CriteriaUpload>,
@@ -72,6 +73,7 @@ data class UtpState(
                 "Специально-подготовительный",
                 "Предсоревновательный"
             ),
+            selectedTrainingUtpUI = null,
             utpTab = UTPTab.PannedUtp,
             tabs = UTPTab.entries,
             selectGroup = null,

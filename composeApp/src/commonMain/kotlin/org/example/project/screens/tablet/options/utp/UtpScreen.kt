@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -60,20 +61,16 @@ import maxipuls.composeapp.generated.resources.is_compare_with_plan
 import maxipuls.composeapp.generated.resources.month
 import maxipuls.composeapp.generated.resources.period
 import maxipuls.composeapp.generated.resources.planned_training_effect
-import maxipuls.composeapp.generated.resources.readies_for_upload
 import maxipuls.composeapp.generated.resources.result_training_effect
 import maxipuls.composeapp.generated.resources.save
 import maxipuls.composeapp.generated.resources.stage_readiness
-import maxipuls.composeapp.generated.resources.start_tarining
 import maxipuls.composeapp.generated.resources.type_event
 import maxipuls.composeapp.generated.resources.upload_in_percent_by_chss_max
 import maxipuls.composeapp.generated.resources.week
-import maxipuls.composeapp.generated.resources.year_education
 import maxipuls.composeapp.generated.resources.year_readiness
 import org.example.project.domain.model.composition.GroupUI
 import org.example.project.domain.model.log.CriteriaUpload
 import org.example.project.domain.model.log.EventType
-import org.example.project.domain.model.trainingStage.TrainingStageUI
 import org.example.project.domain.model.utp.UTPTab
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.toText
@@ -99,22 +96,28 @@ import org.example.project.utils.debouncedClick
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.Color
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
-import cafe.adriel.voyager.navigator.tab.TabNavigator
 import kotlinx.coroutines.launch
 import maxipuls.composeapp.generated.resources.mic
 import maxipuls.composeapp.generated.resources.ok
+import maxipuls.composeapp.generated.resources.pencil
+import maxipuls.composeapp.generated.resources.skipment
+import maxipuls.composeapp.generated.resources.start
+import maxipuls.composeapp.generated.resources.start_go
+import maxipuls.composeapp.generated.resources.training
+import maxipuls.composeapp.generated.resources.training_stage
+import maxipuls.composeapp.generated.resources.trash
 import org.example.project.domain.model.AnalizeGraph
 import org.example.project.domain.model.training.TrainingStageChssUI
+import org.example.project.domain.model.training.TrainingUtpUI
 import org.example.project.ext.granted
 import org.example.project.ext.toTextShort
 import org.example.project.ext.toTrainingStageChssUI
 import org.example.project.platform.SpeechToTextRecognizer
 import org.example.project.platform.permission.model.Permission
 import org.example.project.platform.permission.service.PermissionsService
-import org.example.project.screens.adaptive.main.MainScreen
 import org.example.project.screens.adaptive.mainTab.tabs.MainTab
 import org.example.project.screens.tablet.options.utp.graphs.GrowthGraph
 import org.example.project.screens.tablet.options.utp.graphs.LoadGraph
@@ -124,7 +127,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.getValue
 
-class UtpScreen : Screen, KoinComponent {
+class UtpScreen :   Screen, KoinComponent {
 
     @Composable
     override fun Content() {
@@ -240,7 +243,7 @@ class UtpScreen : Screen, KoinComponent {
                 }
             }
         }
-        if (state.selectedDay != null) {
+        if (state.selectedTrainingUtpUI != null) {
             PlannedTraining(viewModel, state)
         }
     }
@@ -373,8 +376,10 @@ class UtpScreen : Screen, KoinComponent {
                             style = MaxiPulsTheme.typography.regular.copy(
                                 fontSize = 14.sp,
                                 lineHeight = 14.sp,
-                                textAlign = TextAlign.Center
-                            )
+                                textAlign = TextAlign.Center,
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
 
@@ -447,7 +452,7 @@ private fun ColumnScope.PlannedUtpConetent(
                     text = selectGroup?.selectTrainingStage.orEmpty(),
                     onChangeWorkScope = {
                         viewModel.changeSelectTrainingStage(
-                            id = state.selectedDay?.id.orEmpty(),
+                            id = state.selectedTrainingUtpUI?.id.orEmpty(),
                             value = it
                         )
                     },
@@ -481,7 +486,7 @@ private fun ColumnScope.PlannedUtpConetent(
                     text = selectGroup?.yearReadies.orEmpty(),
                     onChangeWorkScope = {
                         viewModel.changeSelectYearReadies(
-                            id = state.selectedDay?.id.orEmpty(),
+                            id = state.selectedTrainingUtpUI?.id.orEmpty(),
                             value = it
                         )
                     },
@@ -495,7 +500,7 @@ private fun ColumnScope.PlannedUtpConetent(
         }
         Spacer(Modifier.size(60.dp))
         Column(
-            modifier = Modifier.weight(1f).fillMaxWidth()
+            modifier = Modifier.height(330.dp).fillMaxWidth()
                 .padding(horizontal = 20.dp).border(
                     shape = RoundedCornerShape(25.dp),
                     color = MaxiPulsTheme.colors.uiKit.divider,
@@ -539,7 +544,10 @@ private fun ColumnScope.PlannedUtpConetent(
                                 fontSize = 16.sp,
                                 lineHeight = 16.sp,
                                 color = MaxiPulsTheme.colors.uiKit.textColor
-                            )
+
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                     if (index != daysOfWeek.lastIndex) {
@@ -562,7 +570,7 @@ private fun ColumnScope.PlannedUtpConetent(
                     modifier = Modifier.weight(1f).fillMaxWidth()
                 ) {
                     chunk.forEachIndexed { index, utpTraining ->
-                        val isSelect = utpTraining.date == state.currentDay
+                        val isSelect = utpTraining.date == state.selectedDay?.first
                         Box(
                             modifier = Modifier.weight(1f).fillMaxHeight()
                                 .clickableBlank {
@@ -573,7 +581,7 @@ private fun ColumnScope.PlannedUtpConetent(
                             Box(
                                 modifier = Modifier.then(
                                     if (isSelect) Modifier.size(
-                                        50.dp
+                                        40.dp
                                     ).background(
                                         color = MaxiPulsTheme.colors.uiKit.primary,
                                         shape = RoundedCornerShape(10.dp)
@@ -607,23 +615,189 @@ private fun ColumnScope.PlannedUtpConetent(
             }
 
         }
-        Spacer(Modifier.size(70.dp))
-        MaxiButton(
-            onClick = debouncedClick() {
-                tabNavigator.current = MainTab(
-                    stages = (state.days.find { it.date == state.currentDay }?.stages?.map { it.toTrainingStageChssUI() })
-                        ?: emptyList<TrainingStageChssUI>()
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            contentPadding = PaddingValues(20.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            itemsIndexed(state.selectedDay?.second.orEmpty()) { index, it ->
+                TrainingComponent(
+                    modifier = Modifier.fillMaxWidth().height(80.dp),
+                    onStart = debouncedClick() {
+                        tabNavigator.current = MainTab(
+                            stages = (it.stages.map { it.toTrainingStageChssUI() })
+                        )
+                        navigator.popUntilRoot()
+                    },
+                    trainingUtpStageUI = it,
+                    onEdit = {
+                        viewModel.changeSelectTrainingUTPUI(it)
+                    },
+                    onDelete = {
+                        viewModel.deleteSelectTrainingUTPUI(it)
+                    },
+                    number = (index + 1).toString(),
+                    isEnd = (state.selectedDay?.first ?: state.currentDay) < state.currentDay
                 )
-                navigator.popUntilRoot()
-
-            },
-            text = stringResource(Res.string.start_tarining),
-            modifier = Modifier.height(69.dp).width(416.dp)
-        )
-        Spacer(Modifier.size(20.dp))
+            }
+        }
+        state.selectedDay?.let {
+            if (state.selectedDay.first >= state.currentDay) {
+                Box(
+                    modifier = Modifier.size(50.dp)
+                        .background(
+                            MaxiPulsTheme.colors.uiKit.primary,
+                            shape = CircleShape
+                        )
+                        .clip(CircleShape).clickableBlank() {
+                            viewModel.addEmptyTrainingUtp()
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painterResource(Res.drawable.add_ic),
+                        contentDescription = null,
+                        modifier = Modifier.size(30.dp),
+                        tint = MaxiPulsTheme.colors.uiKit.lightTextColor
+                    )
+                }
+                Spacer(Modifier.size(20.dp))
+            }
+        }
     }
 }
 
+@Composable
+internal fun TrainingComponent(
+    modifier: Modifier = Modifier,
+    number: String,
+    trainingUtpStageUI: TrainingUtpUI,
+    isEnd: Boolean,
+    onStart: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
+) {
+
+    Box(
+        modifier.background(
+            color = if (isEnd) MaxiPulsTheme.colors.uiKit.card else MaxiPulsTheme.colors.uiKit.trainingCardColor,
+            shape = RoundedCornerShape(25.dp)
+        ), contentAlignment = Alignment.Center
+    ) {
+
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(Modifier.size(20.dp))
+            Text(
+                text = "${stringResource(Res.string.training)} $number",
+                style = MaxiPulsTheme.typography.bold.copy(
+                    fontSize = 14.sp,
+                    lineHeight = 14.sp,
+                    color = MaxiPulsTheme.colors.uiKit.textColor
+                )
+            )
+            Spacer(Modifier.size(20.dp))
+            VerticalDivider(
+                modifier = Modifier.height(17.dp),
+                color = MaxiPulsTheme.colors.uiKit.textFieldStroke
+            )
+            Spacer(Modifier.size(20.dp))
+            Text(
+                text = trainingUtpStageUI.date.toUI(),
+                style = MaxiPulsTheme.typography.regular.copy(
+                    fontSize = 14.sp,
+                    lineHeight = 14.sp,
+                    color = MaxiPulsTheme.colors.uiKit.textColor
+                )
+            )
+            Spacer(Modifier.size(40.dp))
+            if (isEnd) {
+                Box(modifier = Modifier.height(40.dp).weight(1f)) {
+                    Box(
+                        modifier = Modifier.height(35.dp)
+                            .fillMaxWidth(trainingUtpStageUI.expectValue)
+                            .background(
+                                color = Color(0xFFC0DEFD),
+                                shape = RoundedCornerShape(100.dp)
+                            )
+                    )
+                    Box(
+                        modifier = Modifier.height(35.dp)
+                            .fillMaxWidth(trainingUtpStageUI.existValue)
+                            .background(
+                                color = Color(0xFFF8BBCF),
+                                shape = RoundedCornerShape(100.dp)
+                            )
+                    )
+                }
+            } else {
+                MaxiButton(
+                    onClick = debouncedClick() {
+                        onStart()
+                    },
+                    text = stringResource(Res.string.start_go),
+                    modifier = Modifier.height(40.dp).weight(1f)
+                )
+            }
+            Spacer(Modifier.size(40.dp))
+            if (!isEnd) {
+                Box(
+                    modifier = Modifier.size(40.dp)
+                        .background(
+                            MaxiPulsTheme.colors.uiKit.primary,
+                            shape = CircleShape
+                        )
+                        .clip(CircleShape).clickableBlank() {
+                            onEdit()
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painterResource(Res.drawable.pencil),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = MaxiPulsTheme.colors.uiKit.lightTextColor
+                    )
+                }
+                Spacer(Modifier.size(20.dp))
+                Box(
+                    modifier = Modifier.size(40.dp)
+                        .background(
+                            MaxiPulsTheme.colors.uiKit.white,
+                            shape = CircleShape
+                        )
+                        .clip(CircleShape).clickableBlank() {
+                            onDelete()
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painterResource(Res.drawable.trash),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = MaxiPulsTheme.colors.uiKit.primary
+                    )
+                }
+            } else {
+                if (trainingUtpStageUI.existValue == 0f && trainingUtpStageUI.expectValue == 0f) {
+                    Text(
+                        text = stringResource(Res.string.skipment),
+                        style = MaxiPulsTheme.typography.bold.copy(
+                            fontSize = 24.sp,
+                            lineHeight = 24.sp,
+                            color = MaxiPulsTheme.colors.uiKit.textDropDown
+                        )
+                    )
+                }
+            }
+            Spacer(Modifier.size(20.dp))
+
+        }
+    }
+
+}
 
 @Composable
 internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpState) {
@@ -631,23 +805,22 @@ internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpSt
     var showRecord by remember { mutableStateOf(false) }
     var isRecording by remember { mutableStateOf(false) }
     var recognizedText by remember { mutableStateOf("") }
-    val speechRecognizer: SpeechToTextRecognizer by inject()
-    val audioPermissionsService: PermissionsService by inject()
+
     var audioPermission by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        speechRecognizer.setOnResultListener { text ->
+        viewModel.speechRecognizer.setOnResultListener { text ->
             recognizedText = text
         }
-        speechRecognizer.setOnPartialResultListener { text ->
+        viewModel.speechRecognizer.setOnPartialResultListener { text ->
             recognizedText = text
         }
     }
     LaunchedEffect(Unit) {
-        if (state.selectedDay?.stages.orEmpty().isNotEmpty()) {
-            scrollState.animateScrollToItem(state.selectedDay?.stages?.lastIndex ?: 0)
+        if (state.selectedTrainingUtpUI?.stages.orEmpty().isNotEmpty()) {
+            scrollState.animateScrollToItem(state.selectedTrainingUtpUI?.stages?.lastIndex ?: 0)
         }
     }
-    state.selectedDay?.let {
+    state.selectedTrainingUtpUI?.let {
         MaxiAlertDialog(
             modifier = Modifier.fillMaxWidth(0.8f).fillMaxHeight(0.8f),
             paddingValues = PaddingValues(
@@ -678,7 +851,7 @@ internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpSt
                 )
                 Spacer(Modifier.size(5.dp))
                 Text(
-                    text = "${stringResource(state.selectedDay.date.dayOfWeek.toText()).lowercase()} (${state.selectedDay.date.toUI()})",
+                    text = "${stringResource(state.selectedTrainingUtpUI.date.dayOfWeek.toText()).lowercase()} (${state.selectedTrainingUtpUI.date.toUI()})",
                     style = MaxiPulsTheme.typography.regular.copy(
                         fontSize = 20.sp,
                         lineHeight = 20.sp,
@@ -707,8 +880,8 @@ internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpSt
                     )
 
                     MaxiTextFieldMenu<EventType>(
-                        currentValue = state.selectedDay.typeOfEvent,
-                        text = state.selectedDay.typeOfEvent.title,
+                        currentValue = state.selectedTrainingUtpUI.typeOfEvent,
+                        text = state.selectedTrainingUtpUI.typeOfEvent.title,
                         onChangeWorkScope = {
                             viewModel.changeSelectedEvent(it)
                         },
@@ -741,8 +914,8 @@ internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpSt
                     )
 
                     MaxiTextFieldMenu<CriteriaUpload>(
-                        currentValue = state.selectedDay.criteriaUpload,
-                        text = state.selectedDay.criteriaUpload.title,
+                        currentValue = state.selectedTrainingUtpUI.criteriaUpload,
+                        text = state.selectedTrainingUtpUI.criteriaUpload.title,
                         onChangeWorkScope = {
                             viewModel.changeSelectedCriteria(it)
                         },
@@ -770,7 +943,7 @@ internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpSt
                     contentPadding = PaddingValues(vertical = 20.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    items(state.selectedDay.stages) { item ->
+                    itemsIndexed(state.selectedTrainingUtpUI.stages) { index, item ->
                         println("item - $item")
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -778,7 +951,7 @@ internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpSt
                         ) {
                             Text(
                                 modifier = Modifier.width(260.dp),
-                                text = stringResource(Res.string.criteria_upload),
+                                text = "${stringResource(Res.string.training_stage)} ${index + 1}",
                                 style = MaxiPulsTheme.typography.medium.copy(
                                     fontSize = 14.sp,
                                     lineHeight = 14.sp,
@@ -841,9 +1014,9 @@ internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpSt
                     }
 
                     item {
-                        println("state.days - ${state.selectedDay.stages}")
+                        println("state.days - ${state.selectedTrainingUtpUI.stages}")
                         val enable =
-                            state.selectedDay.stages.all { it.value != 0 && it.min != 0 }
+                            state.selectedTrainingUtpUI.stages.all { it.value != 0 && it.min != 0 }
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(30.dp)
@@ -867,8 +1040,12 @@ internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpSt
                                 )
                             }
                             val scope = rememberCoroutineScope()
-                            audioPermissionsService.checkPermissionFlow(Permission.RECORD_AUDIO)
-                                .collectAsState(audioPermissionsService.checkPermission(Permission.RECORD_AUDIO))
+                            viewModel.audioPermissionsService.checkPermissionFlow(Permission.RECORD_AUDIO)
+                                .collectAsState(
+                                    viewModel.audioPermissionsService.checkPermission(
+                                        Permission.RECORD_AUDIO
+                                    )
+                                )
                                 .granted {
                                     audioPermission = true
                                 }
@@ -889,15 +1066,15 @@ internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpSt
                                                     showRecord = !showRecord
                                                 } else {
                                                     scope.launch {
-                                                        if (audioPermissionsService.checkPermission(
+                                                        if (viewModel.audioPermissionsService.checkPermission(
                                                                 Permission.RECORD_AUDIO
                                                             )
                                                                 .granted()
                                                         ) {
-                                                            speechRecognizer.startListening()
+                                                            viewModel.speechRecognizer.startListening()
                                                             audioPermission = true
                                                         } else {
-                                                            audioPermissionsService.providePermission(
+                                                            viewModel.audioPermissionsService.providePermission(
                                                                 Permission.RECORD_AUDIO
                                                             )
                                                         }
@@ -961,8 +1138,7 @@ internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpSt
                         viewModel.dismiss()
                     },
                     accept = {
-                        state.selectedDay
-                        viewModel.saveSelectedDay(state.selectedDay)
+                        viewModel.saveSelectedTrainingUtp(state.selectedTrainingUtpUI)
                     }
                 )
             }
@@ -979,14 +1155,15 @@ internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpSt
             accept = {
                 isRecording = !isRecording
                 showRecord = !showRecord
-                speechRecognizer.stopListening()
+                println("acceptText - $recognizedText")
+                viewModel.speechRecognizer.stopListening()
                 viewModel.trainingStages(recognizedText)
             },
             cancelText = null,
             cancel = {
                 isRecording = !isRecording
                 showRecord = !showRecord
-                speechRecognizer.stopListening()
+                viewModel.speechRecognizer.stopListening()
             },
             descriptionContent = {
                 Column(modifier = Modifier) {
@@ -1020,7 +1197,7 @@ internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpSt
                                 .align(Alignment.CenterHorizontally),
                             onClick = debouncedClick() {
                                 isRecording = !isRecording
-                                speechRecognizer.startListening()
+                                viewModel.speechRecognizer.startListening()
                             }
                         ) {
                             Icon(
@@ -1035,7 +1212,7 @@ internal fun KoinComponent.PlannedTraining(viewModel: UtpViewModel, state: UtpSt
             onDismiss = {
                 isRecording = !isRecording
                 showRecord = !showRecord
-                speechRecognizer.stopListening()
+                viewModel.speechRecognizer.stopListening()
             })
     }
 }

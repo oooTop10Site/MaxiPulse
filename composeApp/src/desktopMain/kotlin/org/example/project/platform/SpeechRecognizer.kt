@@ -24,7 +24,7 @@ actual class SpeechToTextRecognizer {
         println("LOG - STARTING")
 
         try {
-            if(recognizer == null && microphone == null && job == null) {
+            if (recognizer == null && microphone == null && job == null) {
                 stopListening() // Останавливаем, если уже работаем
             }
 
@@ -47,8 +47,13 @@ actual class SpeechToTextRecognizer {
 //                            val result = recognizer?.result ?: ""
 //                            onPartialResultListener?.invoke(result)
                         } else {
-                            val partial = recognizer?.partialResult ?: ""
-                            onPartialResultListener?.invoke(partial)
+                            val partial = recognizer?.partialResult
+                                ?.substringAfter(": \"", "")
+                                ?.substringBefore("\"", "") ?: ""
+                            println("partial - $partial")
+                            if(partial.isNotBlank()) {
+                                onPartialResultListener?.invoke(partial)
+                            }
                         }
                     }
                 } catch (e: Exception) {
@@ -75,7 +80,8 @@ actual class SpeechToTextRecognizer {
         // Очищаем recognizer **до** закрытия микрофона, чтобы избежать краша
         recognizer?.let {
             try {
-                val finalResult = it.finalResult
+                val finalResult = it.finalResult?.substringAfter(": \"", "")
+                    ?.substringBefore("\"", "") ?: ""
                 onResultListener?.invoke(finalResult)
             } catch (e: Exception) {
                 println("Ошибка получения finalResult: ${e.message}")

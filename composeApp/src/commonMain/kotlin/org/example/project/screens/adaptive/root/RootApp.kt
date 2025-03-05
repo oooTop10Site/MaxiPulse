@@ -43,6 +43,7 @@ import org.example.project.domain.manager.MessageObserverManager
 import org.example.project.domain.model.AiEvent
 import org.example.project.domain.model.training.TrainingStageChssUI
 import org.example.project.ext.clickableBlank
+import org.example.project.ext.toTrainingStageChssUI
 import org.example.project.platform.SpeechToTextRecognizer
 import org.example.project.platform.permission.model.Permission
 import org.example.project.platform.permission.service.PermissionsService
@@ -119,7 +120,11 @@ fun RootApp() {
                                     viewModel.aiManager.eventsScreen.receiveAsFlow().collect {
                                         when (it) {
                                             is AiEvent.ScreenEvent -> {
-                                                navigateEvent(rootNavigator, tabNavigator = tabNavigator, it.value)
+                                                navigateEvent(
+                                                    rootNavigator,
+                                                    tabNavigator = tabNavigator,
+                                                    it.value
+                                                )
                                             }
 
                                             is AiEvent.TrainingEvent -> {
@@ -181,7 +186,10 @@ fun RootApp() {
                     }
                 }
 
-                AnimatedVisibility(!isRecording, modifier = Modifier.padding(15.dp).size(50.dp).align(Alignment.BottomEnd)) {
+                AnimatedVisibility(
+                    !isRecording,
+                    modifier = Modifier.padding(15.dp).size(50.dp).align(Alignment.BottomEnd)
+                ) {
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier.size(50.dp).align(Alignment.BottomEnd)
@@ -231,12 +239,39 @@ fun RootApp() {
 
 fun navigateEvent(navigator: Navigator, tabNavigator: TabNavigator, it: Screens) {
     when (it) {
-        UtpScreen -> navigator.push(UtpScreen())
-        GroupScreen -> tabNavigator.current = CompositionsTab
-        SensorsScreen -> tabNavigator.current = SensorTab
-        HomeScreen -> tabNavigator.current = MainTab()
-        TestsScreen -> tabNavigator.current = TestTab
-        MagazineScreen -> tabNavigator.current = LogTab
+        UtpScreen -> {
+            navigator.push(UtpScreen())
+        }
+
+        GroupScreen -> {
+            tabNavigator.current = CompositionsTab
+            navigator.popUntilRoot()
+
+        }
+
+        SensorsScreen -> {
+            tabNavigator.current = SensorTab
+            navigator.popUntilRoot()
+
+        }
+
+        HomeScreen -> {
+            tabNavigator.current = MainTab()
+            navigator.popUntilRoot()
+
+        }
+
+        TestsScreen -> {
+            tabNavigator.current = TestTab
+            navigator.popUntilRoot()
+
+        }
+
+        MagazineScreen -> {
+            tabNavigator.current = LogTab
+            navigator.popUntilRoot()
+
+        }
     }
 }
 

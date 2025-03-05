@@ -23,6 +23,6 @@ val moduleManager = module {
     singleOf(::MessageObserverManagerImpl) { bind<MessageObserverManager>() }
     singleOf(::AiAssistantManagerImpl) { bind<AiAssistantManager>() }
     singleOf(::ScanBluetoothSensorsManager)
-    singleOf(::SpeechToTextRecognizer)
+    factoryOf(::SpeechToTextRecognizer)
 
 }
