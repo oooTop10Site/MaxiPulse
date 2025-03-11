@@ -57,11 +57,14 @@ import maxipuls.composeapp.generated.resources.settings_ic
 import maxipuls.composeapp.generated.resources.start_tarining
 import org.example.project.domain.model.widget.WidgetSize
 import org.example.project.domain.model.widget.WidgetUI
+import org.example.project.domain.model.widget.WidgetUIEvent
 import org.example.project.ext.clickableBlank
 import org.example.project.screens.adaptive.root.RootNavigator
+import org.example.project.screens.tablet.miniPulseWidget.MiniPulseWidgetScreen
 import org.example.project.theme.uiKit.ButtonTextStyle
 import org.example.project.theme.uiKit.MaxiButton
 import org.example.project.theme.uiKit.MaxiRoundCheckBox
+import org.example.project.utils.debouncedClick
 import org.jetbrains.compose.resources.stringResource
 
 class WidgetScreen : Screen {
@@ -209,9 +212,14 @@ class WidgetScreen : Screen {
                                     icon = it.icon,
                                     size = WidgetSize.Small,
                                     isSelect = it in state.selected,
-                                ) {
-
-                                }
+                                    onClick = debouncedClick {
+                                        when (it.event) {
+                                            WidgetUIEvent.AppMiniPulse -> navigator.push(
+                                                MiniPulseWidgetScreen()
+                                            )
+                                        }
+                                    }
+                                )
                             }
                         }
                     }
@@ -350,7 +358,10 @@ fun WidgetItem(
             if (isEditing) changeEdit() else onClick()
         },
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = if (showElevation) CardDefaults.cardElevation(defaultElevation = 7.dp, hoveredElevation = 2.dp) else CardDefaults.cardElevation(
+        elevation = if (showElevation) CardDefaults.cardElevation(
+            defaultElevation = 7.dp,
+            hoveredElevation = 2.dp
+        ) else CardDefaults.cardElevation(
             0.dp, 0.dp, 0.dp, 0.dp, 0.dp, 0.dp
         )
     ) {

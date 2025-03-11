@@ -1,5 +1,6 @@
 package org.example.project.ext
 
+import androidx.compose.runtime.Composable
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DateTimeUnit
@@ -53,6 +54,7 @@ import maxipuls.composeapp.generated.resources.tuesday_sh
 import maxipuls.composeapp.generated.resources.wednesday
 import maxipuls.composeapp.generated.resources.wednesday_sh
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 fun LocalDate.toUI(): String {
     return "${this.dayOfMonth.addZero()}.${this.monthNumber.addZero()}.${this.year}"
@@ -212,13 +214,19 @@ fun LocalDate.weekDates(): List<LocalDate> {
     return List(7) { startOfWeek.plus(DatePeriod(days = it)) }
 }
 
+
+@Composable
+fun LocalDate.toDayOfWeekFullDate(): String {
+    return "${stringResource(this.dayOfWeek.toText())}, ${this.toUI()}"
+}
+
 fun Long.formatSeconds(returnEmptyIfZero: Boolean = false): String {
     val hours = this / 3600
     val minutes = (this % 3600) / 60
     val remainingSeconds = this % 60
 
     val result = buildString {
-        if(hours != 0L) {
+        if (hours != 0L) {
             append(if (hours < 10) "0$hours" else "$hours")
             append(":")
         }

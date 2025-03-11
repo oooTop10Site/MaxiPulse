@@ -39,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -355,6 +356,11 @@ internal fun SelectableTab(
     modifier: Modifier = Modifier,
     text: String,
     isSelect: Boolean,
+    textStyle: TextStyle = MaxiPulsTheme.typography.regular.copy(
+        lineHeight = 14.sp,
+        fontSize = 14.sp,
+        color = if (isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.textColor
+    ),
     select: () -> Unit
 ) {
     Box(
@@ -367,11 +373,7 @@ internal fun SelectableTab(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = text, style = MaxiPulsTheme.typography.regular.copy(
-                lineHeight = 14.sp,
-                fontSize = 14.sp,
-                color = if (isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.textColor
-            )
+            text = text, style = textStyle
         )
     }
 }

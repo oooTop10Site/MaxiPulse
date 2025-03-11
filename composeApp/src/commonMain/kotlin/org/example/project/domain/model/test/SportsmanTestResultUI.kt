@@ -2,6 +2,7 @@ package org.example.project.domain.model.test
 
 import androidx.compose.ui.graphics.Color
 import cafe.adriel.voyager.core.lifecycle.JavaSerializable
+import kotlinx.datetime.LocalDate
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.emoj1
 import maxipuls.composeapp.generated.resources.emoj2
@@ -10,9 +11,14 @@ import maxipuls.composeapp.generated.resources.emoj4
 import org.jetbrains.compose.resources.DrawableResource
 
 data class SportsmanTestResultUI(
+    val id: String,
+    val sportsmanId: String,
     val image: String,
     val name: String,
     val lastname: String,
+    val age: Int,
+    val value: Int,
+    val date: LocalDate,
     val status: TestResultStatus
 ) : JavaSerializable {
 

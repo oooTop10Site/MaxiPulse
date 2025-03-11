@@ -302,6 +302,8 @@
     <string name="load">Нагрузка</string>
     <string name="tension">Напряженность</string>
     <string name="appointed">Назначен</string>
+    <string name="morning_recovery">Утреннее восстановление</string>
+    <string name="remote_training">Удаленная тренировка</string>
 
 
 </resources>
