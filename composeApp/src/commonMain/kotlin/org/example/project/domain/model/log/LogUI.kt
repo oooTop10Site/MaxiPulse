@@ -30,7 +30,8 @@ data class EventUI (
 
 enum class EventType(val title: String) {
     Training("Тренеровка"),
-    Championship("Чемпионат")
+    Championship("Чемпионат"),
+    Test("Тест")
 }
 
 enum class CriteriaUpload(val title: String, value: Int) {

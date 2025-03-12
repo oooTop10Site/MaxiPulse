@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import org.example.project.domain.model.widget.MinipulseWidgetTab.*
 import org.example.project.screens.tablet.miniPulseWidget.contents.morningRecovery.MorningRecoveryScreen
+import org.example.project.screens.tablet.miniPulseWidget.contents.remoteTraining.RemoteTrainingScreen
 import org.example.project.screens.tablet.tests.shuttleRun.result.SelectableTab
 import org.example.project.theme.MaxiPulsTheme
 import org.jetbrains.compose.resources.stringResource
@@ -74,13 +75,18 @@ class MiniPulseWidgetScreen : Screen {
                     modifier = Modifier.fillMaxHeight(),
                     color = MaxiPulsTheme.colors.uiKit.divider
                 )
-                when(state.currentTab) {
+                when (state.currentTab) {
                     MorningRecovery -> {
-                        MorningRecoveryScreen(modifier = Modifier.fillMaxHeight().weight(1f)).Content()
+                        MorningRecoveryScreen(
+                            modifier = Modifier.fillMaxHeight().weight(1f)
+                        ).Content()
                     }
+
                     BorgScale -> {}
                     RemoteTraining -> {
-
+                        RemoteTrainingScreen(
+                            modifier = Modifier.fillMaxHeight().weight(1f)
+                        ).Content()
                     }
                 }
             }

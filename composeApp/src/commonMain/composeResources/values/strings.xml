@@ -304,6 +304,13 @@
     <string name="appointed">Назначен</string>
     <string name="morning_recovery">Утреннее восстановление</string>
     <string name="remote_training">Удаленная тренировка</string>
+    <string name="in_process">В процессе</string>
+    <string name="ended">Завершенно</string>
+    <string name="create_training">Создать тренеровку</string>
+    <string name="people">человек</string>
+    <string name="create">Создать</string>
+    <string name="sportsmen">Спортсменты</string>
+    <string name="member_training">Участиники тренеровки</string>
 
 
 </resources>
