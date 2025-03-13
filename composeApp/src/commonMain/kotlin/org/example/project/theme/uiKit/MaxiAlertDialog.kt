@@ -81,7 +81,7 @@ fun MaxiAlertDialog(
                         style = MaxiPulsTheme.typography.regular.copy(
                             color = MaxiPulsTheme.colors.uiKit.textColor,
                             fontSize = 20.sp,
-                            lineHeight = 20.sp
+                            lineHeight = 24.sp
                         ),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = 40.dp)

@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import org.example.project.domain.model.widget.MinipulseWidgetTab.*
+import org.example.project.screens.tablet.miniPulseWidget.contents.RpeScale.RpeScaleScreen
 import org.example.project.screens.tablet.miniPulseWidget.contents.morningRecovery.MorningRecoveryScreen
 import org.example.project.screens.tablet.miniPulseWidget.contents.remoteTraining.RemoteTrainingScreen
 import org.example.project.screens.tablet.tests.shuttleRun.result.SelectableTab
@@ -82,7 +83,11 @@ class MiniPulseWidgetScreen : Screen {
                         ).Content()
                     }
 
-                    BorgScale -> {}
+                    BorgScale -> {
+                        RpeScaleScreen(
+                            modifier = Modifier.fillMaxHeight().weight(1f)
+                        ).Content()
+                    }
                     RemoteTraining -> {
                         RemoteTrainingScreen(
                             modifier = Modifier.fillMaxHeight().weight(1f)

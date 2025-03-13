@@ -13,14 +13,16 @@ data class RemoteTrainingState(
     val selectRemoteTraining: RemoteTrainingUI?,
     val tempCreateRemoteTrainingUI: RemoteTrainingUI?,
     val remoteTrainings: List<RemoteTrainingUI>,
-    val sportsmen: List<SportsmanUI>
+    val sportsmen: List<SportsmanUI>,
+    val selectUnFinishedRemoteTrainingId: String,
 ) {
     companion object {
         val InitState = RemoteTrainingState(
             selectRemoteTraining = null,
             tempCreateRemoteTrainingUI = null,
             remoteTrainings = emptyList(),
-            sportsmen = emptyList()
+            sportsmen = emptyList(),
+            selectUnFinishedRemoteTrainingId = ""
         )
     }
 

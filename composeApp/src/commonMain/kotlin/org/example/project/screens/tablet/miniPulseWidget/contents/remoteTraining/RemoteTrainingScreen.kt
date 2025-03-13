@@ -50,8 +50,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.currentOrThrow
+import maxipuls.composeapp.generated.resources.add_all
 import maxipuls.composeapp.generated.resources.age
 import maxipuls.composeapp.generated.resources.age_text
+import maxipuls.composeapp.generated.resources.attention
 import maxipuls.composeapp.generated.resources.back_ic
 import maxipuls.composeapp.generated.resources.cancel
 import maxipuls.composeapp.generated.resources.create
@@ -63,10 +65,14 @@ import maxipuls.composeapp.generated.resources.info_ic
 import maxipuls.composeapp.generated.resources.member_training
 import maxipuls.composeapp.generated.resources.people
 import maxipuls.composeapp.generated.resources.profile
+import maxipuls.composeapp.generated.resources.put_away_all
 import maxipuls.composeapp.generated.resources.sportsmen
+import maxipuls.composeapp.generated.resources.stop_training_attention
 import maxipuls.composeapp.generated.resources.title
+import maxipuls.composeapp.generated.resources.yes
 import org.example.project.domain.model.sportsman.SportsmanUI
 import org.example.project.domain.model.training.RemoteTrainingSportsmanStatus
+import org.example.project.domain.model.training.RemoteTrainingStatus
 import org.example.project.domain.model.training.RemoteTrainingUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.toUI
@@ -145,6 +151,26 @@ class RemoteTrainingScreen(private val modifier: Modifier = Modifier) : Screen {
 
         state.selectRemoteTraining?.let {
             RemoteTrainingInfo(viewModel, it)
+        }
+
+        if (state.selectUnFinishedRemoteTrainingId.isNotBlank()) {
+            MaxiAlertDialog(
+                modifier = Modifier.width(600.dp),
+                title = stringResource(Res.string.attention),
+                description = stringResource(Res.string.stop_training_attention),
+                acceptText = stringResource(Res.string.yes),
+                accept = {
+                    viewModel.finish(isHard = true)
+                },
+                cancel = {
+                    viewModel.selectUnFinishedRemoteTrainingId()
+                },
+                onDismiss = {
+                    viewModel.selectUnFinishedRemoteTrainingId()
+                },
+                cancelText = stringResource(Res.string.cancel),
+                alertDialogButtons = MaxiAlertDialogButtons.CancelAccept
+            )
         }
     }
 
@@ -287,15 +313,56 @@ class RemoteTrainingScreen(private val modifier: Modifier = Modifier) : Screen {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Spacer(Modifier.size(10.dp))
-                            Text(
-                                text = stringResource(Res.string.sportsmen),
-                                style = MaxiPulsTheme.typography.bold.copy(
-                                    fontSize = 14.sp,
-                                    lineHeight = 14.sp,
-                                ),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = stringResource(Res.string.sportsmen),
+                                    style = MaxiPulsTheme.typography.bold.copy(
+                                        fontSize = 14.sp,
+                                        lineHeight = 14.sp,
+                                    ),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Row(
+                                    modifier = Modifier.height(40.dp).background(
+                                        color = MaxiPulsTheme.colors.uiKit.primary,
+                                        shape = RoundedCornerShape(100.dp)
+                                    ).clip(RoundedCornerShape(100.dp)).clickableBlank {
+                                        sportsmen.filter { it.id !in tempRemoteTrainingUI.members.map { it.sportsmanUI.id } }
+                                            .forEach {
+                                                viewModel.selectMember(it)
+                                            }
+                                    },
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Spacer(Modifier.size(15.dp))
+                                    Text(
+                                        text = stringResource(Res.string.add_all),
+                                        style = MaxiPulsTheme.typography.medium.copy(
+                                            fontSize = 16.sp,
+                                            lineHeight = 16.sp,
+                                            color = MaxiPulsTheme.colors.uiKit.lightTextColor
+                                        ),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    Spacer(Modifier.size(10.dp))
+
+                                    Icon(
+                                        painter = painterResource(Res.drawable.back_ic),
+                                        contentDescription = null,
+                                        tint = MaxiPulsTheme.colors.uiKit.lightTextColor,
+                                        modifier = Modifier.size(20.dp).rotate(180f)
+                                    )
+
+
+                                    Spacer(Modifier.size(15.dp))
+                                }
+                            }
                             LazyColumn(
                                 contentPadding = PaddingValues(
                                     vertical = 13.dp,
@@ -337,15 +404,58 @@ class RemoteTrainingScreen(private val modifier: Modifier = Modifier) : Screen {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Spacer(Modifier.size(10.dp))
-                            Text(
-                                text = stringResource(Res.string.member_training),
-                                style = MaxiPulsTheme.typography.bold.copy(
-                                    fontSize = 14.sp,
-                                    lineHeight = 14.sp,
-                                ),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = stringResource(Res.string.member_training),
+                                    style = MaxiPulsTheme.typography.bold.copy(
+                                        fontSize = 14.sp,
+                                        lineHeight = 14.sp,
+                                    ),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+
+                                Row(
+                                    modifier = Modifier.height(40.dp).border(
+                                        width = 1.dp,
+                                        color = MaxiPulsTheme.colors.uiKit.primary,
+                                        shape = RoundedCornerShape(100.dp)
+                                    ).clip(RoundedCornerShape(100.dp)).clickableBlank {
+                                        sportsmen.filter { it.id in tempRemoteTrainingUI.members.map { it.sportsmanUI.id } }
+                                            .forEach {
+                                                viewModel.selectMember(it)
+                                            }
+                                    },
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Spacer(Modifier.size(15.dp))
+                                    Text(
+                                        text = stringResource(Res.string.put_away_all),
+                                        style = MaxiPulsTheme.typography.medium.copy(
+                                            fontSize = 16.sp,
+                                            lineHeight = 16.sp,
+                                            color = MaxiPulsTheme.colors.uiKit.primary
+                                        ),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    Spacer(Modifier.size(10.dp))
+
+                                    Icon(
+                                        painter = painterResource(Res.drawable.back_ic),
+                                        contentDescription = null,
+                                        tint = MaxiPulsTheme.colors.uiKit.primary,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+
+
+                                    Spacer(Modifier.size(15.dp))
+                                }
+                            }
                             LazyColumn(
                                 contentPadding = PaddingValues(
                                     vertical = 13.dp,
@@ -388,10 +498,10 @@ class RemoteTrainingScreen(private val modifier: Modifier = Modifier) : Screen {
     ) {
         MaxiAlertDialog(
             modifier = Modifier.fillMaxHeight(0.85f).fillMaxWidth(0.85f),
-            alertDialogButtons = MaxiAlertDialogButtons.Accept,
+            alertDialogButtons = if (selectRemoteTraining.status != RemoteTrainingStatus.End) MaxiAlertDialogButtons.Accept else null,
             acceptText = stringResource(Res.string.end),
             accept = {
-                //todo()
+                viewModel.finish()
             },
             onDismiss = {
                 viewModel.dismissSelectTraining()
@@ -503,7 +613,7 @@ private fun SportsmanExistOrNoCard(
                             width = 1.dp,
                             color = MaxiPulsTheme.colors.uiKit.primary,
                             shape = RoundedCornerShape(topStart = 25.dp, bottomStart = 25.dp),
-                        )
+                        ).background(color = MaxiPulsTheme.colors.uiKit.white)
                         .clickableBlank {
                             onDelete()
                         }, contentAlignment = Alignment.Center

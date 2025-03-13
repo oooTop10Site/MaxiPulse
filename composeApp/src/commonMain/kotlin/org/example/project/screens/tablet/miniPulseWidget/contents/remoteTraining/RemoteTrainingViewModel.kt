@@ -20,6 +20,15 @@ internal class RemoteTrainingViewModel : BaseScreenModel<RemoteTrainingState, Re
 
     private val gamerRepository: GamerRepository by inject()
 
+    fun selectUnFinishedRemoteTrainingId(trainingId: String = state.selectUnFinishedRemoteTrainingId) =
+        intent {
+            reduce {
+                state.copy(
+                    selectUnFinishedRemoteTrainingId = if (state.selectUnFinishedRemoteTrainingId == trainingId) "" else trainingId
+                )
+            }
+        }
+
     fun loadRemoteTraining() = intent {
         reduce {
             state.copy(
@@ -308,6 +317,29 @@ internal class RemoteTrainingViewModel : BaseScreenModel<RemoteTrainingState, Re
                     )
                 )
             )
+        }
+    }
+
+    fun finish(isHard: Boolean = false) = intent {
+        println("state.selectRemoteTraining?.members - ${state.selectRemoteTraining?.members}")
+        if (state.selectRemoteTraining?.members.orEmpty()
+                .all() { it.status == RemoteTrainingSportsmanStatus.End }
+            || isHard ) {
+            reduce {
+                state.copy(
+                    remoteTrainings = state.remoteTrainings.map {
+                        if (it.id == state.selectRemoteTraining?.id) {
+                            it.copy(status = RemoteTrainingStatus.End, members = it.members.map { it.copy(status = RemoteTrainingSportsmanStatus.End) })
+                        } else it
+                    },
+                    selectRemoteTraining = null,
+                    selectUnFinishedRemoteTrainingId = ""
+                )
+            }
+        } else {
+            reduce {
+                state.copy(selectUnFinishedRemoteTrainingId = state.selectRemoteTraining?.id.orEmpty())
+            }
         }
     }
 
