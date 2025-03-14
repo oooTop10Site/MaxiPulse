@@ -94,6 +94,27 @@ fun Float.roundToIntOrNull(): Int? {
     }
 }
 
+fun Double.rpeToColor(): Color {
+    return when (this) {
+        in 1.0..4.9 -> Color(0xFF95D14B)
+        in 5.0..7.9 -> Color(0xFFFFA93A)
+        in 8.0..10.0 -> Color(0xFFDF0B40)
+        else -> {
+            Color.Unspecified
+        }
+    }
+}
+
+fun Int.rpeToColor(): Color {
+    return when (this) {
+        in 1..4 -> Color(0xFF95D14B)
+        in 5..7 -> Color(0xFFFFA93A)
+        in 8..10 -> Color(0xFFDF0B40)
+        else -> {
+            Color.Unspecified
+        }
+    }
+}
 //fun Int.toRightMark(): Double {
 //    var result = this
 //    if (result > 140) {

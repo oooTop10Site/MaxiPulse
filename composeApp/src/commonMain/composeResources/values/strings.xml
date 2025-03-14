@@ -315,6 +315,8 @@
     <string name="add_all">Добавить всех</string>
     <string name="self_training">Самостоятельная тренеровка</string>
     <string name="scale_rpe">Шкала RPE</string>
+    <string name="avg_score_rpe">Средняя оценка PRE</string>
+    <string name="trimp_avg">ТРИМП средний</string>
     <string name="stop_training_attention">Некотрые спортсмены ещё не выполнили\nзадачу. Вы уверены, что хотите завершить\nсобытие?</string>
 
 

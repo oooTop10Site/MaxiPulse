@@ -53,7 +53,9 @@ data class LogState(
                         type = if (index % 2 == 0) EventType.Training else EventType.Championship,
                         title = if (index % 2 == 0) "Тренировка" else "Чемпионат"
                     ),
-                    duration = (index + 1) * 600L // Продолжительность в секундах (10 минут * index)
+                    duration = (index + 1) * 600L, // Продолжительность в секундах (10 минут * index)
+                    avgTrimp = 0,
+                    sportsmen = emptyList()
                 )
             },
             filterEvent = "",

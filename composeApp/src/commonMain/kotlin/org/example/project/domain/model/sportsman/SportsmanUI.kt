@@ -30,6 +30,9 @@ data class SportsmanUI(
     val fio: String
         get() = "$lastname $name $middleName"
 
+    val fioShort: String
+        get() = "$lastname ${name.firstOrNull()?: ""}.${middleName.firstOrNull()?: ""}."
+
     companion object {
         val Default = SportsmanUI(
             "", 0, "", "", "", 0, 0, 0, "", true, 0, 0.0, 0, 0, 0, 0, null, "",

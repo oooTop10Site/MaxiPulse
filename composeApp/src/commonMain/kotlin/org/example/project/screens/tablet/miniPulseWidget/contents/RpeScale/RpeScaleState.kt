@@ -10,7 +10,7 @@ data class RpeScaleState(
     val filter: String,
     val filters: List<String>,
     val trainings: List<LogUI>,
-    val rpies: List<RpeUI>
+    val selectTraining: LogUI?,
 ) {
 
     companion object {
@@ -19,7 +19,7 @@ data class RpeScaleState(
             filters = listOf("Сначала новые", "Сначала старые"),
             selectWeek = getCurrentWeekDates(),
             trainings = emptyList(),
-            rpies = emptyList()
+            selectTraining = null,
         )
     }
 

@@ -1,6 +1,7 @@
 package org.example.project.domain.model.log
 
 import kotlinx.datetime.LocalDateTime
+import org.example.project.domain.model.rpe.RpeUI
 import org.example.project.domain.model.sportsman.SportsmanUI
 import org.example.project.ext.toTimeUI
 import org.example.project.ext.toUI
@@ -11,6 +12,8 @@ data class LogUI(
     val sportsmanUI: SportsmanUI,
     val event: EventUI,
     val duration: Long,
+    val avgTrimp: Int,
+    val sportsmen: List<RpeUI>
 ) {
     val dateText: String
         get() = datetime.date.toUI()
