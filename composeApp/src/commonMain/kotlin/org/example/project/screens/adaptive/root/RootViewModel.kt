@@ -14,6 +14,7 @@ import kotlinx.coroutines.withContext
 import org.example.project.data.repository.AiAssistantManager
 import org.example.project.domain.manager.MessageObserverManager
 import org.example.project.domain.repository.AiAssistantRepository
+import org.example.project.platform.AudioRecorder
 import org.example.project.platform.BaseScreenModel
 import org.example.project.platform.Either
 import org.example.project.platform.Failure
@@ -26,7 +27,8 @@ import kotlin.getValue
 internal class RootViewModel : ViewModel(), KoinComponent {
     val observerManager: MessageObserverManager by inject()
     val aiManager: AiAssistantManager by inject()
-    val speechRecognizer: SpeechToTextRecognizer by inject()
+//    val speechRecognizer: SpeechToTextRecognizer by inject()
+    val audioRecorder: AudioRecorder by inject()
     val audioPermissionsService: PermissionsService by inject()
     private val aiRepository: AiAssistantRepository by inject()
 

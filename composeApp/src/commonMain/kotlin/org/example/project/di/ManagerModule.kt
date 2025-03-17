@@ -10,6 +10,7 @@ import org.example.project.domain.manager.AuthManagerImpl
 import org.example.project.domain.manager.MessageObserverManager
 import org.example.project.domain.manager.MessageObserverManagerImpl
 import org.example.project.domain.repository.AuthRepository
+import org.example.project.platform.AudioRecorder
 import org.example.project.platform.ScanBluetoothSensorsManager
 import org.example.project.platform.SpeechToTextRecognizer
 import org.koin.core.module.dsl.bind
@@ -24,5 +25,6 @@ val moduleManager = module {
     singleOf(::AiAssistantManagerImpl) { bind<AiAssistantManager>() }
     singleOf(::ScanBluetoothSensorsManager)
     factoryOf(::SpeechToTextRecognizer)
+    factoryOf(::AudioRecorder)
 
 }

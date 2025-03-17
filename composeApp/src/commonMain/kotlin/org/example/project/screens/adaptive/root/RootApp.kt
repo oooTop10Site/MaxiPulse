@@ -87,14 +87,11 @@ fun RootApp() {
             val stateHost = remember { SnackbarHostState() }
             val viewModel: RootViewModel = viewModel { RootViewModel() }
             LaunchedEffect(viewModel) {
-                viewModel.speechRecognizer.setOnResultListener { text ->
+                viewModel.audioRecorder.setOnRecordingStoppedListener { text ->
                     isRecording = false
                     recognizedText = text
                     println("ОТПРАВКА СООБЩЕНИЕ - $recognizedText")
                     viewModel.sendMessage(recognizedText)
-                }
-                viewModel.speechRecognizer.setOnPartialResultListener { text ->
-                    recognizedText = text
                 }
                 launch {
                     println("алу я тут")
@@ -186,7 +183,7 @@ fun RootApp() {
                             shape = CircleShape,
                             width = 1.dp
                         ).align(Alignment.Center).clickableBlank {
-                            viewModel.speechRecognizer.stopListening()
+                            viewModel.audioRecorder.stopRecording()
                             isRecording = false
                         }
                     ) {
@@ -222,7 +219,7 @@ fun RootApp() {
                                             )
                                                 .granted()
                                         ) {
-                                            viewModel.speechRecognizer.startListening()
+                                            viewModel.audioRecorder.startRecording()
                                             isRecording = true
                                             audioPermission = true
                                         } else {
