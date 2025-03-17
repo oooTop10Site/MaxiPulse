@@ -31,6 +31,7 @@ import kotlinx.datetime.LocalDate
 import org.example.project.ext.getCurrentWeekDates
 import org.example.project.ext.toAnalizeMorningRecoveryBackgroundColor
 import org.example.project.ext.toAnalizeTensionBackgroundColor
+import org.example.project.ext.toMorningRecoveryCenter
 import org.example.project.ext.toText
 import org.example.project.ext.toTextShort
 import org.example.project.ext.toUIDayOfMonth
@@ -66,7 +67,8 @@ fun MorningRecoveryGraph(
     val zones = listOf(
         secondParam.toFloat() to maxValue,
         firstParam.toFloat() to secondParam.toFloat(),
-        0f to firstParam.toFloat()
+        15f to firstParam.toFloat(),
+        0f to 15f
     )
 
     Column(modifier = modifier) {
@@ -84,18 +86,18 @@ fun MorningRecoveryGraph(
                             modifier = Modifier.width(72.dp).fillMaxHeight(),
                             contentAlignment = Alignment.TopStart
                         ) {
-                            Text(
-                                text = if (end == 115f) 100.toString() else end.toInt().toString(),
-                                style = MaxiPulsTheme.typography.bold.copy(
-                                    fontSize = 14.sp,
-                                    color = MaxiPulsTheme.colors.uiKit.textColor,
-                                    textAlign = TextAlign.Start
-                                ),
-                                modifier = Modifier.width(72.dp),
-                                maxLines = 1,
-                                textAlign = TextAlign.Center,
-                                overflow = TextOverflow.Ellipsis
-                            )
+//                            Text(
+//                                text = if (end == 115f) 100.toString() else end.toInt().toString(),
+//                                style = MaxiPulsTheme.typography.bold.copy(
+//                                    fontSize = 14.sp,
+//                                    color = MaxiPulsTheme.colors.uiKit.textColor,
+//                                    textAlign = TextAlign.Start
+//                                ),
+//                                modifier = Modifier.width(72.dp),
+//                                maxLines = 1,
+//                                textAlign = TextAlign.Center,
+//                                overflow = TextOverflow.Ellipsis
+//                            )
                         }
                         Box(
                             Modifier.weight(1f).fillMaxHeight().background(
@@ -121,7 +123,12 @@ fun MorningRecoveryGraph(
                     (size.width - elementWidth * values.size) / max(values.size - 1, 1)
                 val circleCenters = mutableListOf<Offset>()
 
-                values.forEachIndexed { index, data ->
+                values.forEachIndexed { index, value ->
+                    val data = value.toMorningRecoveryCenter(
+                        first = firstParam,
+                        second = secondParam,
+                        max = maxValue.toInt()
+                    )
                     if (data != 0) {
                         val x = elementWidth / 2 + index * (elementWidth + spaceBetween)
                         val normalizedHeight = normalizeValueInZones(0f, data.toFloat(), zones)

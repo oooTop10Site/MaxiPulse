@@ -33,9 +33,20 @@ fun Double.toAnalizeTensionBackgroundColor(): Color {
     }
 }
 
+fun Int.toMorningRecoveryCenter(first: Int, second: Int, max: Int): Int {
+    return when (this) {
+        in 0..15 -> 7
+        in 15..first -> 15 + (first-15)/2
+        in first..second -> first + (second-first)/2
+        in second..max -> second + (max-second)/2
+        else -> 7
+    }
+}
+
 fun Int.toAnalizeMorningRecoveryBackgroundColor(first: Int, second: Int, max: Int): Color {
     return when (this) {
-        in 0..first -> Color(0xFFDF0B40)
+        in 0..15 -> Color(0xFFB4AD9C)
+        in 15..first -> Color(0xFFDF0B40)
         in first..second -> Color(0xFFFFA93A)
         in second..max -> Color(0xFF95D14B)
         else -> Color.Unspecified

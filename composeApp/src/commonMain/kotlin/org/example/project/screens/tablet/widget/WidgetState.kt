@@ -39,7 +39,7 @@ data class WidgetState(
                     background = Res.drawable.purple_brush,
                     icon = Res.drawable.control_analize,
                     size = WidgetSize.Small,
-                    event = WidgetUIEvent.AppMiniPulse,
+                    event = WidgetUIEvent.Nothing,
                     title = Res.string.control_and_analize
                 ),
                 WidgetUI(
@@ -47,7 +47,7 @@ data class WidgetState(
                     background = Res.drawable.purple_brush,
                     icon = Res.drawable.test_5x54,
                     size = WidgetSize.Small,
-                    event = WidgetUIEvent.AppMiniPulse,
+                    event = WidgetUIEvent.Nothing,
                     title = Res.string.test_4x54
                 ),
                 WidgetUI(
@@ -55,7 +55,7 @@ data class WidgetState(
                     background = Res.drawable.purple_brush,
                     icon = Res.drawable.mark_function_state,
                     size = WidgetSize.Small,
-                    event = WidgetUIEvent.AppMiniPulse,
+                    event = WidgetUIEvent.Nothing,
                     title = Res.string.mark_function_state_by_cardio_beat
                 ),
                 WidgetUI(
@@ -63,7 +63,7 @@ data class WidgetState(
                     background = Res.drawable.purple_brush,
                     icon = Res.drawable.yyir,
                     size = WidgetSize.Small,
-                    event = WidgetUIEvent.AppMiniPulse,
+                    event = WidgetUIEvent.Nothing,
                     title = Res.string.yyir1
                 ),
                 WidgetUI(
@@ -71,7 +71,7 @@ data class WidgetState(
                     background = Res.drawable.purple_brush,
                     icon = Res.drawable.control_analize,
                     size = WidgetSize.Large,
-                    event = WidgetUIEvent.AppMiniPulse,
+                    event = WidgetUIEvent.Nothing,
                     title = Res.string.control_and_analize
                 ),
             ),

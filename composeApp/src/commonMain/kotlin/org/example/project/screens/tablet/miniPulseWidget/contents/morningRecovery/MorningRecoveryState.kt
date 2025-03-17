@@ -29,7 +29,7 @@ data class MorningRecoveryState(
                     name = "Иван",
                     lastname = "Петров",
                     age = 25,
-                    value = 70,
+                    value = 0,
                     date = LocalDate(2025, 3, 10),
                     status = TestResultStatus.Normal
                 ),
@@ -62,7 +62,7 @@ data class MorningRecoveryState(
                     name = "Иван",
                     lastname = "Петров",
                     age = 25,
-                    value = 60,
+                    value = 0,
                     date = LocalDate(2025, 3, 13),
                     status = TestResultStatus.Bad
                 ),
@@ -108,7 +108,7 @@ data class MorningRecoveryState(
                     name = "Алексей",
                     lastname = "Смирнов",
                     age = 27,
-                    value = 65,
+                    value = 0,
                     date = LocalDate(2025, 3, 10),
                     status = TestResultStatus.Normal
                 ),

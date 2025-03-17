@@ -45,6 +45,7 @@ import org.example.project.theme.uiKit.MaxiPageContainer
 import org.example.project.theme.uiKit.MaxiTextFieldMenu
 import org.example.project.theme.uiKit.TopBarTitle
 import org.example.project.utils.Constants
+import org.example.project.utils.debouncedClick
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -172,14 +173,15 @@ class LogScreen : Screen {
                             logUI = it,
                             onDelete = {
                                 viewModel.deleteLog(it)
-                            }
-                        ) {
-                            rootNavigator.push(
-                                TrainingResultScreen(
-                                    emptyList(), emptyList()
+                            },
+                            onClick = debouncedClick {
+                                rootNavigator.push(
+                                    TrainingResultScreen(
+                                        emptyList(), emptyList()
+                                    )
                                 )
-                            )
-                        }
+                            }
+                        )
                     }
                 }
             }

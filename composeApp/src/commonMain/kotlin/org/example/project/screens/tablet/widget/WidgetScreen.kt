@@ -217,6 +217,8 @@ class WidgetScreen : Screen {
                                             WidgetUIEvent.AppMiniPulse -> navigator.push(
                                                 MiniPulseWidgetScreen()
                                             )
+
+                                            else -> {}
                                         }
                                     }
                                 )

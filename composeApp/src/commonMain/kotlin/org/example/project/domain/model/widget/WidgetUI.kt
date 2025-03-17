@@ -15,4 +15,5 @@ data class WidgetUI(
 
 sealed class WidgetUIEvent() {
     object AppMiniPulse: WidgetUIEvent()
+    object Nothing: WidgetUIEvent()
 }
