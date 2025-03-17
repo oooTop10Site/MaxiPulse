@@ -62,15 +62,16 @@ fun MorningRecoveryGraph(
         in 14..15 -> 85
         else -> 80
     }
-    val maxValue = 100f
+    val maxValue = 115f
     val zones = listOf(
         secondParam.toFloat() to maxValue,
         firstParam.toFloat() to secondParam.toFloat(),
         0f to firstParam.toFloat()
     )
+
     Column(modifier = modifier) {
         Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
-            // Фон с зонами (оставляем без изменений)
+            // Фон с зонами
             Column(modifier = Modifier.fillMaxSize()) {
                 zones.forEachIndexed { index, (start, end) ->
                     val shape = when {
@@ -84,7 +85,7 @@ fun MorningRecoveryGraph(
                             contentAlignment = Alignment.TopStart
                         ) {
                             Text(
-                                text = end.toInt().toString(),
+                                text = if (end == 115f) 100.toString() else end.toInt().toString(),
                                 style = MaxiPulsTheme.typography.bold.copy(
                                     fontSize = 14.sp,
                                     color = MaxiPulsTheme.colors.uiKit.textColor,
@@ -107,37 +108,7 @@ fun MorningRecoveryGraph(
                     }
                 }
             }
-
-            // Точки с учетом смещения
-            Row(
-                modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth()
-                    .padding(start = 112.dp, end = 40.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
-            ) {
-                values.forEach { value ->
-                    Box(Modifier, contentAlignment = Alignment.Center) {
-                        val normalizedHeight = normalizeValueInZones(0f, value.toFloat(), zones)
-                        val adjustedHeight = (0.15f + normalizedHeight).coerceIn(0f, 1f)
-                        Column(
-                            modifier = Modifier.fillMaxHeight(adjustedHeight)
-                                .align(Alignment.BottomCenter),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Box(
-                                modifier = Modifier.size(30.dp).clip(CircleShape)
-                                    .background(
-                                        shape = CircleShape,
-                                        color = MaxiPulsTheme.colors.uiKit.white
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {}
-                            Spacer(Modifier.weight(1f))
-                        }
-                    }
-                }
-            }
-
+            val dotColor = MaxiPulsTheme.colors.uiKit.white
             Canvas(
                 modifier = Modifier.fillMaxSize().padding(start = 72.dp).border(
                     width = 1.dp,
@@ -146,21 +117,22 @@ fun MorningRecoveryGraph(
                 ).padding(start = 40.dp, end = 40.dp)
             ) {
                 val elementWidth = 30.dp.toPx()
-                val spaceBetween = (size.width - elementWidth * values.size) / (values.size - 1)
+                val spaceBetween =
+                    (size.width - elementWidth * values.size) / max(values.size - 1, 1)
                 val circleCenters = mutableListOf<Offset>()
-                val pointOffsetPx = 15.dp.toPx() // Смещение в пикселях (половина высоты точки)
 
                 values.forEachIndexed { index, data ->
                     if (data != 0) {
                         val x = elementWidth / 2 + index * (elementWidth + spaceBetween)
                         val normalizedHeight = normalizeValueInZones(0f, data.toFloat(), zones)
-                        val y = size.height * (1f - normalizedHeight.coerceIn(0f, 1f)) - pointOffsetPx // Смещаем точку вверх
+                        val y = size.height * (1f - normalizedHeight.coerceIn(0f, 1f))
                         circleCenters.add(Offset(x, y))
                     }
                 }
 
+                // Рисуем линии
                 for (i in 0 until circleCenters.size - 1) {
-                    if (circleCenters[i + 1].y >= -pointOffsetPx) { // Измененное условие
+                    if (circleCenters[i + 1].y >= 0f) {
                         drawLine(
                             color = Color.White,
                             start = circleCenters[i],
@@ -169,11 +141,19 @@ fun MorningRecoveryGraph(
                         )
                     }
                 }
+
+                // Рисуем точки поверх линий
+                circleCenters.forEach { center ->
+                    drawCircle(
+                        color = dotColor,
+                        radius = 15.dp.toPx(),
+                        center = center
+                    )
+                }
             }
         }
 
         Spacer(Modifier.size(20.dp))
-        // Точки с учетом смещения
         Row(
             modifier = Modifier.fillMaxWidth()
                 .padding(start = 112.dp, end = 40.dp),
@@ -196,7 +176,6 @@ fun MorningRecoveryGraph(
     }
 }
 
-// Вспомогательная функция для нормализации значений в зонах (без изменений)
 private fun normalizeValueInZones(
     startValue: Float,
     endValue: Float,

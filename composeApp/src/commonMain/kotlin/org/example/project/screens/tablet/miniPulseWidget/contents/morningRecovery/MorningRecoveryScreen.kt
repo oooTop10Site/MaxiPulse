@@ -49,6 +49,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.drop_ic
+import maxipuls.composeapp.generated.resources.info_ic
+import maxipuls.composeapp.generated.resources.morining_recovery_info
 import maxipuls.composeapp.generated.resources.profile
 import org.example.project.domain.model.test.SportsmanTestResultUI
 import org.example.project.ext.clickableBlank
@@ -56,10 +58,12 @@ import org.example.project.ext.maxOf
 import org.example.project.ext.toDayOfWeekFullDate
 import org.example.project.screens.tablet.options.utp.graphs.MorningRecoveryGraph
 import org.example.project.theme.MaxiPulsTheme
+import org.example.project.theme.uiKit.MaxiAlertDialog
 import org.example.project.theme.uiKit.MaxiImage
 import org.example.project.theme.uiKit.NextIcon
 import org.example.project.utils.orEmpty
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 class MorningRecoveryScreen(private val modifier: Modifier = Modifier) : Screen {
 
@@ -114,6 +118,14 @@ class MorningRecoveryScreen(private val modifier: Modifier = Modifier) : Screen 
                             viewModel.incrementDate()
                         }
                     }
+                    Icon(
+                        painter = painterResource(Res.drawable.info_ic),
+                        tint = MaxiPulsTheme.colors.uiKit.primary,
+                        modifier = Modifier.size(40.dp).align(Alignment.CenterEnd).clickableBlank {
+                            viewModel.changeAlertDialog()
+                        },
+                        contentDescription = null
+                    )
                 }
                 Spacer(Modifier.size(30.dp))
             }
@@ -183,6 +195,21 @@ class MorningRecoveryScreen(private val modifier: Modifier = Modifier) : Screen 
                     }
                 }
             }
+        }
+
+
+        if (state.isAlertDialog) {
+            MaxiAlertDialog(
+                modifier = Modifier.width(600.dp),
+                paddingAfterTitle = false,
+                alertDialogButtons = null,
+                description = stringResource(Res.string.morining_recovery_info),
+                onDismiss = {
+                    viewModel.changeAlertDialog()
+                },
+                acceptText = "",
+                accept = {}
+            )
         }
 
     }

@@ -19,6 +19,11 @@ actual class SpeechToTextRecognizer : KoinComponent {
     private var onPartialResultListener: ((String) -> Unit)? = null
 
     actual fun startListening() {
+        if (!SpeechRecognizer.isRecognitionAvailable(context)) {
+            println("Speech recognition is NOT available on this device")
+        } else {
+            println("Speech recognition is available")
+        }
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ru-RU") // Принудительно указываем русский язык
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH) // Улучшенное распознавание

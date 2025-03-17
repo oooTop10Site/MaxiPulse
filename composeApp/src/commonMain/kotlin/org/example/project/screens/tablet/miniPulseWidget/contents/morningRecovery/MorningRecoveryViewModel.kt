@@ -33,6 +33,14 @@ internal class MorningRecoveryViewModel :
         }
     }
 
+    fun changeAlertDialog() = intent {
+        reduce {
+            state.copy(
+                isAlertDialog = !state.isAlertDialog
+            )
+        }
+    }
+
     fun changeIsExpand(selectSportsmanId: String? = null) = intent {
         reduce {
             state.copy(

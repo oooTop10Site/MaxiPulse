@@ -13,7 +13,8 @@ data class MorningRecoveryState(
     val currentWeek: List<LocalDate>,
     val users: List<SportsmanTestResultUI>,
     val filterUsers: List<SportsmanTestResultUI>,
-    val selectSportsman: List<SportsmanTestResultUI>?
+    val selectSportsman: List<SportsmanTestResultUI>?,
+    val isAlertDialog: Boolean,
 ) {
 
     companion object {
@@ -259,7 +260,8 @@ data class MorningRecoveryState(
             ),
             filterUsers = emptyList(),
             currentWeek = getCurrentWeekDates(),
-            selectSportsman = null
+            selectSportsman = null,
+            isAlertDialog = false
         )
     }
 }
