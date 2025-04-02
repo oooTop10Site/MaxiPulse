@@ -324,12 +324,15 @@ internal class RemoteTrainingViewModel : BaseScreenModel<RemoteTrainingState, Re
         println("state.selectRemoteTraining?.members - ${state.selectRemoteTraining?.members}")
         if (state.selectRemoteTraining?.members.orEmpty()
                 .all() { it.status == RemoteTrainingSportsmanStatus.End }
-            || isHard ) {
+            || isHard
+        ) {
             reduce {
                 state.copy(
                     remoteTrainings = state.remoteTrainings.map {
                         if (it.id == state.selectRemoteTraining?.id) {
-                            it.copy(status = RemoteTrainingStatus.End, members = it.members.map { it.copy(status = RemoteTrainingSportsmanStatus.End) })
+                            it.copy(
+                                status = RemoteTrainingStatus.End,
+                                members = it.members.map { it.copy(status = RemoteTrainingSportsmanStatus.End) })
                         } else it
                     },
                     selectRemoteTraining = null,
@@ -340,6 +343,27 @@ internal class RemoteTrainingViewModel : BaseScreenModel<RemoteTrainingState, Re
             reduce {
                 state.copy(selectUnFinishedRemoteTrainingId = state.selectRemoteTraining?.id.orEmpty())
             }
+        }
+    }
+
+    fun deleteRemoteTraining(remoteTrainingId: String, hardDelete: Boolean) = intent {
+        if (hardDelete) {
+            reduce {
+                state.copy(
+                    remoteTrainings = state.remoteTrainings.filter { it.id != remoteTrainingId },
+                    tempDeleteRemoteTrainingId = ""
+                )
+            }
+        } else {
+            changeTempDeleteTrainingId(remoteTrainingId)
+        }
+    }
+
+    fun changeTempDeleteTrainingId(remoteTrainingId: String) = intent {
+        reduce {
+            state.copy(
+                tempDeleteRemoteTrainingId = remoteTrainingId
+            )
         }
     }
 

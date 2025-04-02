@@ -3,6 +3,7 @@ package org.example.project.screens.tablet.miniPulseWidget.contents.RpeScale
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,16 +48,23 @@ import androidx.compose.ui.unit.Dp
 import cafe.adriel.voyager.navigator.currentOrThrow
 import maxipuls.composeapp.generated.resources.Res
 import maxipuls.composeapp.generated.resources.avg_score_rpe
+import maxipuls.composeapp.generated.resources.cancel
+import maxipuls.composeapp.generated.resources.history
 import maxipuls.composeapp.generated.resources.info_ic
+import maxipuls.composeapp.generated.resources.save
 import maxipuls.composeapp.generated.resources.trash
 import maxipuls.composeapp.generated.resources.trimp
 import maxipuls.composeapp.generated.resources.trimp_avg
 import org.example.project.domain.model.log.LogUI
+import org.example.project.domain.model.log.RpeLogUI
 import org.example.project.domain.model.rpe.RpeUI
 import org.example.project.ext.clickableBlank
 import org.example.project.ext.rpeToColor
 import org.example.project.ext.toUI
+import org.example.project.ext.toUIDayOfMonth
 import org.example.project.screens.adaptive.root.ScreenSize
+import org.example.project.screens.adaptive.root.navigateEvent
+import org.example.project.theme.uiKit.MaxiAlertDialog
 import org.example.project.theme.uiKit.MaxiTextFieldMenu
 import org.example.project.utils.Constants
 import org.jetbrains.compose.resources.painterResource
@@ -68,7 +76,6 @@ class RpeScaleScreen(private val modifier: Modifier = Modifier) : Screen {
     override fun Content() {
         val viewModel = rememberScreenModel { RpeScaleViewModel() }
         val state by viewModel.stateFlow.collectAsState()
-
         LaunchedEffect(viewModel) {
             viewModel.loadTrainings()
         }
@@ -146,8 +153,8 @@ class RpeScaleScreen(private val modifier: Modifier = Modifier) : Screen {
                 ) {
                     items(state.trainings) {
                         RpeTrainingCard(
-                            modifier = Modifier.fillMaxWidth().height(125.dp),
-                            logUI = it,
+                            modifier = Modifier.fillMaxWidth().height(84.dp),
+                            rpeLogUI = it,
                             isSelect = it == state.selectTraining
                         ) {
                             viewModel.selectTraining(it)
@@ -222,6 +229,9 @@ class RpeScaleScreen(private val modifier: Modifier = Modifier) : Screen {
                                 RowItem(
                                     rpeUI = it,
                                     modifier = Modifier.fillMaxWidth().height(44.dp)
+                                        .clickableBlank {
+                                            viewModel.selectSportsman(it.sportsmanUI.id)
+                                        }
                                 )
                                 HorizontalDivider(
                                     modifier = Modifier.fillMaxWidth(),
@@ -252,6 +262,132 @@ class RpeScaleScreen(private val modifier: Modifier = Modifier) : Screen {
                         }
                     }
                 }
+            }
+
+            if (state.selectSportsmanId != null) {
+                MaxiAlertDialog(
+                    modifier = Modifier.size(width = 589.dp, height = 560.dp),
+                    descriptionContent = {
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            Box(modifier = Modifier.fillMaxWidth()) {
+                                BackIcon(
+                                    modifier = Modifier.size(40.dp).align(Alignment.CenterStart)
+                                ) {
+                                    viewModel.dismissSelectSportsman()
+                                }
+
+                                Text(
+                                    text = stringResource(Res.string.history),
+                                    style = MaxiPulsTheme.typography.bold.copy(
+                                        fontSize = 20.sp,
+                                        lineHeight = 20.sp,
+                                        color = MaxiPulsTheme.colors.uiKit.textColor
+                                    ),
+                                    modifier = Modifier.align(Alignment.Center)
+                                )
+
+
+                            }
+
+                            Spacer(Modifier.size(40.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth().weight(1f).border(
+                                    width = 1.dp,
+                                    color = MaxiPulsTheme.colors.uiKit.divider,
+                                    shape = RoundedCornerShape(50.dp)
+                                )
+                            ) {
+                                state.selectSportsmanRpe.forEachIndexed { index, item ->
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Box(
+                                            modifier = Modifier.height(49.dp).fillMaxWidth(),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+
+                                            Text(
+                                                text = "${item.score}",
+                                                style = MaxiPulsTheme.typography.regular.copy(
+                                                    fontSize = 20.sp,
+                                                    lineHeight = 20.sp,
+                                                    color = item.score.rpeToColor(),
+                                                )
+                                            )
+                                        }
+                                        HorizontalDivider(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            color = MaxiPulsTheme.colors.uiKit.divider
+                                        )
+                                        Spacer(Modifier.size(17.dp))
+                                        Column(
+                                            modifier = Modifier.fillMaxWidth().weight(1f),
+                                            verticalArrangement = Arrangement.Bottom,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            if (1f - item.score / 10 > 0f) {
+                                                Box(modifier = Modifier.weight(1f - item.score / 10))
+                                            }
+                                            if (item.score != 0) {
+                                                Box(
+                                                    modifier = Modifier.width(14.dp)
+                                                        .weight(item.score.toFloat() / 10)
+                                                        .background(
+                                                            color = item.score.rpeToColor(),
+                                                            shape = RoundedCornerShape(
+                                                                topStart = 25.dp,
+                                                                topEnd = 25.dp
+                                                            ),
+                                                        )
+                                                )
+                                            }
+                                        }
+                                        Spacer(Modifier.size(17.dp))
+                                        HorizontalDivider(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            color = MaxiPulsTheme.colors.uiKit.divider
+                                        )
+                                        Box(
+                                            modifier = Modifier.height(88.dp).fillMaxWidth(),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = "${item.localDateTime.date.toUIDayOfMonth()}\n${item.localDateTime.time.toUI()}",
+                                                style = MaxiPulsTheme.typography.regular.copy(
+                                                    fontSize = 20.sp,
+                                                    lineHeight = 26.sp,
+                                                    color = MaxiPulsTheme.colors.uiKit.textColor,
+                                                ),
+                                                modifier = Modifier.padding(10.dp)
+                                            )
+                                        }
+
+                                    }
+
+                                    if (index != state.selectSportsmanRpe.lastIndex) {
+                                        VerticalDivider(
+                                            modifier = Modifier.fillMaxHeight(),
+                                            color = MaxiPulsTheme.colors.uiKit.divider
+                                        )
+                                    }
+
+                                }
+                            }
+                            Spacer(Modifier.size(40.dp))
+                        }
+                    },
+                    onDismiss = {
+                        viewModel.dismissSelectSportsman()
+                    },
+                    accept = {
+                        viewModel.dismissSelectSportsman()
+                    },
+                    alertDialogButtons = null,
+                    acceptText = stringResource(Res.string.save),
+                    cancel = {
+                        viewModel.dismissSelectSportsman()
+                    },
+                    cancelText = stringResource(Res.string.cancel)
+                )
             }
         }
 
@@ -367,7 +503,7 @@ private fun RowItem(modifier: Modifier = Modifier, rpeUI: RpeUI) {
 @Composable
 private fun RpeTrainingCard(
     modifier: Modifier = Modifier,
-    logUI: LogUI,
+    rpeLogUI: RpeLogUI,
     isSelect: Boolean,
     onClick: () -> Unit,
 ) {
@@ -389,7 +525,7 @@ private fun RpeTrainingCard(
         ) {
             Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = logUI.dateText,
+                    text = rpeLogUI.dateText,
                     style = MaxiPulsTheme.typography.bold.copy(
                         color = textColor,
                         fontSize = 14.sp,
@@ -403,7 +539,7 @@ private fun RpeTrainingCard(
                 Spacer(Modifier.size(5.dp))
 
                 Text(
-                    text = logUI.timeText,
+                    text = rpeLogUI.timeText,
                     style = MaxiPulsTheme.typography.regular.copy(
                         color = textColor,
                         fontSize = 14.sp,
@@ -421,7 +557,7 @@ private fun RpeTrainingCard(
                 )
 
                 Text(
-                    text = logUI.event.type.title,
+                    text = rpeLogUI.event.type.title,
                     style = MaxiPulsTheme.typography.bold.copy(
                         color = textColor,
                         fontSize = 14.sp,
@@ -435,7 +571,7 @@ private fun RpeTrainingCard(
             }
 
             Text(
-                text = logUI.durationText,
+                text = rpeLogUI.durationText,
                 style = MaxiPulsTheme.typography.regular.copy(
                     color = textColor,
                     fontSize = 14.sp,
@@ -447,57 +583,73 @@ private fun RpeTrainingCard(
             )
         }
 
-        Spacer(modifier = Modifier.size(20.dp))
+//        Spacer(modifier = Modifier.size(20.dp))
+//
+//
+//        Row(
+//            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            Text(
+//                text = logUI.event.title,
+//                style = MaxiPulsTheme.typography.regular.copy(
+//                    color = textColor,
+//                    fontSize = 14.sp,
+//                    lineHeight = 14.sp
+//                ),
+//                overflow = TextOverflow.Ellipsis,
+//                maxLines = 1
+//
+//            )
+//
+//            VerticalDivider(
+//                modifier = Modifier.padding(horizontal = 10.dp).height(17.dp),
+//                color = MaxiPulsTheme.colors.uiKit.divider
+//            )
+//
+//            Text(
+//                text = logUI.sportsmanUI.fio,
+//                style = MaxiPulsTheme.typography.bold.copy(
+//                    color = textColor,
+//                    fontSize = 14.sp,
+//                    lineHeight = 14.sp
+//                ),
+//                overflow = TextOverflow.Ellipsis,
+//                modifier = Modifier.weight(1f),
+//                maxLines = 1
+//
+//            )
+//        }
 
-
+        Spacer(modifier = Modifier.size(10.dp))
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = logUI.event.title,
+                text = "${stringResource(Res.string.trimp_avg)}",
                 style = MaxiPulsTheme.typography.regular.copy(
-                    color = textColor,
+                    color = if (isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.textColor,
                     fontSize = 14.sp,
                     lineHeight = 14.sp
                 ),
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 1
-
+                maxLines = 1,
+                modifier = Modifier
             )
-
-            VerticalDivider(
-                modifier = Modifier.padding(horizontal = 10.dp).height(17.dp),
-                color = MaxiPulsTheme.colors.uiKit.divider
-            )
-
+            Spacer(Modifier.size(5.dp))
             Text(
-                text = logUI.sportsmanUI.fio,
-                style = MaxiPulsTheme.typography.bold.copy(
-                    color = textColor,
+                text = "${rpeLogUI.avgTrimp}",
+                style = MaxiPulsTheme.typography.regular.copy(
+                    color = if (isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.primary,
                     fontSize = 14.sp,
                     lineHeight = 14.sp
                 ),
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f),
-                maxLines = 1
-
+                maxLines = 1,
+                modifier = Modifier
             )
         }
-
-        Spacer(modifier = Modifier.size(10.dp))
-
-        Text(
-            text = "${stringResource(Res.string.trimp_avg)} ${logUI.avgTrimp}",
-            style = MaxiPulsTheme.typography.regular.copy(
-                color = if (isSelect) MaxiPulsTheme.colors.uiKit.lightTextColor else MaxiPulsTheme.colors.uiKit.primary,
-                fontSize = 14.sp,
-                lineHeight = 14.sp
-            ),
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
-        )
 
         Spacer(modifier = Modifier.size(20.dp))
 

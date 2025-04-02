@@ -1,6 +1,7 @@
 package org.example.project.screens.tablet.miniPulseWidget.contents.remoteTraining
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -58,6 +59,8 @@ import maxipuls.composeapp.generated.resources.back_ic
 import maxipuls.composeapp.generated.resources.cancel
 import maxipuls.composeapp.generated.resources.create
 import maxipuls.composeapp.generated.resources.create_training
+import maxipuls.composeapp.generated.resources.delete
+import maxipuls.composeapp.generated.resources.delete_remote_training_attention
 import maxipuls.composeapp.generated.resources.description
 import maxipuls.composeapp.generated.resources.end
 import maxipuls.composeapp.generated.resources.heart_rate_peak_player
@@ -69,6 +72,7 @@ import maxipuls.composeapp.generated.resources.put_away_all
 import maxipuls.composeapp.generated.resources.sportsmen
 import maxipuls.composeapp.generated.resources.stop_training_attention
 import maxipuls.composeapp.generated.resources.title
+import maxipuls.composeapp.generated.resources.trash
 import maxipuls.composeapp.generated.resources.yes
 import org.example.project.domain.model.sportsman.SportsmanUI
 import org.example.project.domain.model.training.RemoteTrainingSportsmanStatus
@@ -133,9 +137,12 @@ class RemoteTrainingScreen(private val modifier: Modifier = Modifier) : Screen {
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
 
-                    items(state.remoteTrainings) {
+                    items(state.remoteTrainings, key = { it.id }) {
                         RemoteTrainingItem(
-                            modifier = Modifier.height(94.dp),
+                            modifier = Modifier.height(94.dp).animateItem(),
+                            delete = {
+                                viewModel.deleteRemoteTraining(it.id, hardDelete = false)
+                            },
                             remoteTrainingUI = it
                         ) {
                             viewModel.selectTraining(it)
@@ -172,12 +179,36 @@ class RemoteTrainingScreen(private val modifier: Modifier = Modifier) : Screen {
                 alertDialogButtons = MaxiAlertDialogButtons.CancelAccept
             )
         }
+
+        if (state.tempDeleteRemoteTrainingId.isNotBlank()) {
+            MaxiAlertDialog(
+                modifier = Modifier.width(600.dp),
+                title = stringResource(Res.string.attention),
+                description = stringResource(Res.string.delete_remote_training_attention),
+                acceptText = stringResource(Res.string.delete),
+                accept = {
+                    viewModel.deleteRemoteTraining(
+                        remoteTrainingId = state.tempDeleteRemoteTrainingId,
+                        hardDelete = true
+                    )
+                },
+                cancel = {
+                    viewModel.changeTempDeleteTrainingId("")
+                },
+                onDismiss = {
+                    viewModel.changeTempDeleteTrainingId("")
+                },
+                cancelText = stringResource(Res.string.cancel),
+                alertDialogButtons = MaxiAlertDialogButtons.CancelAccept
+            )
+        }
     }
 
     @Composable
     private fun RemoteTrainingItem(
         modifier: Modifier = Modifier,
         remoteTrainingUI: RemoteTrainingUI,
+        delete: () -> Unit,
         onClick: () -> Unit,
     ) {
 
@@ -237,6 +268,14 @@ class RemoteTrainingScreen(private val modifier: Modifier = Modifier) : Screen {
                 )
                 Spacer(Modifier.weight(1f))
             }
+            Icon(
+                painter = painterResource(Res.drawable.trash),
+                tint = MaxiPulsTheme.colors.uiKit.primary,
+                contentDescription = null,
+                modifier = Modifier.padding(horizontal = 20.dp).size(30.dp).clickableBlank {
+                    delete()
+                }
+            )
             Box(
                 modifier = Modifier.fillMaxHeight().width(170.dp)
                     .background(color = remoteTrainingUI.status.color),

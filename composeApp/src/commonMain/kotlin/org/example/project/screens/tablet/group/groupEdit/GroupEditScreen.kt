@@ -379,7 +379,8 @@ internal fun SelectSportsmansDialog(
                     ) {
                         items(
                             sportsmans
-                                .chunked(chunkSize)
+                                .chunked(chunkSize),
+                            key = {it}
                         ) { chunk ->
                             Row(
                                 modifier = Modifier.fillMaxWidth().animateItem(),

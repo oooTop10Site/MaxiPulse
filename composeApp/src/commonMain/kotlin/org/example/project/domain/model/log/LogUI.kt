@@ -12,6 +12,23 @@ data class LogUI(
     val sportsmanUI: SportsmanUI,
     val event: EventUI,
     val duration: Long,
+) {
+    val dateText: String
+        get() = datetime.date.toUI()
+
+    val timeText: String
+        get() = datetime.time.toUI()
+
+    val durationText: String
+        get() = duration.toTimeUI()
+
+}
+
+
+data class RpeLogUI(
+    val datetime: LocalDateTime,
+    val event: EventUI,
+    val duration: Long,
     val avgTrimp: Int,
     val sportsmen: List<RpeUI>
 ) {
@@ -25,6 +42,7 @@ data class LogUI(
         get() = duration.toTimeUI()
 
 }
+
 data class EventUI (
     val id: String,
     val type: EventType,

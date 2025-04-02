@@ -7,6 +7,7 @@ import kotlinx.datetime.plus
 import org.example.project.domain.model.log.EventType
 import org.example.project.domain.model.log.EventUI
 import org.example.project.domain.model.log.LogUI
+import org.example.project.domain.model.log.RpeLogUI
 import org.example.project.domain.model.rpe.RpeUI
 import org.example.project.domain.model.sportsman.SportsmanUI
 import org.example.project.ext.weekDates
@@ -15,57 +16,152 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import kotlin.math.log
 
-internal class RpeScaleViewModel: BaseScreenModel<RpeScaleState, RpeScaleEvent>(RpeScaleState.InitState) {
+internal class RpeScaleViewModel :
+    BaseScreenModel<RpeScaleState, RpeScaleEvent>(RpeScaleState.InitState) {
 
     fun loadTrainings() = intent { //todo
         reduce {
             state.copy(
                 trainings = listOf(
-                    LogUI(
-                        datetime = LocalDateTime(2025, 3, 11, 10, 0),
-                        sportsmanUI = SportsmanUI.Default.copy(
-                            id = "1", number = 1, name = "Иван", lastname = "Иванов", middleName = "Иванович"
-                        ),
-                        event = EventUI("1", EventType.Training, "Утренняя тренировка"),
+                    RpeLogUI(
+                        datetime = LocalDateTime(2025, 3, 17, 10, 0),
+                        event = EventUI("1", EventType.Training, "Тренировка 1"),
                         duration = 90L,
                         avgTrimp = 70,
                         sportsmen = List(10) { index ->
                             RpeUI(
                                 sportsmanUI = SportsmanUI.Default.copy(
-                                    id = "s${index + 1}", number = index + 1,
-                                    name = "Спортсмен${index + 1}", lastname = "Фамилия${index + 1}", middleName = "Отчество${index + 1}"
+                                    id = "s${index + 1}",
+                                    number = index + 1,
+                                    name = "Спортсмен${index + 1}",
+                                    lastname = "Фамилия${index + 1}",
+                                    middleName = "Отчество${index + 1}"
                                 ),
-                                score = (1..10).random()
+                                score = (1..10).random(),
+                                localDateTime = LocalDateTime(2025, 3, 17, 10, 0)
                             )
                         }
                     ),
-                    LogUI(
-                        datetime = LocalDateTime(2025, 3, 14, 17, 30),
-                        sportsmanUI = SportsmanUI.Default.copy(
-                            id = "2", number = 2, name = "Петр", lastname = "Петров", middleName = "Петрович"
-                        ),
-                        event = EventUI("2", EventType.Training, "Вечерняя тренировка"),
-                        duration = 120L,
+                    RpeLogUI(
+                        datetime = LocalDateTime(2025, 3, 18, 15, 0),
+                        event = EventUI("2", EventType.Training, "Тренировка 2"),
+                        duration = 100L,
+                        avgTrimp = 75,
+                        sportsmen = List(10) { index ->
+                            RpeUI(
+                                sportsmanUI = SportsmanUI.Default.copy(
+                                    id = "s${index + 1}",
+                                    number = index + 1,
+                                    name = "Спортсмен${index + 1}",
+                                    lastname = "Фамилия${index + 1}",
+                                    middleName = "Отчество${index + 1}"
+                                ),
+                                score = (1..10).random(),
+                                localDateTime = LocalDateTime(2025, 3, 18, 15, 0)
+                            )
+                        }
+                    ),
+                    RpeLogUI(
+                        datetime = LocalDateTime(2025, 3, 19, 18, 0),
+                        event = EventUI("3", EventType.Training, "Тренировка 3"),
+                        duration = 110L,
                         avgTrimp = 80,
                         sportsmen = List(10) { index ->
                             RpeUI(
                                 sportsmanUI = SportsmanUI.Default.copy(
-                                    id = "s${index + 11}", number = index + 11,
-                                    name = "Спортсмен${index + 11}", lastname = "Фамилия${index + 11}", middleName = "Отчество${index + 11}"
+                                    id = "s${index + 1}",
+                                    number = index + 1,
+                                    name = "Спортсмен${index + 1}",
+                                    lastname = "Фамилия${index + 1}",
+                                    middleName = "Отчество${index + 1}"
                                 ),
-                                score = (1..10).random()
+                                score = (1..10).random(),
+                                localDateTime = LocalDateTime(2025, 3, 19, 18, 0)
+                            )
+                        }
+                    ),
+                    RpeLogUI(
+                        datetime = LocalDateTime(2025, 3, 20, 9, 30),
+                        event = EventUI("4", EventType.Training, "Тренировка 4"),
+                        duration = 90L,
+                        avgTrimp = 72,
+                        sportsmen = List(10) { index ->
+                            RpeUI(
+                                sportsmanUI = SportsmanUI.Default.copy(
+                                    id = "s${index + 1}",
+                                    number = index + 1,
+                                    name = "Спортсмен${index + 1}",
+                                    lastname = "Фамилия${index + 1}",
+                                    middleName = "Отчество${index + 1}"
+                                ),                                score = (1..10).random(),
+                                localDateTime = LocalDateTime(2025, 3, 20, 9, 30)
+                            )
+                        }
+                    ),
+                    RpeLogUI(
+                        datetime = LocalDateTime(2025, 3, 21, 16, 0),
+                        event = EventUI("5", EventType.Training, "Тренировка 5"),
+                        duration = 120L,
+                        avgTrimp = 85,
+                        sportsmen = List(10) { index ->
+                            RpeUI(
+                                sportsmanUI = SportsmanUI.Default.copy(
+                                    id = "s${index + 1}",
+                                    number = index + 1,
+                                    name = "Спортсмен${index + 1}",
+                                    lastname = "Фамилия${index + 1}",
+                                    middleName = "Отчество${index + 1}"
+                                ),                                score = (1..10).random(),
+                                localDateTime = LocalDateTime(2025, 3, 21, 16, 0)
+                            )
+                        }
+                    ),
+                    RpeLogUI(
+                        datetime = LocalDateTime(2025, 3, 22, 11, 0),
+                        event = EventUI("6", EventType.Training, "Тренировка 6"),
+                        duration = 105L,
+                        avgTrimp = 78,
+                        sportsmen = List(10) { index ->
+                            RpeUI(
+                                sportsmanUI = SportsmanUI.Default.copy(
+                                    id = "s${index + 1}",
+                                    number = index + 1,
+                                    name = "Спортсмен${index + 1}",
+                                    lastname = "Фамилия${index + 1}",
+                                    middleName = "Отчество${index + 1}"
+                                ),                                score = (1..10).random(),
+                                localDateTime = LocalDateTime(2025, 3, 22, 11, 0)
+                            )
+                        }
+                    ),
+                    RpeLogUI(
+                        datetime = LocalDateTime(2025, 3, 23, 14, 30),
+                        event = EventUI("7", EventType.Training, "Тренировка 7"),
+                        duration = 95L,
+                        avgTrimp = 74,
+                        sportsmen = List(10) { index ->
+                            RpeUI(
+                                sportsmanUI = SportsmanUI.Default.copy(
+                                    id = "s${index + 1}",
+                                    number = index + 1,
+                                    name = "Спортсмен${index + 1}",
+                                    lastname = "Фамилия${index + 1}",
+                                    middleName = "Отчество${index + 1}"
+                                ),                                score = (1..10).random(),
+                                localDateTime = LocalDateTime(2025, 3, 23, 14, 30)
                             )
                         }
                     )
                 )
+
             )
         }
     }
 
-    fun selectTraining(logUI: LogUI) = intent {
+    fun selectTraining(rpeLogUI: RpeLogUI) = intent {
         reduce {
             state.copy(
-                selectTraining = logUI,
+                selectTraining = rpeLogUI,
             )
         }
     }
@@ -87,6 +183,26 @@ internal class RpeScaleViewModel: BaseScreenModel<RpeScaleState, RpeScaleEvent>(
                     selectWeek = it.weekDates(),
                 )
             }
+        }
+    }
+
+    fun selectSportsman(sportsmanId: String) = intent {
+        reduce {
+            state.copy(
+                selectSportsmanId = sportsmanId,
+                selectSportsmanRpe = state.trainings.filter { it.datetime.date in state.selectWeek }
+                    .flatMap { it.sportsmen }
+                    .filter { it.sportsmanUI.id == sportsmanId }
+            )
+        }
+    }
+
+    fun dismissSelectSportsman() = intent {
+        reduce {
+            state.copy(
+                selectSportsmanId = null,
+                selectSportsmanRpe = emptyList()
+            )
         }
     }
 

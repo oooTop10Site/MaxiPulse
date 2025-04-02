@@ -244,11 +244,11 @@
 
 По степени выраженности каждого синдрома строится заключение, которое имеет практическое значение для понимания причин состояния спортсмена.</string>
 
-    <string name="assigned_training">Назначенная тренировка</string>
+    <string name="assigned_training">Самостоятельная тренировка</string>
     <string name="time_in_zones">Время в зонах</string>
     <string name="training_is_end">Тренеровка\nзавершена</string>
     <string name="results">Результаты</string>
-    <string name="what_is_assigned_training">Что такое назначенная тренировка?</string>
+    <string name="what_is_assigned_training">Что такое самостоятельная тренировка?</string>
     <string name="put_on_the_sensor">Наденьте\nдатчик</string>
     <string name="time_to_training">Время позаниматься</string>
     <string name="device_fully_and_turn_on">Убедитесь, что устройство заряжено и включено</string>
@@ -319,6 +319,9 @@
     <string name="trimp_avg">ТРИМП средний</string>
     <string name="morining_recovery_info">На экране отображаются результаты теста “Утреннего восстановления”, который спортсмены самостоятельно выполнили сразу после пробуждения  с помощью мобильного приложения Минипульс. По тапу на карточку можно посмотреть историю, а также проанализировать качество отдыха и восстановление каждого  спортсмена</string>
     <string name="stop_training_attention">Некотрые спортсмены ещё не выполнили\nзадачу. Вы уверены, что хотите завершить\nсобытие?</string>
+    <string name="history">История</string>
+    <string name="delete_remote_training_attention">Тренировка будет удалена без сохранения результатов и возможности восстановления.</string>
+    <string name="delete">Удалить</string>
 
 
 </resources>
